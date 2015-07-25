@@ -2,6 +2,8 @@
 
 namespace Flysap\ScaffoldGenerator;
 
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -15,6 +17,18 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadRoutes()
             ->loadConfiguration()
             ->loadViews();
+
+
+        #@todo refactor ..
+        $database = config('scaffold-generator.database');
+        $pathSqlite = __DIR__ . '/../' . $database['database'];
+        $database = array_merge($database, ['database' => $pathSqlite]);
+
+        $this->app->resolving('db', function ($db) use($database) {
+            $db->extend('scaffold', function () use($database) {
+                return new Connection($database);
+            });
+        });
     }
 
     /**
@@ -25,19 +39,18 @@ class GeneratorServiceProvider extends ServiceProvider {
     public function register() {
 
         /** Stub generator . */
-        $this->app->singleton('stub-generator', function() {
+        $this->app->singleton('stub-generator', function () {
             return new StubGenerator(
                 new Filesystem()
             );
         });
 
         /** Scaffold manager . */
-        $this->app->singleton('scaffold-generator', function($app) {
+        $this->app->singleton('scaffold-generator', function ($app) {
             return new ScaffoldManager(
                 $app['stub-generator']
             );
         });
-
     }
 
     /**
@@ -47,7 +60,7 @@ class GeneratorServiceProvider extends ServiceProvider {
      */
     protected function loadRoutes() {
         if (! $this->app->routesAreCached()) {
-            require __DIR__.'/../routes.php';
+            require __DIR__ . '/../routes.php';
         }
 
         return $this;
@@ -74,7 +87,7 @@ class GeneratorServiceProvider extends ServiceProvider {
      * Load views .
      */
     protected function loadViews() {
-        $this->loadViewsFrom(__DIR__.'/../views', 'scaffold-generator');
+        $this->loadViewsFrom(__DIR__ . '/../views', 'scaffold-generator');
 
         return $this;
     }

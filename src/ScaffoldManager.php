@@ -31,16 +31,34 @@ class ScaffoldManager {
                 ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
                 ->save($fullPath . DIRECTORY_SEPARATOR . 'module.json');
 
-            /** Generate models file . */
-            $this->stubGenerator
-                ->loadStub( $this->getStubPath('Model') )
-                ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
-                ->save($fullPath . DIRECTORY_SEPARATOR . 'Model.php');
+            /** Save table and relations .. */
+            array_walk($post['tables'], function($table) use($fullPath) {
+                $tableName = strtolower(str_singular($table['name']));
+
+                /** Generate models file . */
+                $this->stubGenerator
+                    ->loadStub( $this->getStubPath('Model') )
+                    ->addFields([
+                        'class'        => ucfirst($tableName),
+                        'table_name'   => strtolower($table['name']),
+                        'table_fields' => $table['fields'],
+                    ])
+                    ->save($fullPath . DIRECTORY_SEPARATOR . ucfirst($tableName) . '.php');
+
+            });
 
 
         } catch(StubException $e) {
-            dd($e);
+
         }
+    }
+
+    protected function prepareFields($fields) {
+        #@todo convert the fields from string to array ..
+    }
+
+    protected function migrate() {
+        #@todo migrate into sqlite database preparete table and fields
     }
 
     /**
@@ -52,5 +70,4 @@ class ScaffoldManager {
     protected function getStubPath($stub = null) {
         return __DIR__ . '/../stubs/' . (! is_null($stub) ? $stub . '.stub' : '');
     }
-
 }

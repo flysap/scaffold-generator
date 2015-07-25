@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class {{class}} extends Model {
 
+    protected $connection = 'scaffold';
+
     protected $table = '{{table_name}}';
 
     protected $fillable = [{{table_fields}}];
