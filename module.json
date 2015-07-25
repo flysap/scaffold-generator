@@ -1,0 +1,13 @@
+{
+  "name" : "flysap/scaffold-generator",
+  "description" : "Scaffold generator",
+  "version" : "1.0",
+
+  "menu": [
+    {
+      "section": "Scaffold",
+      "label"  : "Generate",
+      "href"   : "/scaffold-generator/generate"
+    }
+  ]
+}
