@@ -1,11 +1,12 @@
 <?php
 
-namespace Flysap\ModuleManager;
+namespace Flysap\ScaffoldGenerator;
 
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
-class ScaffoldGeneratorServiceProvider extends ServiceProvider {
+class GeneratorServiceProvider extends ServiceProvider {
 
     /**
      * On boot's application load package requirements .
@@ -22,6 +23,20 @@ class ScaffoldGeneratorServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
+
+        /** Stub generator . */
+        $this->app->singleton('stub-generator', function() {
+            return new StubGenerator(
+                new Filesystem()
+            );
+        });
+
+        /** Scaffold manager . */
+        $this->app->singleton('scaffold-generator', function($app) {
+            return new ScaffoldManager(
+                $app['stub-generator']
+            );
+        });
 
     }
 
@@ -50,7 +65,7 @@ class ScaffoldGeneratorServiceProvider extends ServiceProvider {
 
         $config = $this->app['config']->get('scaffold-generator', []);
 
-        $this->app['config']->set('scaffold-generator', array_merge($array, $config));
+        $this->app['config']->set('scaffold-generator', array_merge((array)$array, $config));
 
         return $this;
     }
