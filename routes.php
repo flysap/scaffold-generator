@@ -1,7 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: radu
- * Date: 7/25/15
- * Time: 3:00 PM
- */
+
+Route::group(['prefix' => 'scaffold-generator'], function() {
+
+    Route::get('generate', function() {
+       return view('scaffold-generator::generate');
+   });
+});
