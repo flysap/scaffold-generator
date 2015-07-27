@@ -36,9 +36,31 @@ class MigrationGenerator {
      */
     private $stubGenerator;
 
+    /**
+     * Aliases from sql to BluePrint functions .
+     *
+     * @var array
+     */
     protected $typeAlias = [
-        'varchar' => 'string',
-        'int'     => 'integer',
+        'int'         => 'integer',
+        'tinyint'     => 'tinyInteger',
+        'smallint'    => 'smallInteger',
+        'mediumint'   => 'mediumInteger',
+        'bigint'      => 'bigInteger',
+        'float'       => 'float',
+        'double'      => 'double',
+
+        'char'        => 'char',
+        'varchar'     => 'string',
+        'mediumtext'  => 'mediumText',
+        'longtext'    => 'longText',
+        'text'        => 'text',
+
+        'enum'        => 'enum',
+
+        'date'        => 'date',
+        'datetime'    => 'dateTime',
+        'time'        => 'time',
     ];
 
     /**

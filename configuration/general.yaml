@@ -3,5 +3,10 @@ temp_path: modules
 
 # here will be listed aliases types .
 fields_type_alias:
+ int: integer
+ tinyInteger: tinyint
+ smallint: smallInteger
+ mediumInteger: mediumint
+ bigInteger: bigint
+ int: integer
  string: varchar
- number: integer
