@@ -2,6 +2,8 @@
 
 namespace Flysap\ScaffoldGenerator\Parsers;
 
+use Flysap\ScaffoldGenerator\Exceptions\ParseException;
+
 class Field {
 
     /**
@@ -59,6 +61,24 @@ class Field {
                 return $this->toType($matches);
 
         }, $fields);
+    }
+
+    /**
+     * Get parsed fields only .
+     *
+     * @param $separator
+     * @return string
+     * @throws ParseException
+     */
+    public function getFieldsOnly($separator) {
+        if(! $this->getFields())
+            throw new ParseException(_("Set fields before ."));
+
+        $parsed = $this->parse();
+
+        return implode($separator, array_map(function($field) {
+            return $field['name'];
+        }, $parsed));
     }
 
     /**
