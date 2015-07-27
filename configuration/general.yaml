@@ -1,2 +1,7 @@
 # here will be stored temporary modules
 temp_path: modules
+
+# here will be listed aliases types .
+fields_type_alias:
+ string: varchar
+ number: integer
