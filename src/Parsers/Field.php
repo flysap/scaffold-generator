@@ -2,7 +2,7 @@
 
 namespace Flysap\ScaffoldGenerator\Parsers;
 
-class Fields {
+class Field {
 
     /**
      * @var
@@ -24,12 +24,23 @@ class Fields {
         $this->aliases = $aliases;
     }
 
+    /**
+     * Set fields .
+     *
+     * @param $fields
+     * @return $this
+     */
     public function setFields($fields) {
         $this->fields = $fields;
 
         return $this;
     }
 
+    /**
+     * Get fields .
+     *
+     * @return mixed
+     */
     public function getFields() {
         return $this->fields;
     }
