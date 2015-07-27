@@ -1,8 +1,2 @@
 # here will be stored temporary modules
 temp_path: modules
-
-# here will be the temporary connection to test modules .
-database:
-  driver: sqlite
-  database: scaffold.sqlite
-  prefix:

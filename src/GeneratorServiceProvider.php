@@ -2,8 +2,6 @@
 
 namespace Flysap\ScaffoldGenerator;
 
-use Illuminate\Database\Connection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -17,18 +15,6 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadRoutes()
             ->loadConfiguration()
             ->loadViews();
-
-
-        #@todo refactor ..
-        $database = config('scaffold-generator.database');
-        $pathSqlite = __DIR__ . '/../' . $database['database'];
-        $database = array_merge($database, ['database' => $pathSqlite]);
-
-        $this->app->resolving('db', function ($db) use($database) {
-            $db->extend('scaffold', function () use($database) {
-                return new Connection($database);
-            });
-        });
     }
 
     /**
