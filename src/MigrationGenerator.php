@@ -3,8 +3,8 @@
 namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
-use Flysap\ScaffoldGenerator\Parsers\Fields;
-use Flysap\ScaffoldGenerator\Parsers\Relations;
+use Flysap\ScaffoldGenerator\Parsers\Field;
+use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Symfony\Component\Filesystem\Filesystem;
 
 class MigrationGenerator {
@@ -69,6 +69,11 @@ class MigrationGenerator {
     protected $fieldTemplate = '$table->{type}("{name}", "{value}")';
 
     /**
+     * @var string
+     */
+    protected $fieldRelation = '$table->foreign("{foreign}")->references("{reference}")->on("{on}")->onDelete("{on_delete}")->onUpdate("{on_update}")';
+
+    /**
      * @var Fields
      */
     private $fieldParser;
@@ -78,7 +83,7 @@ class MigrationGenerator {
      */
     private $relationParser;
 
-    public function __construct(Filesystem $filesystem, StubGenerator $stubGenerator, Fields $fieldParser, Relations $relationParser) {
+    public function __construct(Filesystem $filesystem, StubGenerator $stubGenerator, Field $fieldParser, Relation $relationParser) {
 
         $this->filesystem = $filesystem;
         $this->stubGenerator = $stubGenerator;
@@ -165,6 +170,7 @@ class MigrationGenerator {
         if( ! $this->getTable() )
             throw new StubException(_("Invalid table"));
 
+        /** @var Prepare table fields .. $tableFields */
         $tableFields = [];
         $fields      = $this->getFields();
         array_walk($fields, function($field) use(& $tableFields) {
@@ -181,6 +187,19 @@ class MigrationGenerator {
             $tableFields[] = $string . ';';
         });
 
+
+        /** Prepare table relations .. */
+        $tableRelations = [];
+        $relations      = $this->getRelations();
+        array_walk($relations, function($relation) use(& $tableRelations) {
+            $string = $this->fieldRelation;
+            foreach ($relation as $key => $value) {
+                $string = str_replace('{'.$key.'}', $value, $string);
+            }
+
+            $tableRelations[] = $string . ';';
+        });
+
         $this->stubGenerator
             ->loadStub(
                 __DIR__ . DIRECTORY_SEPARATOR . '../' . self::STUB_PATH
@@ -188,8 +207,9 @@ class MigrationGenerator {
 
         $this->stubGenerator
             ->addFields([
-                'table_name'   => $this->getTable(),
-                'table_fields' => $tableFields,
+                'table_name'      => $this->getTable(),
+                'table_fields'    => $tableFields,
+                'table_relations' => $tableRelations,
             ]);
 
         return $this->stubGenerator;
