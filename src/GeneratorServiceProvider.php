@@ -2,6 +2,8 @@
 
 namespace Flysap\ScaffoldGenerator;
 
+use Flysap\ScaffoldGenerator\Parsers\Fields;
+use Flysap\ScaffoldGenerator\Parsers\Relations;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -34,7 +36,26 @@ class GeneratorServiceProvider extends ServiceProvider {
         /** Scaffold manager . */
         $this->app->singleton('scaffold-generator', function ($app) {
             return new ScaffoldManager(
-                $app['stub-generator']
+                $app['stub-generator'], $app['migration-generator']
+            );
+        });
+
+        /** Register field parser. */
+        $this->app->singleton('field-parser', function() {
+            return new Fields(
+                config('scaffold-generator.fields_type_alias')
+            );
+        });
+
+        /** Register field parser. */
+        $this->app->singleton('relation-parser', function() {
+            return new Relations;
+        });
+
+        /** Register field parser. */
+        $this->app->singleton('migration-generator', function($app) {
+            return new MigrationGenerator(
+                new Filesystem(), $app['stub-generator'], $app['field-parser'], $app['relation-parser']
             );
         });
     }
