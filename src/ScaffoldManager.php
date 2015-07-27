@@ -57,7 +57,7 @@ class ScaffoldManager {
 
                 /** Generate models file . */
                 $this->stubGenerator
-                    ->loadStub( $this->getStubPath('Model') )
+                    ->loadStub( $this->getStubPath('model') )
                     ->addFields([
                         'class'        => ucfirst($tableName),
                         'table_name'   => strtolower($table['name']),

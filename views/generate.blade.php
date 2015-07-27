@@ -49,16 +49,16 @@
                             <div class="row">
                                 <div class="col-xs-2">
                                     <label>{{_('Table name')}}</label>
-                                    <input type="text" name="tables[0][name]" class="form-control" placeholder="Table name">
+                                    <input type="text" name="tables[0][name]" class="form-control" placeholder="User">
                                 </div>
                                 <div class="col-xs-7">
                                     <label>{{_('Fields')}}</label>
-                                    <input type="text" name="tables[0][fields]" class="form-control" placeholder="Fields">
+                                    <input type="text" name="tables[0][fields]" class="form-control" placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
                                 </div>
 
                                 <div class="col-xs-9">
                                     <label>{{_('Relations')}}</label>
-                                    <input type="text" name="tables[0][relations]" class="form-control" placeholder="Relations">
+                                    <input type="text" name="tables[0][relations]" class="form-control" placeholder="phone_id:id|phones|cascade|cascade">
                                 </div>
 
                             </div>
