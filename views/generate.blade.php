@@ -1,6 +1,7 @@
 @extends('themes::layouts.default')
 
 @section('content')
+
     <section class="content-header">
         <h1>
             General Form Elements
@@ -15,62 +16,84 @@
 
     <!-- Main content -->
     <section class="content">
-
-
         <div class="row">
             <!-- left column -->
             <div class="col-md-12">
 
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_1" data-toggle="tab">Builder</a></li>
+                        <li><a href="#tab_2" data-toggle="tab">Editor</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_1">
 
-                <!-- general form elements -->
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">{{_('Generate modules')}}e</h3>
-                    </div><!-- /.box-header -->
-                    <!-- form start -->
-                    <form role="form" method="post" action="">
-                        <input type="hidden" name="_token" value="{{csrf_token()}}">
+                            <!-- form start -->
+                            <form role="form" method="post" action="">
+                                <input type="hidden" name="_token" value="{{csrf_token()}}">
 
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-xs-2">
-                                    <label>{{_('Vendor')}}</label>
-                                    <input type="text" name="vendor" class="form-control" placeholder="Vendor">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <label>{{_('Vendor')}}</label>
+                                            <input type="text" name="vendor" class="form-control" placeholder="Vendor">
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label>{{_('Name')}}</label>
+                                            <input type="text" name="name" class="form-control" placeholder="Name">
+                                        </div>
+
+                                    </div>
                                 </div>
-                                <div class="col-xs-3">
-                                    <label>{{_('Name')}}</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Name">
+
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <label>{{_('Table name')}}</label>
+                                            <input type="text" name="tables[0][name]" class="form-control"
+                                                   placeholder="User">
+                                        </div>
+                                        <div class="col-xs-7">
+                                            <label>{{_('Fields')}}</label>
+                                            <input type="text" name="tables[0][fields]" class="form-control"
+                                                   placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
+                                        </div>
+
+                                        <div class="col-xs-9">
+                                            <label>{{_('Relations')}}</label>
+                                            <input type="text" name="tables[0][relations]" class="form-control"
+                                                   placeholder="phone_id:id|phones|cascade|cascade">
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                            </div>
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-primary">{{_('Generate')}}</button>
+                                </div>
+
+                            </form>
+
                         </div>
-
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-xs-2">
-                                    <label>{{_('Table name')}}</label>
-                                    <input type="text" name="tables[0][name]" class="form-control" placeholder="User">
-                                </div>
-                                <div class="col-xs-7">
-                                    <label>{{_('Fields')}}</label>
-                                    <input type="text" name="tables[0][fields]" class="form-control" placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
-                                </div>
-
-                                <div class="col-xs-9">
-                                    <label>{{_('Relations')}}</label>
-                                    <input type="text" name="tables[0][relations]" class="form-control" placeholder="phone_id:id|phones|cascade|cascade">
-                                </div>
-
-                            </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_2">
+                            tab 2
                         </div>
+                        <!-- /.tab-pane -->
+                    </div>
+                    <!-- /.tab-content -->
+                </div>
+                <!-- nav-tabs-custom -->
 
-                        <div class="box-footer">
-                            <button type="submit" class="btn btn-primary">{{_('Generate')}}</button>
-                        </div>
-
-                    </form>
-                </div><!-- /.box -->
-            </div><!--/.col (left) -->
-        </div>   <!-- /.row -->
+            </div>
+            <!--/.col (left) -->
+        </div>
+        <!-- /.row -->
     </section><!-- /.content -->
+
+    <script type="text/javascript">
+        $(function () {
+
+        });
+    </script>
 @endsection
