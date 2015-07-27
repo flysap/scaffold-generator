@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class {{class}} extends Model {
 
-    protected $connection = 'scaffold';
+    protected $connection = 'sqlite';
 
     protected $table = '{{table_name}}';
 
