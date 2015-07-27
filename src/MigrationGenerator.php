@@ -63,6 +63,12 @@ class MigrationGenerator {
         'time'        => 'time',
     ];
 
+    protected $specialValues = [
+        'unsigned' => '->unsigned()',
+        'index'    => '->index()',
+        'nullable' => '->nullable()',
+    ];
+
     /**
      * @var string
      */
@@ -74,12 +80,12 @@ class MigrationGenerator {
     protected $fieldRelation = '$table->foreign("{foreign}")->references("{reference}")->on("{on}")->onDelete("{on_delete}")->onUpdate("{on_update}")';
 
     /**
-     * @var Fields
+     * @var Field
      */
     private $fieldParser;
 
     /**
-     * @var Relations
+     * @var Relation
      */
     private $relationParser;
 
@@ -184,13 +190,18 @@ class MigrationGenerator {
                 $string = str_replace('{'.$key.'}', $value, $string);
             }
 
+            foreach ($this->specialValues as $key => $value) {
+                if( isset($field[$key]) )
+                    $string .= $value;
+            }
+
             $tableFields[] = $string . ';';
         });
 
 
         /** Prepare table relations .. */
         $tableRelations = [];
-        $relations      = $this->getRelations();
+        $relations      = array_filter($this->getRelations());
         array_walk($relations, function($relation) use(& $tableRelations) {
             $string = $this->fieldRelation;
             foreach ($relation as $key => $value) {

@@ -17,7 +17,7 @@ class Field {
     /**
      * @var string
      */
-    protected $rule = "/^(\\w+):(\\w+)(?:\\((.+)\\))?(?::(\\w+))?$/i";
+    protected $rule = "/^(?<field>\w+):(?<type>\w+)(?:\((?<value>.+)\))?(?::(\w+))?\|?(?<unsigned>unsigned)?\|?(?<nullable>nullable)?\|?(?<index>index)?$/i";
 
     public function __construct($aliases) {
 
@@ -68,21 +68,31 @@ class Field {
      * @return array
      */
     public function toType($matches) {
-        $field = ['name' => $matches[1]];
+        $field = ['name' => $matches['field']];
 
-        if( isset($this->aliases[$matches[2]]) )
-            $field = array_merge($field, ['type' => $this->aliases[$matches[2]]]);
+        if( isset($this->aliases[$matches['type']]) )
+            $field = array_merge($field, ['type' => $this->aliases[$matches['type']]]);
         else
-            $field = array_merge($field, ['type' => $matches[2]]);
+            $field = array_merge($field, ['type' => $matches['type']]);
 
-        if( isset($matches[3]) )
+        if( isset($matches['value']) )
             $field = array_merge($field, [
-               'value' => $matches[3]
+               'value' => $matches['value']
             ]);
 
-        if( isset($matches[4]) )
+        if( isset($matches['unsigned']) && $matches['unsigned'] )
             $field = array_merge($field, [
-                'unsigned' => $matches[4]
+                'unsigned' => $matches['unsigned']
+            ]);
+
+        if( isset($matches['nullable']) && $matches['nullable'] )
+            $field = array_merge($field, [
+                'nullable' => $matches['nullable']
+            ]);
+
+        if( isset($matches['index']) && $matches['index'] )
+            $field = array_merge($field, [
+                'index' => $matches['index']
             ]);
 
         return $field;
