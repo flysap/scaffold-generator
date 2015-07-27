@@ -2,8 +2,8 @@
 
 namespace Flysap\ScaffoldGenerator;
 
-use Flysap\ScaffoldGenerator\Parsers\Fields;
-use Flysap\ScaffoldGenerator\Parsers\Relations;
+use Flysap\ScaffoldGenerator\Parsers\Field;
+use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -42,14 +42,14 @@ class GeneratorServiceProvider extends ServiceProvider {
 
         /** Register field parser. */
         $this->app->singleton('field-parser', function() {
-            return new Fields(
+            return new Field(
                 config('scaffold-generator.fields_type_alias')
             );
         });
 
         /** Register field parser. */
         $this->app->singleton('relation-parser', function() {
-            return new Relations;
+            return new Relation;
         });
 
         /** Register field parser. */

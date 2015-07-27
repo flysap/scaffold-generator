@@ -13,6 +13,7 @@ class Create{{table_name}}Table extends Migration
     public function up() {
         Schema::create('{{table_name}}', function (Blueprint $table) {
             {{table_fields}}
+            {{table_relations}}
         });
     }
 

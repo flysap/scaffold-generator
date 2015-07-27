@@ -48,6 +48,7 @@ class ScaffoldManager {
                 $this->migrationGenerator
                     ->setTable($table['name'])
                     ->setFields($table['fields'])
+                    ->setRelations($table['relations'])
                     ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
 
 
