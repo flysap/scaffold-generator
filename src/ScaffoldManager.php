@@ -29,19 +29,19 @@ class ScaffoldManager {
      */
     public function generate($post) {
         try {
-            $fullPath = DIRECTORY_SEPARATOR . $post['vendor'] . DIRECTORY_SEPARATOR . $post['name'];
+            $path = DIRECTORY_SEPARATOR . $post['vendor'] . DIRECTORY_SEPARATOR . $post['name'];
 
             /** Generate the module.json file. */
             $this->stubGenerator
                 ->loadStub( $this->getStubPath('modules') )
                 ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
-                ->save($fullPath . DIRECTORY_SEPARATOR . 'module.json');
+                ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
             /** Save table and relations .. */
-            array_walk($post['tables'], function($table) use($fullPath) {
+            array_walk($post['tables'], function($table) use($path) {
 
                 $tableName  = strtolower(str_singular($table['name']));
-                $path       = $fullPath . DIRECTORY_SEPARATOR;
+                $path       = $path . DIRECTORY_SEPARATOR;
 
 
                 /** Generate migration files . */
@@ -50,7 +50,6 @@ class ScaffoldManager {
                     ->setFields($table['fields'])
                     ->setRelations($table['relations'])
                     ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
-
 
                 $fieldParser = app('field-parser');
                 $parsedFields = $fieldParser->setFields($table['fields'])
@@ -67,7 +66,6 @@ class ScaffoldManager {
                     ->save($path . ucfirst($tableName) . '.php');
 
             });
-
 
         } catch(StubException $e) {
 
