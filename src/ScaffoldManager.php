@@ -52,13 +52,17 @@ class ScaffoldManager {
                     ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
 
 
+                $fieldParser = app('field-parser');
+                $parsedFields = $fieldParser->setFields($table['fields'])
+                    ->getFieldsOnly("','");
+
                 /** Generate models file . */
                 $this->stubGenerator
                     ->loadStub( $this->getStubPath('Model') )
                     ->addFields([
                         'class'        => ucfirst($tableName),
                         'table_name'   => strtolower($table['name']),
-                        'table_fields' => $table['fields'],
+                        'table_fields' => "'" . $parsedFields . "'",
                     ])
                     ->save($path . ucfirst($tableName) . '.php');
 
