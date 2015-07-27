@@ -11,9 +11,15 @@ class ScaffoldManager {
      */
     private $stubGenerator;
 
-    public function __construct(StubGenerator $stubGenerator) {
+    /**
+     * @var MigrationGenerator
+     */
+    private $migrationGenerator;
+
+    public function __construct(StubGenerator $stubGenerator, MigrationGenerator $migrationGenerator) {
 
         $this->stubGenerator = $stubGenerator;
+        $this->migrationGenerator = $migrationGenerator;
     }
 
     /**
@@ -33,7 +39,17 @@ class ScaffoldManager {
 
             /** Save table and relations .. */
             array_walk($post['tables'], function($table) use($fullPath) {
-                $tableName = strtolower(str_singular($table['name']));
+
+                $tableName  = strtolower(str_singular($table['name']));
+                $path       = $fullPath . DIRECTORY_SEPARATOR;
+
+
+                /** Generate migration files . */
+                $this->migrationGenerator
+                    ->setTable($table['name'])
+                    ->setFields($table['fields'])
+                    ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
+
 
                 /** Generate models file . */
                 $this->stubGenerator
@@ -43,7 +59,7 @@ class ScaffoldManager {
                         'table_name'   => strtolower($table['name']),
                         'table_fields' => $table['fields'],
                     ])
-                    ->save($fullPath . DIRECTORY_SEPARATOR . ucfirst($tableName) . '.php');
+                    ->save($path . ucfirst($tableName) . '.php');
 
             });
 

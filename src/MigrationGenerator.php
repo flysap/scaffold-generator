@@ -44,12 +44,13 @@ class MigrationGenerator {
     /**
      * @var string
      */
-    protected $fieldTemplate = '$table->{type}("{name}", {value})';
+    protected $fieldTemplate = '$table->{type}("{name}", "{value}")';
 
     /**
      * @var Fields
      */
     private $fieldParser;
+
     /**
      * @var Relations
      */
@@ -59,12 +60,6 @@ class MigrationGenerator {
 
         $this->filesystem = $filesystem;
         $this->stubGenerator = $stubGenerator;
-
-        $this->stubGenerator
-            ->loadStub(
-                __DIR__ . DIRECTORY_SEPARATOR . '../' . self::STUB_PATH
-            );
-
         $this->fieldParser = $fieldParser;
         $this->relationParser = $relationParser;
     }
@@ -161,8 +156,13 @@ class MigrationGenerator {
                 $string = str_replace('{'.$key.'}', $value, $string);
             }
 
-            $tableFields[] = $string;
+            $tableFields[] = $string . ';';
         });
+
+        $this->stubGenerator
+            ->loadStub(
+                __DIR__ . DIRECTORY_SEPARATOR . '../' . self::STUB_PATH
+            );
 
         $this->stubGenerator
             ->addFields([
@@ -187,7 +187,6 @@ class MigrationGenerator {
      * @param $path
      */
     public function save($path) {
-        dd($this->prepare()->getStub());
         return $this->prepare()
             ->save($path);
     }
