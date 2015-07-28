@@ -3,8 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Flysap\Scaffold\Traits\ScaffoldTrait;
+use Flysap\Scaffold\ScaffoldAble;
 
-class {{class}} extends Model {
+class {{class}} extends Model implements ScaffoldAble {
+
+    use ScaffoldTrait;
 
     protected $connection = 'sqlite';
 
