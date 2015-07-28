@@ -39,6 +39,21 @@ class Field {
     }
 
     /**
+     * Set raw fields ..
+     *
+     * @param $fields
+     * @return $this
+     */
+    public function setRawFields($fields) {
+        if(! is_array($fields))
+            $fields = (array)$fields;
+
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    /**
      * Get fields .
      *
      * @return mixed
@@ -53,13 +68,16 @@ class Field {
      * @return array
      */
     public function parse() {
-        $fields = explode(",", $this->getFields());
-        $fields = preg_replace('/ +/', '', $fields);
+        $fields = $this->getFields();
+
+        if(! is_array($this->getFields())) {
+            $fields = explode(",", $fields);
+            $fields = preg_replace('/ +/', '', $fields);
+        }
 
         return array_map(function($field)  {
             if( preg_match($this->rule, $field, $matches) )
                 return $this->toType($matches);
-
         }, $fields);
     }
 
