@@ -43,36 +43,25 @@ class ScaffoldManager {
                 ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
+            
             /** Generate model files . */
             $this->modelGenerator
                 ->setTables($post['tables'])
                 ->save($path);
 
-            /** Save table and relations .. */
+
             array_walk($post['tables'], function($table) use($path) {
 
-                $tableName  = strtolower(str_singular($table['name']));
-                $path       = $path . DIRECTORY_SEPARATOR;
-
-                /** Generate migration files . */
                 $this->migrationGenerator
                     ->setTable($table['name'])
                     ->setFields($table['fields'])
                     ->setRelations($table['relations'])
-                    ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
+                    ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . strtolower(str_singular($table['name'])) . '_migration.php');
             });
 
         } catch(StubException $e) {
 
         }
-    }
-
-    protected function prepareFields($fields) {
-        #@todo convert the fields from string to array ..
-    }
-
-    protected function migrate() {
-        #@todo migrate into sqlite database preparete table and fields
     }
 
     /**

@@ -4,6 +4,37 @@ namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
 
+/**
+ * When post is incoming need to validate each field
+ *
+ * Possible formats ..
+ *   1.
+ *      a. fields    - id:int(11)|unsigned, name:string(55), etc ..
+ *      b. relations - user_id:id|users|cascade|cascade|hasMany
+ *
+ *   2.
+ *    tables[] ->
+ *      a. name
+ *      b. fields:
+ *           id:
+ *            - type => int
+ *            - length => 11
+ *            - unsigned => unsigned
+ *            - index => index
+ *           etc:
+ *
+ *      c. relations:
+ *            -
+ *              - foreign => foreign
+ *              - reference => reference
+ *              - table => table
+ *              - on_update => on_update
+ *              - on_delete => on_delete
+ *              - relation => relation
+ *
+ * Class ModelGenerator
+ * @package Flysap\ScaffoldGenerator
+ */
 class ModelGenerator extends Generator {
 
     const STUB_PATH = 'stubs/model.stub';
@@ -34,7 +65,7 @@ class ModelGenerator extends Generator {
             $this->tables[$table['name']] = $table;
         });
 
-        $this->setUpRelations();
+        $this->prepareRelations();
 
         return $this;
     }
@@ -42,11 +73,11 @@ class ModelGenerator extends Generator {
     /**
      * Set up relations
      */
-    protected function setUpRelations() {
+    protected function prepareRelations() {
         array_walk($this->tables, function($table, $key) {
             if( isset($table['relations']) && !empty($table['relations']) ) {
 
-                $this->setRelations($table['relations']);
+                $this->setRawRelations($table['relations']);
                 $relations = $this->getRelations();
 
                 array_walk($relations, function($relation) use($key) {
@@ -98,22 +129,20 @@ class ModelGenerator extends Generator {
 
         $this->setTable($table['name']);
 
-        if( ! $this->getTable() )
-            throw new StubException(_("Invalid table"));
-
         $relationsString = '';
 
-        array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
-           $template = array_get($this->templates, $key);
+        if( isset($table['relations']) && !empty($table['relations']) )
+            array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
+               $template = array_get($this->templates, $key);
 
-            array_walk($relations, function($relation) use(& $relationsString, $template) {
+                array_walk($relations, function($relation) use(& $relationsString, $template) {
 
-                $relationsString .= $template;
-                array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
-                    $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
+                    $relationsString .= $template;
+                    array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
+                        $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
+                    });
                 });
             });
-        });
 
         /** Generate models file . */
         $this->stubGenerator
