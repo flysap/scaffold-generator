@@ -16,10 +16,16 @@ class ScaffoldManager {
      */
     private $migrationGenerator;
 
-    public function __construct(StubGenerator $stubGenerator, MigrationGenerator $migrationGenerator) {
+    /**
+     * @var ModelGenerator
+     */
+    private $modelGenerator;
+
+    public function __construct(StubGenerator $stubGenerator, MigrationGenerator $migrationGenerator, ModelGenerator $modelGenerator) {
 
         $this->stubGenerator = $stubGenerator;
         $this->migrationGenerator = $migrationGenerator;
+        $this->modelGenerator = $modelGenerator;
     }
 
     /**
@@ -37,12 +43,16 @@ class ScaffoldManager {
                 ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
+            /** Generate model files . */
+            $this->modelGenerator
+                ->setTables($post['tables'])
+                ->save($path);
+
             /** Save table and relations .. */
             array_walk($post['tables'], function($table) use($path) {
 
                 $tableName  = strtolower(str_singular($table['name']));
                 $path       = $path . DIRECTORY_SEPARATOR;
-
 
                 /** Generate migration files . */
                 $this->migrationGenerator
@@ -50,21 +60,6 @@ class ScaffoldManager {
                     ->setFields($table['fields'])
                     ->setRelations($table['relations'])
                     ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . $tableName . '_migration.php');
-
-                $fieldParser = app('field-parser');
-                $parsedFields = $fieldParser->setFields($table['fields'])
-                    ->getFieldsOnly("','");
-
-                /** Generate models file . */
-                $this->stubGenerator
-                    ->loadStub( $this->getStubPath('model') )
-                    ->addFields([
-                        'class'        => ucfirst($tableName),
-                        'table_name'   => strtolower($table['name']),
-                        'table_fields' => "'" . $parsedFields . "'",
-                    ])
-                    ->save($path . ucfirst($tableName) . '.php');
-
             });
 
         } catch(StubException $e) {

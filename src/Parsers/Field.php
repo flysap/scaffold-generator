@@ -67,10 +67,12 @@ class Field {
      * Get parsed fields only .
      *
      * @param $separator
+     * @param array $only
+     * @param array $except
      * @return string
      * @throws ParseException
      */
-    public function getFieldsOnly($separator) {
+    public function getFieldsOnly($separator, $only = array(), $except = array()) {
         if(! $this->getFields())
             throw new ParseException(_("Set fields before ."));
 
@@ -78,7 +80,7 @@ class Field {
 
         return implode($separator, array_map(function($field) {
             return $field['name'];
-        }, $parsed));
+        }, $only ? array_only($parsed, $only) : $except ? array_except($parsed, $except) : $parsed));
     }
 
     /**

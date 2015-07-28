@@ -12,7 +12,7 @@ class Relation {
     /**
      * @var string
      */
-    protected $rule = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?/i";
+    protected $rule = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?\\|?(?<relation>hasOne|hasMany|belongsTo|belongsToMany)?/i";
 
     /**
      * Set relations .
@@ -21,6 +21,9 @@ class Relation {
      * @return $this
      */
     public function setRelations($relations) {
+        if(! is_array($relations))
+            $relations = (array)$relations;
+
         $this->relations = $relations;
 
         return $this;
@@ -41,13 +44,11 @@ class Relation {
      * @return array
      */
     public function parse() {
-        $Relations = explode(",", $this->getRelations());
-
         return array_map(function($field)  {
             if( preg_match($this->rule, $field, $matches) )
                 return $this->toType($matches);
 
-        }, $Relations);
+        }, $this->getRelations());
     }
 
     /**
@@ -57,31 +58,12 @@ class Relation {
      * @return array
      */
     public function toType($matches) {
-        $field = [
-            'foreign'   => $matches['foreign'],
-            'reference' => $matches['reference'],
-            'on'        => $matches['table']
-        ];
+        if(! isset($matches['on_update']))
+            $matches['on_update'] = 'no action';
 
-        if( isset($matches['on_update']) )
-            $field = array_merge($field, [
-                'on_update' => $matches['on_update']
-            ]);
-        else
-            $field = array_merge($field, [
-                'on_update' => 'no action'
-            ]);
+        if(! isset($matches['on_delete']))
+            $matches['on_delete'] = 'no action';
 
-
-        if( isset($matches['on_delete']) )
-            $field = array_merge($field, [
-                'on_delete' => $matches['on_delete']
-            ]);
-        else
-            $field = array_merge($field, [
-                'on_update' => 'no action'
-            ]);
-
-        return $field;
+        return $matches;
     }
 }

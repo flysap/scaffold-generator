@@ -11,4 +11,6 @@ class {{class}} extends Model {
     protected $table = '{{table_name}}';
 
     protected $fillable = [{{table_fields}}];
+
+    {{table_relations}}
 }
