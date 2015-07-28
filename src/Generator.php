@@ -73,6 +73,18 @@ abstract class Generator {
     }
 
     /**
+     * Set raw fields .
+     *
+     * @param array $fields
+     * @return $this
+     */
+    public function setRawFields($fields = array()) {
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    /**
      * Set fields .
      *
      * @param array $fields
@@ -93,6 +105,18 @@ abstract class Generator {
      */
     public function getFields() {
         return $this->fields;
+    }
+
+    /**
+     * Set raw relations .
+     *
+     * @param array $relations
+     * @return $this
+     */
+    public function setRawRelations($relations = array()) {
+        $this->relations = $relations;
+
+        return $this;
     }
 
     /**
