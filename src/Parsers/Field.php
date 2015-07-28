@@ -76,11 +76,14 @@ class Field {
         if(! $this->getFields())
             throw new ParseException(_("Set fields before ."));
 
-        $parsed = $this->parse();
+        $parsed = [];
+        array_map(function($field) use(& $parsed) {
+            $parsed[$field['name']] = $field;
+        }, $this->parse());
 
         return implode($separator, array_map(function($field) {
             return $field['name'];
-        }, $only ? array_only($parsed, $only) : $except ? array_except($parsed, $except) : $parsed));
+        }, $only ? array_only($parsed, $only) : ($except ? array_except($parsed, $except) : $parsed)));
     }
 
     /**

@@ -17,10 +17,10 @@ class ModelGenerator extends Generator {
      * @var array
      */
     protected $templates = [
-        'hasOne'         => 'public function {{table}}() { $this->hasOne("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'hasMany'        => 'public function {{table}}() { $this->hasMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'belongsToMany'  => 'public function {{table}}() { $this->belongsToMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'belongsTo'      => 'public function {{table}}() { $this->belongsToMany("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
+        'hasOne'         => 'public function {{function}}() { $this->hasOne("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
+        'hasMany'        => 'public function {{function}}() { $this->hasMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
+        'belongsToMany'  => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
+        'belongsTo'      => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
     ];
 
     /**
@@ -54,7 +54,8 @@ class ModelGenerator extends Generator {
                     $this->tables[$relation['table']]['relations'] = [
                         $relation['relation'] => [
                             [
-                                'table'       => str_singular(ucfirst(strtolower($key))),
+                                'function'    => str_singular(strtolower($key)),
+                                'table'       => str_singular(strtolower($key)),
                                 'foreign_key' => $relation['foreign'],
                                 'local_key'   => $relation['reference']
                             ]
@@ -64,14 +65,13 @@ class ModelGenerator extends Generator {
                     $this->tables[$key]['relations'] = [
                         'belongsTo' => [
                             [
-                                'table' => str_singular(ucfirst(strtolower($relation['table']))),
-                                'local_key' => $relation['foreign'],
+                                'function'   => str_singular(strtolower($relation['table'])),
+                                'table'      => str_singular(strtolower($relation['table'])),
+                                'local_key'  => $relation['foreign'],
                                 'parent_key' => $relation['reference']
                             ]
                         ]
                     ];
-
-
                 });
             }
         });
