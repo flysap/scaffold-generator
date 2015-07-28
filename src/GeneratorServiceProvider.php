@@ -36,7 +36,7 @@ class GeneratorServiceProvider extends ServiceProvider {
         /** Scaffold manager . */
         $this->app->singleton('scaffold-generator', function ($app) {
             return new ScaffoldManager(
-                $app['stub-generator'], $app['migration-generator']
+                $app['stub-generator'], $app['migration-generator'], $app['model-generator']
             );
         });
 
@@ -55,6 +55,13 @@ class GeneratorServiceProvider extends ServiceProvider {
         /** Register field parser. */
         $this->app->singleton('migration-generator', function($app) {
             return new MigrationGenerator(
+                new Filesystem(), $app['stub-generator'], $app['field-parser'], $app['relation-parser']
+            );
+        });
+
+        /** Register field parser. */
+        $this->app->singleton('model-generator', function($app) {
+            return new ModelGenerator(
                 new Filesystem(), $app['stub-generator'], $app['field-parser'], $app['relation-parser']
             );
         });
