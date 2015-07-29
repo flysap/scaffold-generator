@@ -58,6 +58,11 @@ class ModelGenerator extends Generator {
     ];
 
     /**
+     * @var
+     */
+    protected $aliases;
+
+    /**
      * Set tables .
      *
      * @param $tables
@@ -112,6 +117,32 @@ class ModelGenerator extends Generator {
     }
 
     /**
+     * Prepare package replacer .
+     *
+     * @param $packages
+     * @return array
+     */
+    protected function getPackagesReplacement($packages) {
+        $aliases = $this->getPackageAliases();
+
+        $replacement = [];
+        array_walk($packages, function($options, $alias) use($aliases, & $replacement) {
+            if( ! in_array($alias, array_keys($aliases)) )
+                return false;
+
+            $class = $aliases[$alias];
+
+            if(! class_exists($class))
+                return false;
+
+            $replacement = array_merge($replacement, (new $class($options))
+                ->toArray());
+        });
+
+        return $replacement;
+    }
+
+    /**
      * Prepare table .
      *
      * @param $name
@@ -130,7 +161,20 @@ class ModelGenerator extends Generator {
             ->setFields($table['fields'])
             ->getFieldsOnly("','", null, ["id"]);
 
+
         $this->setTable($table['name']);
+
+        $packages = [
+            'packages_traits'    => '',
+            'packages_options'   => '',
+            'packages_contracts' => '',
+            'packages_import'    => '',
+        ];
+
+        if( isset($table['packages']) )
+            $packages = $this->getPackagesReplacement(
+                $table['packages']
+            );
 
         $relationsString = '';
 
@@ -150,11 +194,11 @@ class ModelGenerator extends Generator {
         /** Generate models file . */
         $this->stubGenerator
             ->addFields([
-                'class'           => str_singular(ucfirst($this->getTable())),
-                'table_name'      => strtolower($this->getTable()),
-                'table_fields'    => "'" . $fields . "'",
-                'table_relations' => $relationsString,
-            ]);
+                'class'              => str_singular(ucfirst($this->getTable())),
+                'table_name'         => strtolower($this->getTable()),
+                'table_fields'       => "'" . $fields . "'",
+                'table_relations'    => $relationsString,
+            ] + $packages);
 
         return $this->stubGenerator;
     }
@@ -169,5 +213,17 @@ class ModelGenerator extends Generator {
             $this->prepare($table['name'])
                 ->save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($table['name']))) . '.php');
         });
+    }
+
+    /**
+     * Return package aliases .
+     *
+     * @return mixed
+     */
+    protected function getPackageAliases() {
+        if( ! $this->aliases )
+            $this->aliases = config('scaffold-generator.package_alias');
+
+        return $this->aliases;
     }
 }
