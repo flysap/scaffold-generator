@@ -10,3 +10,7 @@ fields_type_alias:
  bigInteger: bigint
  int: integer
  string: varchar
+
+# here will be declared all the aliases packages .
+package_alias:
+ sluggable: Flysap\ScaffoldGenerator\Packages\Sluggable
