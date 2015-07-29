@@ -31,6 +31,9 @@ use Flysap\ScaffoldGenerator\Exceptions\StubException;
  *              - on_update => on_update
  *              - on_delete => on_delete
  *              - relation => relation
+ *      d. packages
+ *          - package
+ *             - options
  *
  * Class ModelGenerator
  * @package Flysap\ScaffoldGenerator
