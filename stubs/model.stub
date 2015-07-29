@@ -1,0 +1,25 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+use Flysap\Scaffold\Traits\ScaffoldTrait;
+use Flysap\Scaffold\ScaffoldAble;
+{{packages_import}}
+
+class {{class}} extends Model implements ScaffoldAble {{packages_contracts}} {
+
+    use ScaffoldTrait;
+
+    {{packages_traits}}
+
+    {{packages_options}}
+
+    protected $connection = 'sqlite';
+
+    protected $table = '{{table_name}}';
+
+    protected $fillable = [{{table_fields}}];
+
+    {{table_relations}}
+}
