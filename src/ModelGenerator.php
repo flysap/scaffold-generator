@@ -126,21 +126,25 @@ class ModelGenerator extends Generator {
         $aliases = $this->getPackageAliases();
 
         $replacement = [];
-        array_walk($packages, function($options, $alias) use($aliases, & $replacement) {
-            if(! $alias)
-                $alias = $options;
+        foreach($packages as $package => $options) {
+            if(is_numeric($package))
+                $package = $options;
 
-            if( ! in_array($alias, array_keys($aliases)) )
+            if( ! in_array($package, array_keys($aliases)) )
                 return false;
 
-            $class = $aliases[$alias];
+            $class = $aliases[$package];
 
             if(! class_exists($class))
                 return false;
 
-            $replacement = array_merge($replacement, (new $class($options))
-                ->toArray());
-        });
+            $data = (new $class($options))
+                ->toArray();
+
+            foreach ($data as $key => $value) {
+                @$replacement[$key] .= $value;
+            }
+        }
 
         return $replacement;
     }

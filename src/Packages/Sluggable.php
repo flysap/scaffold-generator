@@ -8,14 +8,7 @@ class Sluggable extends Package implements PackageInterface {
      * @return mixed
      */
     public function traits() {
-        return " use SluggableTrait;\n";
-    }
-
-    /**
-     * @return mixed
-     */
-    public function options() {
-        return "return ['from']\n";
+        return "    use SluggableTrait;\n";
     }
 
     /**

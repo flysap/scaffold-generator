@@ -18,6 +18,36 @@ abstract class Package implements Arrayable {
     }
 
     /**
+     * @return mixed
+     */
+    public function traits() {
+        return '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function options() {
+        return '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function contracts() {
+        return '';
+    }
+
+    /**
+     * Get import data .
+     *
+     * @return mixed
+     */
+    public function import() {
+        return '';
+    }
+
+    /**
      * To array convert .
      *
      * @return array
