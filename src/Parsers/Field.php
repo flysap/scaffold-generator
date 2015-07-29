@@ -64,11 +64,14 @@ class Field {
 
     /**
      * Parse fields .
-     *
      * @return array
+     * @throws ParseException
      */
     public function parse() {
         $fields = $this->getFields();
+
+        if(! $fields)
+            throw new ParseException(_("Set fields before ."));
 
         if(! is_array($this->getFields())) {
             $fields = explode(",", $fields);
