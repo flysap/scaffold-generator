@@ -142,4 +142,14 @@ class StubGenerator {
     public function getStub() {
         return $this->stub;
     }
+
+    /**
+     * Return stub path .
+     *
+     * @param null $stub
+     * @return string
+     */
+    public static function getStubPath($stub = null) {
+        return __DIR__ . '/../stubs/' . (! is_null($stub) ? $stub . '.stub' : '');
+    }
 }

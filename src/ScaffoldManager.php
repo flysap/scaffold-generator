@@ -32,6 +32,7 @@ class ScaffoldManager {
      * Generate scaffold .
      *
      * @param $post
+     * @return string
      */
     public function generate($post) {
         try {
@@ -39,11 +40,11 @@ class ScaffoldManager {
 
             /** Generate the module.json file. */
             $this->stubGenerator
-                ->loadStub( $this->getStubPath('modules') )
+                ->loadStub( StubGenerator::getStubPath('modules') )
                 ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
-            
+
             /** Generate model files . */
             $this->modelGenerator
                 ->setTables($post['tables'])
@@ -59,18 +60,12 @@ class ScaffoldManager {
                     ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . strtolower(str_singular($table['name'])) . '_migration.php');
             });
 
+            return 'storage/' . config('scaffold-generator.temp_path') . $path;
+
         } catch(StubException $e) {
 
         }
     }
 
-    /**
-     * Return stub path .
-     *
-     * @param null $stub
-     * @return string
-     */
-    protected function getStubPath($stub = null) {
-        return __DIR__ . '/../stubs/' . (! is_null($stub) ? $stub . '.stub' : '');
-    }
+
 }
