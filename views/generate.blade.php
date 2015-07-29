@@ -67,7 +67,19 @@
                                             <input type="text" name="tables[0][relations]" class="form-control"
                                                    placeholder="phone_id:id|phones|cascade|cascade">
                                         </div>
+                                    </div>
+                                </div>
 
+                                <div class="box-body">
+                                    <div class="row">
+                                        @if($packages)
+                                            <div class="col-xs-9">
+                                                @foreach($packages as $key => $package)
+                                                    <lable>{{$key}}</lable>
+                                                    <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0">
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -98,4 +110,13 @@
         </div>
         <!-- /.row -->
     </section><!-- /.content -->
+
+
+    <script>
+        $(function() {
+            $("input[type=checkbox]").on("click", function() {
+                $(this).val($(this).is(':checked') ? 1 : 0)
+            })
+        })
+    </script>
 @endsection

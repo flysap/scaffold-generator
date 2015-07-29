@@ -171,12 +171,11 @@ class ModelGenerator extends Generator {
 
         $this->setTable($table['name']);
 
-        $table['packages'] = [
-            'scaffold'
-        ];
+        $packages = isset($table['packages']) ? $table['packages'] : [];
+        array_unshift($packages, 'scaffold');
 
         $packages = $this->getPackagesReplacement(
-            $table['packages']
+            $packages
         );
 
         $relationsString = '';

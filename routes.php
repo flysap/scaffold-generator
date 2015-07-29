@@ -17,7 +17,13 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
             );
         }
 
-        return view('scaffold-generator::generate', compact('isGenerated', 'pathModule'));
+        $packages = config('scaffold-generator.package_alias');
+
+        return view('scaffold-generator::generate', [
+            'isGenerated' => $isGenerated,
+            'pathModule' => $pathModule,
+            'packages' => array_except($packages, ['scaffold'])
+        ]);
     }]);
 
     /**
