@@ -23,7 +23,10 @@
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab_1" data-toggle="tab">Builder</a></li>
-                        <li><a href="#tab_2" data-toggle="tab">Editor</a></li>
+
+                        @if($isGenerated)
+                            <li><a href="#tab_2" data-toggle="tab" class="editor">Editor</a></li>
+                        @endif
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
@@ -75,11 +78,16 @@
                             </form>
 
                         </div>
-                        <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_2">
-                            tab 2
-                        </div>
-                        <!-- /.tab-pane -->
+
+                        @if($isGenerated)
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_2">
+                                @if($pathModule)
+                                    @include('scaffold-generator::editor')
+                                @endif
+                            </div>
+                            @endif
+                            <!-- /.tab-pane -->
                     </div>
                     <!-- /.tab-content -->
                 </div>
@@ -90,10 +98,4 @@
         </div>
         <!-- /.row -->
     </section><!-- /.content -->
-
-    <script type="text/javascript">
-        $(function () {
-
-        });
-    </script>
 @endsection
