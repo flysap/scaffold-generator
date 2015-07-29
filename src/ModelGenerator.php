@@ -127,6 +127,9 @@ class ModelGenerator extends Generator {
 
         $replacement = [];
         array_walk($packages, function($options, $alias) use($aliases, & $replacement) {
+            if(! $alias)
+                $alias = $options;
+
             if( ! in_array($alias, array_keys($aliases)) )
                 return false;
 
@@ -164,17 +167,13 @@ class ModelGenerator extends Generator {
 
         $this->setTable($table['name']);
 
-        $packages = [
-            'packages_traits'    => '',
-            'packages_options'   => '',
-            'packages_contracts' => '',
-            'packages_import'    => '',
+        $table['packages'] = [
+            'scaffold'
         ];
 
-        if( isset($table['packages']) )
-            $packages = $this->getPackagesReplacement(
-                $table['packages']
-            );
+        $packages = $this->getPackagesReplacement(
+            $table['packages']
+        );
 
         $relationsString = '';
 
