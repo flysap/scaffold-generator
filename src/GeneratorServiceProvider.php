@@ -17,6 +17,11 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadRoutes()
             ->loadConfiguration()
             ->loadViews();
+
+        /** Adding namespace to temp modules path to render menu . */
+        app('menu-manager')->addNamespace(
+            'storage/' . config('scaffold-generator.temp_path')
+        );
     }
 
     /**
