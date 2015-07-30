@@ -24,6 +24,6 @@ class Sluggable extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Cviebrock\\EloquentSluggable\\SluggableInterface;\nuse Cviebrock\\EloquentSluggable\\SluggableTrait;";
+        return "use Cviebrock\\EloquentSluggable\\SluggableInterface;\nuse Cviebrock\\EloquentSluggable\\SluggableTrait;\n";
     }
 }
