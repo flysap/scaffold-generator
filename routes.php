@@ -46,4 +46,22 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
             $request['file']
         );
     }]);
+
+    Route::post('flush-modules', ['as' => 'flush-modules', function() {
+        $scaffold = app('scaffold-generator');
+
+        $scaffold->flushModules();
+
+        return redirect()
+            ->back();
+    }]);
+
+    Route::post('flush-module/:module', ['as' => 'flush-module', function($module) {
+        $scaffold = app('scaffold-generator');
+
+        $scaffold->flushModule($module);
+
+        return redirect()
+            ->back();
+    }]);
 });

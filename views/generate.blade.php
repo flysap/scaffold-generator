@@ -89,6 +89,17 @@
 
                             </form>
 
+
+                            <form method="post" action="{{route('flush-modules')}}">
+                                <button type="submit" class="btn btn-primary">{{_('Flush all')}}</button>
+                            </form>
+
+                            @if($pathModule)
+                                <form method="post" action="{{route('flush-module', ['module' => $pathModule])}}">
+                                    <button type="submit" class="btn btn-primary">{{_('Flush current')}}</button>
+                                </form>
+                            @endif
+
                         </div>
 
                         @if($isGenerated)

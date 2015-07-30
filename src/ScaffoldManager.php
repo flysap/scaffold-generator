@@ -67,5 +67,41 @@ class ScaffoldManager {
         }
     }
 
+    /**
+     * Flush all modules .
+     */
+    public function flushModules() {
+        if( \Flysap\Support\is_path_exists(
+            storage_path(
+                config('scaffold-generator.temp_path')
+            )
+        ) )
+            \Flysap\Support\remove_paths(
+                storage_path(
+                    config('scaffold-generator.temp_path')
+                )
+            );
 
+        return $this;
+    }
+
+    /**
+     * Flush module .
+     * @param $module
+     * @return $this
+     */
+    public function flushModule($module) {
+        if( \Flysap\Support\is_path_exists(
+            storage_path(
+                config('scaffold-generator.temp_path') . $module
+            )
+        ) )
+            \Flysap\Support\remove_paths(
+                storage_path(
+                    config('scaffold-generator.temp_path') . $module
+                )
+            );
+
+        return $this;
+    }
 }
