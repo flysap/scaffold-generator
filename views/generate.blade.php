@@ -94,8 +94,9 @@
                                 <button type="submit" class="btn btn-primary">{{_('Flush all')}}</button>
                             </form>
 
-                            @if($pathModule)
-                                <form method="post" action="{{route('flush-module', ['module' => $pathModule])}}">
+                            @if(isset($vendor) && isset($name))
+                                <form method="post" action="{{route('flush-module')}}">
+                                    <input type="hidden" name="module" value="{{$vendor . DIRECTORY_SEPARATOR . $name}}">
                                     <button type="submit" class="btn btn-primary">{{_('Flush current')}}</button>
                                 </form>
                             @endif

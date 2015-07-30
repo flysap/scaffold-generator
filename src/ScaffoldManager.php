@@ -93,12 +93,12 @@ class ScaffoldManager {
     public function flushModule($module) {
         if( \Flysap\Support\is_path_exists(
             storage_path(
-                config('scaffold-generator.temp_path') . $module
+                config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
             )
         ) )
             \Flysap\Support\remove_paths(
                 storage_path(
-                    config('scaffold-generator.temp_path') . $module
+                    config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
                 )
             );
 

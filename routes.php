@@ -9,20 +9,27 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
 
         $isGenerated = false;
         $pathModule  = null;
+        $vendor  = null;
+        $name  = null;
         if( $request->method() == 'POST' ) {
             $isGenerated = true;
 
             $pathModule = $service->generate(
                 $request->all()
             );
+
+            $vendor = $request->get('vendor');
+            $name   = $request->get('name');
         }
 
         $packages = config('scaffold-generator.package_alias');
 
         return view('scaffold-generator::generate', [
             'isGenerated' => $isGenerated,
-            'pathModule' => $pathModule,
-            'packages' => array_except($packages, ['scaffold'])
+            'pathModule'  => $pathModule,
+            'vendor'      => $vendor,
+            'name'        => $name,
+            'packages'    => array_except($packages, ['scaffold'])
         ]);
     }]);
 
@@ -56,10 +63,12 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
             ->back();
     }]);
 
-    Route::post('flush-module/:module', ['as' => 'flush-module', function($module) {
+    Route::post('flush-module', ['as' => 'flush-module', function(Request $request) {
         $scaffold = app('scaffold-generator');
 
-        $scaffold->flushModule($module);
+        $scaffold->flushModule(
+            $request->get('module')
+        );
 
         return redirect()
             ->back();
