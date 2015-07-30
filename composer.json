@@ -5,8 +5,7 @@
         "laravel/framework": "~5.1",
         "flysap/scaffold": "dev-master",
         "symfony/yaml": "~2.7",
-        "symfony/filesystem": "~2.7",
-        "alchemy/zippy": " ~0.1"
+        "symfony/filesystem": "~2.7"
     },
     "license": "MIT",
     "authors": [

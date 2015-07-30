@@ -2,7 +2,6 @@
 
 namespace Flysap\ScaffoldGenerator;
 
-use Alchemy\Zippy\Zippy;
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
 
@@ -93,6 +92,8 @@ class ScaffoldManager {
      * @return $this
      */
     public function flushModule($module) {
+        $module = realpath($module);
+
         if( \Flysap\Support\is_path_exists(
             storage_path(
                 config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
@@ -124,10 +125,8 @@ class ScaffoldManager {
         ) )
             throw new ExportException(_("Invalid module path."));
 
-        $zippy = Zippy::load();
-
-        return $zippy->create(
-            $path
+        return \Flysap\Support\download_archive(
+            $path, str_replace('/', '_', $module)
         );
     }
 }
