@@ -99,6 +99,11 @@
                                     <input type="hidden" name="module" value="{{$vendor . DIRECTORY_SEPARATOR . $name}}">
                                     <button type="submit" class="btn btn-primary">{{_('Flush current')}}</button>
                                 </form>
+
+                                <form method="post" action="{{route('export-module')}}">
+                                    <input type="hidden" name="module" value="{{$vendor . DIRECTORY_SEPARATOR . $name}}">
+                                    <button type="submit" class="btn btn-primary">{{_('Export current')}}</button>
+                                </form>
                             @endif
 
                         </div>

@@ -73,4 +73,12 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
         return redirect()
             ->back();
     }]);
+
+    Route::post('export-module', ['as' => 'export-module', function(Request $request) {
+        $scaffold = app('scaffold-generator');
+
+        return $scaffold->exportModule(
+            $request->get('module')
+        );
+    }]);
 });
