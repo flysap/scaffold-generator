@@ -48,6 +48,15 @@ abstract class Package implements Arrayable {
     }
 
     /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function build() {
+        return $this;
+    }
+
+    /**
      * To array convert .
      *
      * @return array

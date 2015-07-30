@@ -39,18 +39,14 @@ class ScaffoldManager {
         try {
             $path = DIRECTORY_SEPARATOR . $post['vendor'] . DIRECTORY_SEPARATOR . $post['name'];
 
-            /** Generate the module.json file. */
-            $this->stubGenerator
-                ->loadStub( StubGenerator::getStubPath('modules') )
-                ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
-                ->save($path . DIRECTORY_SEPARATOR . 'module.json');
-
-
-            /** Generate model files . */
             $this->modelGenerator
                 ->setTables($post['tables'])
                 ->save($path);
 
+            $this->stubGenerator
+                ->loadStub( StubGenerator::getStubPath('modules') )
+                ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
+                ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
             array_walk($post['tables'], function($table) use($path) {
 

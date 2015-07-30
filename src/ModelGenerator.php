@@ -139,6 +139,7 @@ class ModelGenerator extends Generator {
                 return false;
 
             $data = (new $class($options))
+                ->build()
                 ->toArray();
 
             foreach ($data as $key => $value) {
