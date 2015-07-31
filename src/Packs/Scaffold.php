@@ -1,6 +1,6 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packages;
+namespace Flysap\ScaffoldGenerator\Packs;
 
 class Scaffold extends Package implements PackageInterface {
 

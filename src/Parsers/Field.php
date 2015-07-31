@@ -73,7 +73,7 @@ class Field {
         if(! $fields)
             throw new ParseException(_("Set fields before ."));
 
-        if(! is_array($this->getFields())) {
+        if(! is_array($fields)) {
             $fields = explode(",", $fields);
             $fields = preg_replace('/ +/', '', $fields);
         }
@@ -100,7 +100,7 @@ class Field {
         $parsed = [];
         array_map(function($field) use(& $parsed) {
             $parsed[$field['name']] = $field;
-        }, $this->parse());
+        }, ! is_array($this->getFields()) ? $this->parse() : $this->getFields());
 
         return implode($separator, array_map(function($field) {
             return $field['name'];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packages;
+namespace Flysap\ScaffoldGenerator\Packs;
 
 class Sluggable extends Package implements PackageInterface {
 

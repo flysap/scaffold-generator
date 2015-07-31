@@ -4,30 +4,9 @@ namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
+use Flysap\ScaffoldGenerator\Generators\ContextGenerator;
 
 class ScaffoldManager {
-
-    /**
-     * @var StubGenerator
-     */
-    private $stubGenerator;
-
-    /**
-     * @var MigrationGenerator
-     */
-    private $migrationGenerator;
-
-    /**
-     * @var ModelGenerator
-     */
-    private $modelGenerator;
-
-    public function __construct(StubGenerator $stubGenerator, MigrationGenerator $migrationGenerator, ModelGenerator $modelGenerator) {
-
-        $this->stubGenerator = $stubGenerator;
-        $this->migrationGenerator = $migrationGenerator;
-        $this->modelGenerator = $modelGenerator;
-    }
 
     /**
      * Generate scaffold .
@@ -39,23 +18,27 @@ class ScaffoldManager {
         try {
             $path = DIRECTORY_SEPARATOR . $post['vendor'] . DIRECTORY_SEPARATOR . $post['name'];
 
-            $this->modelGenerator
-                ->setTables($post['tables'])
-                ->save($path);
+            $generator = app('generator');
+            $tables    = $post['tables'];
 
-            $this->stubGenerator
-                ->loadStub( StubGenerator::getStubPath('modules') )
-                ->addFields(array_only($post, ['name', 'vendor', 'description', 'version']))
+            $generator->generate(
+                ContextGenerator::GENERATOR_CONFIG
+            )
+                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
-            array_walk($post['tables'], function($table) use($path) {
+            $generator->generate(
+                ContextGenerator::GENERATOR_MIGRATION
+            )
+                ->setContents($tables)
+                ->save($path);
 
-                $this->migrationGenerator
-                    ->setTable($table['name'])
-                    ->setFields($table['fields'])
-                    ->setRelations($table['relations'])
-                    ->save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . strtolower(str_singular($table['name'])) . '_migration.php');
-            });
+
+            $generator->generate(
+                ContextGenerator::GENERATOR_MODEL
+            )
+                ->setContents($tables)
+                ->save($path);
 
             return 'storage/' . config('scaffold-generator.temp_path') . $path;
 

@@ -1,8 +1,6 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator;
-
-use Flysap\ScaffoldGenerator\Exceptions\StubException;
+namespace Flysap\ScaffoldGenerator\Generators;
 
 /**
  * When post is incoming need to validate each field
@@ -38,18 +36,8 @@ use Flysap\ScaffoldGenerator\Exceptions\StubException;
  * Class ModelGenerator
  * @package Flysap\ScaffoldGenerator
  */
-class ModelGenerator extends Generator {
+class ModelGenerator extends Generator  {
 
-    const STUB_PATH = 'stubs/model.stub';
-
-    /**
-     * @var
-     */
-    protected $tables;
-
-    /**
-     * @var array
-     */
     protected $templates = [
         'hasOne'         => 'public function {{function}}() { $this->hasOne("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
         'hasMany'        => 'public function {{function}}() { $this->hasMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
@@ -63,45 +51,35 @@ class ModelGenerator extends Generator {
     protected $aliases;
 
     /**
-     * Set tables .
+     * Prepare ..
      *
-     * @param $tables
-     * @return $this
+     * @param $contents
+     * @return array
      */
-    public function setTables($tables) {
-        array_walk($tables, function($table) {
-            $this->tables[$table['name']] = $table;
-        });
+    protected function prepare($contents) {
+        $tables = [];
 
-        $this->prepareRelations();
+        array_walk($contents, function($table) use(& $tables) {
+            $tableName = $table['name'];
 
-        return $this;
-    }
-
-    /**
-     * Set up relations
-     */
-    protected function prepareRelations() {
-        array_walk($this->tables, function($table, $key) {
             if( isset($table['relations']) && !empty($table['relations']) ) {
-
                 $this->setRawRelations($table['relations']);
                 $relations = $this->getRelations();
 
-                array_walk($relations, function($relation) use($key) {
+                array_walk($relations, function($relation) use($tableName) {
 
-                    $this->tables[$relation['table']]['relations'] = [
+                    $tables[$relation['table']]['relations'] = [
                         $relation['relation'] => [
                             [
-                                'function'    => str_singular(strtolower($key)),
-                                'table'       => str_singular(strtolower($key)),
+                                'function'    => str_singular(strtolower($tableName)),
+                                'table'       => str_singular(strtolower($tableName)),
                                 'foreign_key' => $relation['foreign'],
                                 'local_key'   => $relation['reference']
                             ]
                         ]
                     ];
 
-                    $this->tables[$key]['relations'] = [
+                    $tables[$tableName]['relations'] = [
                         'belongsTo' => [
                             [
                                 'function'   => str_singular(strtolower($relation['table'])),
@@ -113,6 +91,71 @@ class ModelGenerator extends Generator {
                     ];
                 });
             }
+
+            if( ! is_array($table['fields']) )
+                $this->setFields($table['fields']);
+            else
+                $this->setRawFields($table['fields']);
+
+            $tables[$tableName]['fields'] = $this->getFields();
+        });
+
+        return $tables;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStub() {
+       return __DIR__ . DIRECTORY_SEPARATOR . '../../stubs/model.stub';
+    }
+
+    /**
+     * Save all models .
+     *
+     * @param $path
+     */
+    public function save($path) {
+        $contents = $this->getContents();
+
+        array_walk($contents, function($table, $name) use($path) {
+
+            $packages = isset($table['packages']) ? $table['packages'] : [];
+            array_unshift($packages, 'scaffold');
+
+            $packages = $this->getPackagesReplacement(
+                $packages
+            );
+
+            $relationsString = '';
+            if( isset($table['relations']) ) {
+                array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
+                    $template = array_get($this->templates, $key);
+
+                    array_walk($relations, function($relation) use(& $relationsString, $template) {
+
+                        $relationsString .= $template;
+                        array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
+                            $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
+                        });
+                    });
+                });
+            }
+
+            $fields = $this->getFieldsParser()
+                ->setRawFields($table['fields'])
+                ->getFieldsOnly("','", null, ["id"]);
+
+            $this->setReplacement(
+                [
+                    'class'              => str_singular(ucfirst($name)),
+                    'table_name'         => strtolower($name),
+                    'table_fields'       => "'".$fields."'",
+                    'table_relations'    => $relationsString,
+                ] + $packages
+            );
+
+            parent::save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($name))) . '.php');
         });
     }
 
@@ -148,74 +191,6 @@ class ModelGenerator extends Generator {
         }
 
         return $replacement;
-    }
-
-    /**
-     * Prepare table .
-     *
-     * @param $name
-     * @return StubGenerator
-     * @throws StubException
-     */
-    public function prepare($name) {
-        $this->stubGenerator
-            ->loadStub(
-                __DIR__ . DIRECTORY_SEPARATOR . '../' . self::STUB_PATH
-            );
-
-        $table = $this->tables[$name];
-
-        $fields = $this->fieldParser
-            ->setFields($table['fields'])
-            ->getFieldsOnly("','", null, ["id"]);
-
-
-        $this->setTable($table['name']);
-
-        $packages = isset($table['packages']) ? $table['packages'] : [];
-        array_unshift($packages, 'scaffold');
-
-        $packages = $this->getPackagesReplacement(
-            $packages
-        );
-
-        $relationsString = '';
-
-        if( isset($table['relations']) && !empty($table['relations']) )
-            array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
-               $template = array_get($this->templates, $key);
-
-                array_walk($relations, function($relation) use(& $relationsString, $template) {
-
-                    $relationsString .= $template;
-                    array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
-                        $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
-                    });
-                });
-            });
-
-        /** Generate models file . */
-        $this->stubGenerator
-            ->addFields([
-                'class'              => str_singular(ucfirst($this->getTable())),
-                'table_name'         => strtolower($this->getTable()),
-                'table_fields'       => "'" . $fields . "'",
-                'table_relations'    => $relationsString,
-            ] + $packages);
-
-        return $this->stubGenerator;
-    }
-
-    /**
-     * Save migration .
-     *
-     * @param $path
-     */
-    public function save($path) {
-        array_walk($this->tables, function($table) use($path) {
-            $this->prepare($table['name'])
-                ->save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($table['name']))) . '.php');
-        });
     }
 
     /**

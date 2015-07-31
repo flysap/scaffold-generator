@@ -1,6 +1,6 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packages;
+namespace Flysap\ScaffoldGenerator\Packs;
 
 use Flysap\Support\Traits\ElementAttributes;
 use Illuminate\Contracts\Support\Arrayable;
@@ -63,10 +63,10 @@ abstract class Package implements Arrayable {
      */
     public function toArray() {
         return [
-            'packages_traits'    => $this->traits(),
-            'packages_options'   => $this->options(),
-            'packages_contracts' => $this->contracts(),
-            'packages_import'    => $this->import(),
+            'packs_traits'    => $this->traits(),
+            'packs_options'   => $this->options(),
+            'packs_contracts' => $this->contracts(),
+            'packs_import'    => $this->import(),
         ];
     }
 }

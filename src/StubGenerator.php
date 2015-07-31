@@ -130,7 +130,7 @@ class StubGenerator {
      *
      * @return mixed
      */
-    protected function isStubLoaded() {
+    public function isStubLoaded() {
         return $this->stub;
     }
 

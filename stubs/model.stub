@@ -3,12 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-{{packages_import}}
+{{packs_import}}
 
-class {{class}} extends Model {{packages_contracts}} {
+class {{class}} extends Model {{packs_contracts}} {
 
-    {{packages_traits}}
-    {{packages_options}}
+    {{packs_traits}}
+    {{packs_options}}
 
     protected $connection = 'sqlite';
 

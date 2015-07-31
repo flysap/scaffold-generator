@@ -13,5 +13,5 @@ fields_type_alias:
 
 # here will be declared all the aliases packages .
 package_alias:
- sluggable: Flysap\ScaffoldGenerator\Packages\Sluggable
- scaffold : Flysap\ScaffoldGenerator\Packages\Scaffold
+ sluggable: Flysap\ScaffoldGenerator\Packs\Sluggable
+ scaffold : Flysap\ScaffoldGenerator\Packs\Scaffold

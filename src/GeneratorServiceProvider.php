@@ -2,6 +2,7 @@
 
 namespace Flysap\ScaffoldGenerator;
 
+use Flysap\ScaffoldGenerator\Generators\ContextGenerator;
 use Flysap\ScaffoldGenerator\Parsers\Field;
 use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -39,10 +40,8 @@ class GeneratorServiceProvider extends ServiceProvider {
         });
 
         /** Scaffold manager . */
-        $this->app->singleton('scaffold-generator', function ($app) {
-            return new ScaffoldManager(
-                $app['stub-generator'], $app['migration-generator'], $app['model-generator']
-            );
+        $this->app->singleton('scaffold-manager', function ($app) {
+            return new ScaffoldManager;
         });
 
         /** Register field parser. */
@@ -57,18 +56,11 @@ class GeneratorServiceProvider extends ServiceProvider {
             return new Relation;
         });
 
-        /** Register field parser. */
-        $this->app->singleton('migration-generator', function($app) {
-            return new MigrationGenerator(
-                new Filesystem(), $app['stub-generator'], $app['field-parser'], $app['relation-parser']
-            );
-        });
-
-        /** Register field parser. */
-        $this->app->singleton('model-generator', function($app) {
-            return new ModelGenerator(
-                new Filesystem(), $app['stub-generator'], $app['field-parser'], $app['relation-parser']
-            );
+        /**
+         * Register generator factory .
+         */
+        $this->app->singleton('generator', function() {
+            return new ContextGenerator;
         });
     }
 
