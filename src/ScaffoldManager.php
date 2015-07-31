@@ -50,7 +50,6 @@ class ScaffoldManager {
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
 
-
             return 'storage/' . config('scaffold-generator.temp_path') . $path;
 
         } catch(StubException $e) {

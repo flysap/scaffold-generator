@@ -8,7 +8,7 @@ class Presenter extends Package implements PackageInterface {
      * @return mixed
      */
     public function traits() {
-        return "use PresentableTrait;\n";
+        return "    use PresentableTrait;\n";
     }
 
      /**
@@ -17,11 +17,13 @@ class Presenter extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Laracasts\\Presenter\\PresentableTrait;";
+        return "use Laracasts\\Presenter\\PresentableTrait;\n";
     }
 
     public function options() {
-        return "protected \$presenter = 'UserPresenter';";
+        $class = $this->getAttribute('class');
+
+        return "protected \$presenter = '{$class}Presenter';";
     }
 
     /**
