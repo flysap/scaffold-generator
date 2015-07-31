@@ -55,7 +55,7 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
     }]);
 
     Route::post('flush-modules', ['as' => 'flush-modules', function() {
-        $scaffold = app('scaffold-generator');
+        $scaffold = app('scaffold-manager');
 
         $scaffold->flushModules();
 
@@ -64,7 +64,7 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
     }]);
 
     Route::post('flush-module', ['as' => 'flush-module', function(Request $request) {
-        $scaffold = app('scaffold-generator');
+        $scaffold = app('scaffold-manager');
 
         $scaffold->flushModule(
             $request->get('module')
@@ -75,7 +75,7 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
     }]);
 
     Route::post('export-module', ['as' => 'export-module', function(Request $request) {
-        $scaffold = app('scaffold-generator');
+        $scaffold = app('scaffold-manager');
 
         return $scaffold->exportModule(
             $request->get('module')

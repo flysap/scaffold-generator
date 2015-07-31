@@ -1,0 +1,7 @@
+<?php
+
+use Laracasts\Presenter\Presenter;
+
+class {{class}}Presenter extends Presenter {
+
+}

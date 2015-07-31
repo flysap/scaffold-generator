@@ -45,6 +45,10 @@ class ModelGenerator extends Generator  {
         'belongsTo'      => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
     ];
 
+    protected $defaultPackages = [
+        'scaffold'
+    ];
+
     /**
      * @var
      */
@@ -61,6 +65,7 @@ class ModelGenerator extends Generator  {
 
         array_walk($contents, function($table) use(& $tables) {
             $tableName = $table['name'];
+            $tables[$tableName] = $table;
 
             if( isset($table['relations']) && !empty($table['relations']) ) {
                 $this->setRawRelations($table['relations']);
@@ -120,15 +125,17 @@ class ModelGenerator extends Generator  {
 
         array_walk($contents, function($table, $name) use($path) {
 
-            $packages = isset($table['packages']) ? $table['packages'] : [];
-            array_unshift($packages, 'scaffold');
+            $packages = $this->getDefaultPackages();
+
+            if( isset($table['packages']) )
+                $packages = array_merge($packages, array_keys($table['packages']));
 
             $packages = $this->getPackagesReplacement(
-                $packages
+                $packages, ['path' => $path, 'class' => str_singular(ucfirst(strtolower($name)))]
             );
 
             $relationsString = '';
-            if( isset($table['relations']) ) {
+            if( isset($table['relations']) && !empty($table['relations']) ) {
                 array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
                     $template = array_get($this->templates, $key);
 
@@ -163,9 +170,10 @@ class ModelGenerator extends Generator  {
      * Prepare package replacer .
      *
      * @param $packages
+     * @param array $arguments
      * @return array
      */
-    protected function getPackagesReplacement($packages) {
+    protected function getPackagesReplacement($packages, $arguments = array()) {
         $aliases = $this->getPackageAliases();
 
         $replacement = [];
@@ -181,8 +189,8 @@ class ModelGenerator extends Generator  {
             if(! class_exists($class))
                 return false;
 
-            $data = (new $class($options))
-                ->build()
+            $data = (new $class($arguments))
+                ->buildDepency()
                 ->toArray();
 
             foreach ($data as $key => $value) {
@@ -203,5 +211,14 @@ class ModelGenerator extends Generator  {
             $this->aliases = config('scaffold-generator.package_alias');
 
         return $this->aliases;
+    }
+
+    /**
+     * Default packages .
+     *
+     * @return array
+     */
+    protected function getDefaultPackages() {
+        return $this->defaultPackages;
     }
 }

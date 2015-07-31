@@ -9,12 +9,16 @@ abstract class Package implements Arrayable {
 
     use ElementAttributes;
 
+    protected $stubGenerator;
+
     /**
      * @param array $options
      */
     public function __construct($options = array()) {
 
-        $this->setAttribute('options', $options);
+        $this->setAttributes($options);
+
+        $this->stubGenerator = app('stub-generator');
     }
 
     /**
@@ -52,7 +56,7 @@ abstract class Package implements Arrayable {
      *
      * @return $this
      */
-    public function build() {
+    public function buildDepency() {
         return $this;
     }
 

@@ -5,6 +5,7 @@ namespace Flysap\ScaffoldGenerator;
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
 use Flysap\ScaffoldGenerator\Generators\ContextGenerator;
+use Flysap\Support;
 
 class ScaffoldManager {
 
@@ -22,12 +23,6 @@ class ScaffoldManager {
             $tables    = $post['tables'];
 
             $generator->generate(
-                ContextGenerator::GENERATOR_CONFIG
-            )
-                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
-                ->save($path . DIRECTORY_SEPARATOR . 'module.json');
-
-            $generator->generate(
                 ContextGenerator::GENERATOR_MIGRATION
             )
                 ->setContents($tables)
@@ -40,6 +35,22 @@ class ScaffoldManager {
                 ->setContents($tables)
                 ->save($path);
 
+
+            $generator->generate(
+                ContextGenerator::GENERATOR_COMPOSER
+            )
+                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
+                ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
+
+
+            $generator->generate(
+                ContextGenerator::GENERATOR_CONFIG
+            )
+                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
+                ->save($path . DIRECTORY_SEPARATOR . 'module.json');
+
+
+
             return 'storage/' . config('scaffold-generator.temp_path') . $path;
 
         } catch(StubException $e) {
@@ -51,12 +62,12 @@ class ScaffoldManager {
      * Flush all modules .
      */
     public function flushModules() {
-        if( \Flysap\Support\is_path_exists(
+        if( Support\is_path_exists(
             storage_path(
                 config('scaffold-generator.temp_path')
             )
         ) )
-            \Flysap\Support\remove_paths(
+            Support\remove_paths(
                 storage_path(
                     config('scaffold-generator.temp_path')
                 )
@@ -73,12 +84,12 @@ class ScaffoldManager {
     public function flushModule($module) {
         $module = realpath($module);
 
-        if( \Flysap\Support\is_path_exists(
+        if( Support\is_path_exists(
             storage_path(
                 config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
             )
         ) )
-            \Flysap\Support\remove_paths(
+            Support\remove_paths(
                 storage_path(
                     config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
                 )
@@ -99,12 +110,12 @@ class ScaffoldManager {
             config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $module
         );
 
-        if( ! \Flysap\Support\is_path_exists(
+        if( ! Support\is_path_exists(
             $path
         ) )
             throw new ExportException(_("Invalid module path."));
 
-        return \Flysap\Support\download_archive(
+        return Support\download_archive(
             $path, str_replace('/', '_', $module)
         );
     }

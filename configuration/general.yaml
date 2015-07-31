@@ -15,3 +15,4 @@ fields_type_alias:
 package_alias:
  sluggable: Flysap\ScaffoldGenerator\Packs\Sluggable
  scaffold : Flysap\ScaffoldGenerator\Packs\Scaffold
+ presentable : Flysap\ScaffoldGenerator\Packs\Presenter

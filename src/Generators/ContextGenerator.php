@@ -8,6 +8,7 @@ class ContextGenerator {
 
     const GENERATOR_MODEL     = ModelGenerator::class;
     const GENERATOR_CONFIG    = ConfigGenerator::class;
+    const GENERATOR_COMPOSER  = ComposerGenerator::class;
     const GENERATOR_MIGRATION = MigrationGenerator::class;
 
     /**
