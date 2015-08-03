@@ -2,4 +2,6 @@
   "name" : "{{vendor}}/{{name}}",
   "description" : "{{description}}",
   "version" : "{{version}}"
+
+  {{menus}}
 }

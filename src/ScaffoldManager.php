@@ -46,7 +46,7 @@ class ScaffoldManager {
             $generator->generate(
                 ContextGenerator::GENERATOR_CONFIG
             )
-                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
+                ->setContents($post)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
 
