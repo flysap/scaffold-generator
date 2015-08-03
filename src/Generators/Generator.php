@@ -126,6 +126,20 @@ abstract class Generator {
     }
 
     /**
+     * Merge replacement .
+     *
+     * @param $fields
+     * @return $this
+     */
+    public function mergeReplacement($fields) {
+        $this->replacement = array_merge(
+            $fields, $this->getReplacement()
+        );
+
+        return $this;
+    }
+
+    /**
      * Get replacement .
      *
      * @return mixed
