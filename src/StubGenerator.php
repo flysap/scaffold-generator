@@ -104,6 +104,8 @@ class StubGenerator {
         array_walk($fields, function($field, $key) use(& $stub) {
             if( is_array($field) )
                 $field = implode("\n", $field);
+            elseif($field instanceof \Closure)
+                $field = $field();
 
             $stub = str_replace('{{'.$key.'}}', $field, $stub);
         });
