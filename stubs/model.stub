@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Modules\{{vendor}}\{{name}};
 
 use Illuminate\Database\Eloquent\Model;
 {{packs_import}}

@@ -153,7 +153,7 @@ class ModelGenerator extends Generator  {
                 ->setRawFields($table['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
-            $this->setReplacement(
+            $this->mergeReplacement(
                 [
                     'class'              => str_singular(ucfirst($name)),
                     'table_name'         => strtolower($name),

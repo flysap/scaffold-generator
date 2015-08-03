@@ -10,5 +10,10 @@
             "email": "radu.bordei89@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\": "/"
+        }
+    },
     "minimum-stability": "dev"
 }

@@ -27,7 +27,7 @@ class ConfigGenerator extends Generator {
             $menus[] = [
                 'section' => $this->getVendor(),
                 'label' => $table,
-                'href' => route('scaffold::index', [
+                'href' => route('scaffold::main', [
                     'model' => sprintf('%s/%s/%s', $this->getVendor(), $this->getUser(), $table)
                 ]),
             ];
