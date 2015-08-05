@@ -10,6 +10,8 @@ class {{class}} extends Model {{packs_contracts}} {
     {{packs_traits}}
     {{packs_options}}
 
+    {{relations}}
+
     protected $connection = 'sqlite';
 
     protected $table = '{{table_name}}';

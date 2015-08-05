@@ -32,8 +32,7 @@ class ScaffoldManager {
             $generator->generate(
                 ContextGenerator::GENERATOR_MODEL
             )
-                ->setContents($tables)
-                ->setReplacement(array_only($post, ['name', 'vendor']))
+                ->setContents($post)
                 ->save($path);
 
 

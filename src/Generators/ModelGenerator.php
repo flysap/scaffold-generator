@@ -42,7 +42,7 @@ class ModelGenerator extends Generator  {
         'hasOne'         => 'public function {{function}}() { $this->hasOne("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
         'hasMany'        => 'public function {{function}}() { $this->hasMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
         'belongsToMany'  => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'belongsTo'      => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
+        'belongsTo'      => 'public function {{function}}() { $this->belongsTo("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
     ];
 
     protected $defaultPackages = [
@@ -63,34 +63,41 @@ class ModelGenerator extends Generator  {
     protected function prepare($contents) {
         $tables = [];
 
-        array_walk($contents, function($table) use(& $tables) {
-            $tableName = $table['name'];
-            $tables[$tableName] = $table;
+        array_walk($contents['tables'], function($table) use(& $tables) {
+            $tableName          = $table['name'];
+
+            if(! isset($tables[$tableName]))
+                $tables[$tableName] = $table;
 
             if( isset($table['relations']) && !empty($table['relations']) ) {
-                $this->setRawRelations($table['relations']);
+
+                if(! is_array($table['relations']))
+                    $this->setRelations($table['relations']);
+                else
+                    $this->setRawRelations($table['relations']);
+
                 $relations = $this->getRelations();
 
-                array_walk($relations, function($relation) use($tableName) {
+                array_walk($relations, function($relation) use($tableName, & $tables) {
 
                     $tables[$relation['table']]['relations'] = [
-                        $relation['relation'] => [
+                        'belongsTo' => [
                             [
-                                'function'    => str_singular(strtolower($tableName)),
+                                'function'    => str_plural(strtolower($tableName)),
                                 'table'       => str_singular(strtolower($tableName)),
-                                'foreign_key' => $relation['foreign'],
-                                'local_key'   => $relation['reference']
+                                'parent_key'  => $relation['reference'],
+                                'local_key'   => $relation['foreign']
                             ]
                         ]
                     ];
 
                     $tables[$tableName]['relations'] = [
-                        'belongsTo' => [
+                        $relation['relation'] => [
                             [
-                                'function'   => str_singular(strtolower($relation['table'])),
+                                'function'   => str_plural(strtolower($relation['table'])),
                                 'table'      => str_singular(strtolower($relation['table'])),
-                                'local_key'  => $relation['foreign'],
-                                'parent_key' => $relation['reference']
+                                'local_key'  => $relation['reference'],
+                                'foreign_key'=> $relation['foreign']
                             ]
                         ]
                     ];
@@ -105,7 +112,7 @@ class ModelGenerator extends Generator  {
             $tables[$tableName]['fields'] = $this->getFields();
         });
 
-        return $tables;
+        return ['tables' => $tables] + $contents;
     }
 
     /**
@@ -123,7 +130,7 @@ class ModelGenerator extends Generator  {
     public function save($path) {
         $contents = $this->getContents();
 
-        array_walk($contents, function($table, $name) use($path) {
+        array_walk($contents['tables'], function($table, $name) use($path) {
 
             $packages = $this->getDefaultPackages();
 
@@ -135,17 +142,20 @@ class ModelGenerator extends Generator  {
             );
 
             $relationsString = '';
+            $relationsArray  = [];
             if( isset($table['relations']) && !empty($table['relations']) ) {
-                array_walk($table['relations'], function($relations, $key) use(& $relationsString) {
+                array_walk($table['relations'], function($relations, $key) use(& $relationsString, & $relationsArray) {
                     $template = array_get($this->templates, $key);
 
-                    array_walk($relations, function($relation) use(& $relationsString, $template) {
+                    array_walk($relations, function($relation) use(& $relationsString, $template, & $relationsArray) {
 
+                        $relationsArray[] = $relation['function'];
                         $relationsString .= $template;
                         array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
                             $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
                         });
                     });
+
                 });
             }
 
@@ -153,12 +163,16 @@ class ModelGenerator extends Generator  {
                 ->setRawFields($table['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
-            $this->mergeReplacement(
+
+            $this->setReplacement(
                 [
                     'class'              => str_singular(ucfirst($name)),
                     'table_name'         => strtolower($name),
                     'table_fields'       => "'".$fields."'",
                     'table_relations'    => $relationsString,
+                    'relations'          => 'protected $relations = [\'' . implode(',\'', $relationsArray) . '\'];',
+                    'vendor'             => $this->getContent('vendor'),
+                    'name'               => $this->getContent('name'),
                 ] + $packages
             );
 

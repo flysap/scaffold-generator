@@ -12,7 +12,7 @@ class Relation {
     /**
      * @var string
      */
-    protected $rule = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?\\|?(?<relation>hasOne|hasMany|belongsTo|belongsToMany)?/i";
+    protected $regex = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?\\|?(?<relation>hasOne|hasMany|belongsTo|belongsToMany)?/i";
 
     /**
      * Set raw relations ..
@@ -63,8 +63,8 @@ class Relation {
             $relations = preg_replace('/ +/', '', $relations);
         }
 
-        return array_map(function($field)  {
-            if( preg_match($this->rule, $field, $matches) )
+        return array_map(function($relation)  {
+            if( preg_match($this->regex, $relation, $matches) )
                 return $this->toType($matches);
 
         }, $relations);
