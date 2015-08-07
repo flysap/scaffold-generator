@@ -25,13 +25,12 @@ class ConfigGenerator extends Generator {
             $table = str_singular(strtolower($table['name']));
 
             $menus[] = [
-                'section' => $this->getVendor(),
-                'label' => $table,
-                'href' => route('scaffold::main', [
+                'section'   => $this->getVendor(),
+                'label'     => str_plural(ucfirst($table)),
+                'href'      => route('scaffold::main', [
                     'model' => sprintf('%s/%s/%s', $this->getVendor(), $this->getUser(), $table)
                 ]),
             ];
-
         });
 
         $this->setReplacement([
