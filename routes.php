@@ -33,10 +33,6 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
         ]);
     }]);
 
-    /**
-     * Update the file .
-     *
-     */
     Route::post('update-file', ['as' => 'update-file', function(Request $request) {
         Flysap\FileManager\updateFile(
             $request['file'],
@@ -44,10 +40,6 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
         );
     }]);
 
-    /**
-     * Load the file .
-     *
-     */
     Route::get('load-file', ['as' => 'load-file', function(Request $request) {
         return Flysap\FileManager\getFile(
             $request['file']
