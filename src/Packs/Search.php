@@ -17,7 +17,7 @@ class Search extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Nicolaslopezj\\Searchable\\SearchableTrait;";
+        return "use Nicolaslopezj\\Searchable\\SearchableTrait;\n";
     }
 
     public function options() {
@@ -42,6 +42,7 @@ class Search extends Package implements PackageInterface {
             'posts' => ['users.id','posts.user_id'],
         ],
     ];
+
 EOD;
 
     }

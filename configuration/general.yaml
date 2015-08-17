@@ -17,3 +17,4 @@ package_alias:
  scaffold : Flysap\ScaffoldGenerator\Packs\Scaffold
  presentable : Flysap\ScaffoldGenerator\Packs\Presenter
  searchable : Flysap\ScaffoldGenerator\Packs\Search
+ validable : Flysap\ScaffoldGenerator\Packs\Validable
