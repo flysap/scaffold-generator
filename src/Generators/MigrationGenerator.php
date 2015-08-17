@@ -40,7 +40,7 @@ class MigrationGenerator extends Generator {
     /**
      * @var string
      */
-    protected $fieldTemplate = '$table->{type}("{name}", "{value}")';
+    protected $fieldTemplate = '$table->{type}("{name}")';
 
     /**
      * @var string
