@@ -20,6 +20,7 @@ class Validable extends Package implements PackageInterface {
         'title' => 'required|unique:posts|max:255',
         'body' => 'required',
     ];
+
 DOC;
 
     }

@@ -23,7 +23,7 @@ class Presenter extends Package implements PackageInterface {
     public function options() {
         $class = $this->getAttribute('class');
 
-        return "protected \$presenter = '{$class}Presenter';";
+        return "protected \$presenter = '{$class}Presenter';\n";
     }
 
     /**
