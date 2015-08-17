@@ -49,10 +49,6 @@ class ModelGenerator extends Generator  {
         'scaffold'
     ];
 
-    /**
-     * @var
-     */
-    protected $aliases;
 
     /**
      * Prepare ..
@@ -188,7 +184,7 @@ class ModelGenerator extends Generator  {
      * @return array
      */
     protected function getPackagesReplacement($packages, $arguments = array()) {
-        $aliases = $this->getPackageAliases();
+        $aliases = config('scaffold-generator.package_alias');
 
         $replacement = [];
         foreach($packages as $package => $options) {
@@ -213,18 +209,6 @@ class ModelGenerator extends Generator  {
         }
 
         return $replacement;
-    }
-
-    /**
-     * Return package aliases .
-     *
-     * @return mixed
-     */
-    protected function getPackageAliases() {
-        if( ! $this->aliases )
-            $this->aliases = config('scaffold-generator.package_alias');
-
-        return $this->aliases;
     }
 
     /**
