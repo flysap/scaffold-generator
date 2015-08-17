@@ -12,15 +12,15 @@ class ScaffoldManager {
     /**
      * Generate scaffold .
      *
-     * @param $post
+     * @param $params
      * @return string
      */
-    public function generate($post) {
+    public function generate($params) {
         try {
-            $path = DIRECTORY_SEPARATOR . $post['vendor'] . DIRECTORY_SEPARATOR . $post['name'];
+            $path = DIRECTORY_SEPARATOR . $params['vendor'] . DIRECTORY_SEPARATOR . $params['name'];
 
             $generator = app('generator');
-            $tables    = $post['tables'];
+            $tables    = $params['tables'];
 
             $generator->generate(
                 ContextGenerator::GENERATOR_MIGRATION
@@ -32,21 +32,21 @@ class ScaffoldManager {
             $generator->generate(
                 ContextGenerator::GENERATOR_MODEL
             )
-                ->setContents($post)
+                ->setContents($params)
                 ->save($path);
 
 
             $generator->generate(
                 ContextGenerator::GENERATOR_COMPOSER
             )
-                ->setReplacement(array_only($post, ['name', 'vendor', 'description', 'version']))
+                ->setReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
 
 
             $generator->generate(
                 ContextGenerator::GENERATOR_CONFIG
             )
-                ->setContents($post)
+                ->setContents($params)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
 
