@@ -91,7 +91,6 @@ class StubGenerator {
      * @throws StubException
      */
     public function generate() {
-
         if( ! $this->isStubLoaded() )
             throw new StubException(_('Stub not loaded'));
 

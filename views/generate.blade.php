@@ -71,7 +71,7 @@
                                 <div class="table" style="margin-bottom: 5px">
                                     <div class="box-body">
 
-                                        <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> Table #1</h4>
+                                        <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> <span class="js-table-number">Table #1</span></h4>
 
                                         <div class="row">
 
@@ -156,7 +156,14 @@
         $(function() {
             $(".js-add-table").on("click", function() {
                 var table = $(this).prev('div.table').clone();
-                console.log(table);
+
+                table.find('input[name*=tables]').each(function(key, value) {
+                   $(value).attr('name', $(value).attr('name').replace('0', $('.table').length + 1))
+                });
+
+                table.find('.js-table-number').html(
+                    table.find('.js-table-number').text().replace("/#\\d+/g", $('.table').length + 1)
+                );
 
                 $(this).before(table);
 
