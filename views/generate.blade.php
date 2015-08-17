@@ -22,15 +22,29 @@
 
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_1" data-toggle="tab">Builder</a></li>
+                        <li class="active"><a href="#tab_1" data-toggle="tab">{{_('Build your module')}}</a></li>
+
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                {{_('Actions')}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-modules')}}">{{_('Flush modules')}}</a></li>
+
+                                @if($isGenerated)
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Flush module')}}</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('export-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Export module')}}</a></li>
+                                @endif
+
+                            </ul>
+                        </li>
 
                         @if($isGenerated)
-                            <li><a href="#tab_2" data-toggle="tab" class="editor">Editor</a></li>
+                            <li><a href="#tab_2" data-toggle="tab" class="editor">{{_('Editor')}}</a></li>
                         @endif
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
-
                             <!-- form start -->
                             <form role="form" method="post" action="">
                                 <input type="hidden" name="_token" value="{{csrf_token()}}">
@@ -100,31 +114,15 @@
                                     </div>
                                 </div>
 
-                                <a href="#" class="js-add-table">{{_('Add new table')}}</a>
+                                <a href="#" class="js-add-table">
+                                    <span style="cursor: pointer;"><i class="fa fa-plus-circle"></i></span>
+                                </a>
 
-                                <div class="box-footer">
-                                    <button type="submit" class="btn btn-primary">{{_('Generate')}}</button>
+                                <div class="box-footer" style="border-top: 0">
+                                    <button type="submit" class="btn bg-olive margin">{{_('Generate')}}</button>
                                 </div>
 
                             </form>
-
-
-                            <form method="post" action="{{route('flush-modules')}}">
-                                <button type="submit" class="btn btn-primary">{{_('Flush all')}}</button>
-                            </form>
-
-                            @if(isset($vendor) && isset($name))
-                                <form method="post" action="{{route('flush-module')}}">
-                                    <input type="hidden" name="module" value="{{$vendor . DIRECTORY_SEPARATOR . $name}}">
-                                    <button type="submit" class="btn btn-primary">{{_('Flush current')}}</button>
-                                </form>
-
-                                <form method="post" action="{{route('export-module')}}">
-                                    <input type="hidden" name="module" value="{{$vendor . DIRECTORY_SEPARATOR . $name}}">
-                                    <button type="submit" class="btn btn-primary">{{_('Export current')}}</button>
-                                </form>
-                            @endif
-
                         </div>
 
                         @if($isGenerated)
@@ -134,8 +132,9 @@
                                     @include('scaffold-generator::editor')
                                 @endif
                             </div>
-                            @endif
                             <!-- /.tab-pane -->
+                        @endif
+
                     </div>
                     <!-- /.tab-content -->
                 </div>
@@ -145,8 +144,8 @@
             <!--/.col (left) -->
         </div>
         <!-- /.row -->
-    </section><!-- /.content -->
-
+    </section>
+    <!-- /.content -->
 
     <script>
         function remove_table(span) {
