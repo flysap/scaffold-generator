@@ -35,57 +35,69 @@
                             <form role="form" method="post" action="">
                                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
-                                <div class="table">
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-xs-2">
-                                                <label>{{_('Vendor')}}</label>
-                                                <input type="text" name="vendor" class="form-control" placeholder="Vendor">
-                                            </div>
-                                            <div class="col-xs-3">
-                                                <label>{{_('Name')}}</label>
-                                                <input type="text" name="name" class="form-control" placeholder="Name">
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-xs-2">
-                                                <label>{{_('Table name')}}</label>
-                                                <input type="text" name="tables[0][name]" class="form-control"
-                                                       placeholder="User">
-                                            </div>
-                                            <div class="col-xs-7">
-                                                <label>{{_('Fields')}}</label>
-                                                <input type="text" name="tables[0][fields]" class="form-control"
-                                                       placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
-                                            </div>
-
-                                            <div class="col-xs-9">
-                                                <label>{{_('Relations')}}</label>
-                                                <input type="text" name="tables[0][relations]" class="form-control"
-                                                       placeholder="phone_id:id|phones|cascade|cascade">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-users"></i></span>
+                                                <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor">
                                             </div>
                                         </div>
-                                    </div>
 
+                                        <div class="col-xs-2">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                <input type="text" class="form-control input-lg" name="name" placeholder="Name">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="table" style="margin-bottom: 5px">
                                     <div class="box-body">
+
+                                        <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> Table #1</h4>
+
                                         <div class="row">
-                                            @if($packages)
-                                                <div class="col-xs-9">
-                                                    @foreach($packages as $key => $package)
-                                                        <lable>{{$key}}</lable>
-                                                        <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0">
-                                                    @endforeach
+
+                                            <div class="col-xs-2">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="fa fa-table"></i></span>
+                                                    <input type="text" class="form-control input-sm" name="tables[0][name]" placeholder="users">
                                                 </div>
-                                            @endif
+                                            </div>
+
+                                            <div class="col-xs-4">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="fa fa-columns"></i></span>
+                                                    <input type="text" class="form-control input-sm" name="tables[0][fields]" placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-7" style="margin-top: 14px;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon"><i class="fa fa-chain"></i></span>
+                                                    <input type="text" class="form-control input-sm" name="tables[0][relations]" placeholder="phone_id:id|phones|cascade|cascade">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-7 checkbox">
+                                                @if($packages)
+                                                    <div class="col-xs-9">
+                                                        @foreach($packages as $key => $package)
+                                                            <label>
+                                                                <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0">
+                                                                {{$key}}
+                                                            </label>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+
                                         </div>
                                     </div>
-
-
-
                                 </div>
 
                                 <a href="#" class="js-add-table">{{_('Add new table')}}</a>
@@ -137,6 +149,11 @@
 
 
     <script>
+        function remove_table(span) {
+            if( $('.table').length > 1 )
+                $(span).closest('.table').remove();
+        }
+
         $(function() {
             $(".js-add-table").on("click", function() {
                 var table = $(this).prev('div.table').clone();
