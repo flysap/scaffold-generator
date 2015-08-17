@@ -102,7 +102,7 @@
                                                     <div class="col-xs-9">
                                                         @foreach($packages as $key => $package)
                                                             <label>
-                                                                <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0">
+                                                                <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}}>
                                                                 {{$key}}
                                                             </label>
                                                         @endforeach

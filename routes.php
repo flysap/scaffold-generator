@@ -22,7 +22,7 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
             $name   = $request->get('name');
         }
 
-        $packages = config('scaffold-generator.package_alias');
+        $packages = config('scaffold-generator.packages');
 
         return view('scaffold-generator::generate', [
             'isGenerated' => $isGenerated,

@@ -49,7 +49,6 @@ class ModelGenerator extends Generator  {
         'scaffold'
     ];
 
-
     /**
      * Prepare ..
      *
@@ -128,7 +127,7 @@ class ModelGenerator extends Generator  {
 
         array_walk($contents['tables'], function($table, $name) use($path) {
 
-            $packages = $this->getDefaultPackages();
+            $packages = $this->defaultPackages;
 
             if( isset($table['packages']) )
                 $packages = array_merge($packages, array_keys($table['packages']));
@@ -184,7 +183,7 @@ class ModelGenerator extends Generator  {
      * @return array
      */
     protected function getPackagesReplacement($packages, $arguments = array()) {
-        $aliases = config('scaffold-generator.package_alias');
+        $aliases = config('scaffold-generator.packages');
 
         $replacement = [];
         foreach($packages as $package => $options) {
@@ -194,7 +193,7 @@ class ModelGenerator extends Generator  {
             if( ! in_array($package, array_keys($aliases)) )
                 return false;
 
-            $class = $aliases[$package];
+            $class = $aliases[$package]['class'];
 
             if(! class_exists($class))
                 return false;
@@ -209,14 +208,5 @@ class ModelGenerator extends Generator  {
         }
 
         return $replacement;
-    }
-
-    /**
-     * Default packages .
-     *
-     * @return array
-     */
-    protected function getDefaultPackages() {
-        return $this->defaultPackages;
     }
 }

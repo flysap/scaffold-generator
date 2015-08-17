@@ -12,9 +12,22 @@ fields_type_alias:
  string: varchar
 
 # here will be declared all the aliases packages .
-package_alias:
- sluggable: Flysap\ScaffoldGenerator\Packs\Sluggable
- scaffold : Flysap\ScaffoldGenerator\Packs\Scaffold
- presentable : Flysap\ScaffoldGenerator\Packs\Presenter
- searchable : Flysap\ScaffoldGenerator\Packs\Search
- validable : Flysap\ScaffoldGenerator\Packs\Validable
+packages:
+ sluggable:
+  class: Flysap\ScaffoldGenerator\Packs\Sluggable
+  is_default: true
+
+ scaffold :
+  class: Flysap\ScaffoldGenerator\Packs\Scaffold
+  is_default: true
+
+ presentable :
+  class: Flysap\ScaffoldGenerator\Packs\Presenter
+  is_default: true
+
+ searchable :
+  class: Flysap\ScaffoldGenerator\Packs\Search
+
+ validable :
+  class: Flysap\ScaffoldGenerator\Packs\Validable
+  is_default: true
