@@ -125,6 +125,13 @@ class ScaffoldManager {
     }
 
 
+    /**
+     * Refresh migration
+     *
+     * @param $connection
+     * @param $path
+     * @return mixed
+     */
     protected function flushDatabase($connection, $path) {
         $tables = DB::connection($connection)
             ->table('sqlite_master')
