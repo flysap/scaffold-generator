@@ -1,10 +1,14 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Generators;
+namespace Flysap\ScaffoldGenerator;
 
+use Flysap\ScaffoldGenerator\Generators\ComposerGenerator;
+use Flysap\ScaffoldGenerator\Generators\ConfigGenerator;
+use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
+use Flysap\ScaffoldGenerator\Generators\ModelGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ContextGenerator {
+class Generator {
 
     const GENERATOR_MODEL     = ModelGenerator::class;
     const GENERATOR_CONFIG    = ConfigGenerator::class;
