@@ -9,8 +9,9 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
 
         $isGenerated = false;
         $pathModule  = null;
-        $vendor  = null;
-        $name  = null;
+        $vendor      = null;
+        $name        = null;
+
         if( $request->method() == 'POST' ) {
             $isGenerated = true;
 

@@ -2,7 +2,6 @@
 
 namespace Flysap\ScaffoldGenerator;
 
-use Flysap\ScaffoldGenerator\Generators\ContextGenerator;
 use Flysap\ScaffoldGenerator\Parsers\Field;
 use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -60,7 +59,7 @@ class GeneratorServiceProvider extends ServiceProvider {
          * Register generator factory .
          */
         $this->app->singleton('generator', function() {
-            return new ContextGenerator;
+            return new Generator;
         });
     }
 

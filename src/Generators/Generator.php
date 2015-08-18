@@ -64,6 +64,7 @@ abstract class Generator {
         $this->relationParser = $relationParser;
     }
 
+
     /**
      * Set contents .
      *
@@ -112,6 +113,7 @@ abstract class Generator {
         if( isset($this->contents[$alias]) )
             return $this->contents[$alias];
     }
+
 
     /**
      * Set replacement .
@@ -216,6 +218,7 @@ abstract class Generator {
         return $this->fields;
     }
 
+
     /**
      * Set raw relations .
      *
@@ -251,6 +254,7 @@ abstract class Generator {
         return $this->relations;
     }
 
+
     /**
      * Get fields parser .
      *
@@ -268,6 +272,7 @@ abstract class Generator {
     protected function getRelationsParser() {
         return $this->relationParser;
     }
+
 
     /**
      * Prepare content .

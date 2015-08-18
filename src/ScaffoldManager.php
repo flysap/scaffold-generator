@@ -4,7 +4,6 @@ namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
-use Flysap\ScaffoldGenerator\Generators\ContextGenerator;
 use Flysap\Support;
 
 class ScaffoldManager {
@@ -23,28 +22,28 @@ class ScaffoldManager {
             $tables    = $params['tables'];
 
             $generator->generate(
-                ContextGenerator::GENERATOR_MIGRATION
+                Generator::GENERATOR_MIGRATION
             )
                 ->setContents($tables)
                 ->save($path);
 
 
             $generator->generate(
-                ContextGenerator::GENERATOR_MODEL
+                Generator::GENERATOR_MODEL
             )
                 ->setContents($params)
                 ->save($path);
 
 
             $generator->generate(
-                ContextGenerator::GENERATOR_COMPOSER
+                Generator::GENERATOR_COMPOSER
             )
                 ->setReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
 
 
             $generator->generate(
-                ContextGenerator::GENERATOR_CONFIG
+                Generator::GENERATOR_CONFIG
             )
                 ->setContents($params)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');

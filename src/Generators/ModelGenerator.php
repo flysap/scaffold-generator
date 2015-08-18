@@ -79,7 +79,7 @@ class ModelGenerator extends Generator  {
                         'belongsTo' => [
                             [
                                 'function'    => str_plural(strtolower($tableName)),
-                                'table'       => str_singular(strtolower($tableName)),
+                                'table'       => str_plural(strtolower($tableName)),
                                 'parent_key'  => $relation['reference'],
                                 'local_key'   => $relation['foreign']
                             ]
@@ -90,7 +90,7 @@ class ModelGenerator extends Generator  {
                         $relation['relation'] => [
                             [
                                 'function'   => str_plural(strtolower($relation['table'])),
-                                'table'      => str_singular(strtolower($relation['table'])),
+                                'table'      => str_plural(strtolower($relation['table'])),
                                 'local_key'  => $relation['reference'],
                                 'foreign_key'=> $relation['foreign']
                             ]
