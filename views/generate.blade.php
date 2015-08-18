@@ -54,65 +54,75 @@
                                         <div class="col-xs-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-users"></i></span>
-                                                <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor">
+                                                <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor" value="{{Input::get('vendor')}}">
                                             </div>
                                         </div>
 
                                         <div class="col-xs-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                                <input type="text" class="form-control input-lg" name="name" placeholder="Name">
+                                                <input type="text" class="form-control input-lg" name="name" placeholder="Name" value="{{Input::get('name')}}">
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
 
-                                <div class="table" style="margin-bottom: 5px">
-                                    <div class="box-body">
+                                <?php
+                                    $tables = Input::has('tables') ? Input::get('tables') : [0];
+                                ?>
 
-                                        <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> <span class="js-table-number">Table #1</span></h4>
+                                <?php $key = 0; ?>
+                                @foreach($tables as $table)
+                                    <div class="table" style="margin-bottom: 5px">
+                                        <div class="box-body">
 
-                                        <div class="row">
+                                            <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> <span class="js-table-number">Table #{{$key + 1}}</span></h4>
 
-                                            <div class="col-xs-2">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><i class="fa fa-table"></i></span>
-                                                    <input type="text" class="form-control input-sm" name="tables[0][name]" placeholder="users">
-                                                </div>
-                                            </div>
+                                                <div class="row">
 
-                                            <div class="col-xs-4">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><i class="fa fa-columns"></i></span>
-                                                    <input type="text" class="form-control input-sm" name="tables[0][fields]" placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned">
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-xs-7" style="margin-top: 14px;">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon"><i class="fa fa-chain"></i></span>
-                                                    <input type="text" class="form-control input-sm" name="tables[0][relations]" placeholder="phone_id:id|phones|cascade|cascade">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-7 checkbox">
-                                                @if($packages)
-                                                    <div class="col-xs-9">
-                                                        @foreach($packages as $key => $package)
-                                                            <label>
-                                                                <input type="checkbox" name="tables[0][packages][{{$key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}}>
-                                                                {{$key}}
-                                                            </label>
-                                                        @endforeach
+                                                    <div class="col-xs-2">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><i class="fa fa-table"></i></span>
+                                                            <input type="text" class="form-control input-sm" name="tables[{{$key}}][name]" placeholder="users" value="{{$table['name']}}">
+                                                        </div>
                                                     </div>
-                                                @endif
-                                            </div>
 
+                                                    <div class="col-xs-4">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><i class="fa fa-columns"></i></span>
+                                                            <input type="text" class="form-control input-sm" name="tables[{{$key}}][fields]" placeholder="id:int(11)|unsigned|nullable|index, phone_id:int(11)|unsigned" value="{{$table['fields']}}">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-xs-7" style="margin-top: 14px;">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><i class="fa fa-chain"></i></span>
+                                                            <input type="text" class="form-control input-sm" name="tables[{{$key}}][relations]" placeholder="phone_id:id|phones|cascade|cascade" value="{{$table['relations']}}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-7 checkbox">
+                                                        @if($packages)
+                                                            <div class="col-xs-9">
+                                                                @foreach($packages as $package_key => $package)
+                                                                    <label>
+                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}}>
+                                                                        {{$package_key}}
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
+                                                </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <?php $key++; ?>
+                                @endforeach
+
+
 
                                 <a href="#" class="js-add-table">
                                     <span style="cursor: pointer;"><i class="fa fa-plus-circle"></i></span>
@@ -158,11 +168,11 @@
                 var table = $(this).prev('div.table').clone();
 
                 table.find('input[name*=tables]').each(function(key, value) {
-                   $(value).attr('name', $(value).attr('name').replace('0', $('.table').length + 1))
+                   $(value).attr('name', $(value).attr('name').replace(new RegExp("(\\d+)", "g"), $('.table').length))
                 });
 
                 table.find('.js-table-number').html(
-                    table.find('.js-table-number').text().replace("/#\\d+/g", $('.table').length + 1)
+                    table.find('.js-table-number').text().replace(new RegExp("(\\d+)", "g"), $('.table').length + 1)
                 );
 
                 $(this).before(table);
