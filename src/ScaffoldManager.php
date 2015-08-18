@@ -5,18 +5,20 @@ namespace Flysap\ScaffoldGenerator;
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
 use Flysap\Support;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ScaffoldManager {
 
-    /**
-     * Generate scaffold .
-     *
-     * @param $params
-     * @return string
-     */
     public function generate($params) {
         try {
-            $path = DIRECTORY_SEPARATOR . $params['vendor'] . DIRECTORY_SEPARATOR . $params['name'];
+            $module = $params['vendor'] . DIRECTORY_SEPARATOR . $params['name'];
+
+            $this->flushModule(
+                $module
+            );
+
+            $path = DIRECTORY_SEPARATOR . $module;
 
             $generator = app('generator');
             $tables    = $params['tables'];
@@ -25,7 +27,7 @@ class ScaffoldManager {
                 Generator::GENERATOR_MIGRATION
             )
                 ->setContents($tables)
-                ->save($path);
+                ->save(DIRECTORY_SEPARATOR . $module);
 
 
             $generator->generate(
@@ -49,7 +51,11 @@ class ScaffoldManager {
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
 
-            return 'storage/' . config('scaffold-generator.temp_path') . $path;
+            $path = 'storage/' . config('scaffold-generator.temp_path') . $path;
+
+            $this->flushDatabase('sqlite', $path . DIRECTORY_SEPARATOR . 'migrations');
+
+            return $path;
 
         } catch(StubException $e) {
 
@@ -116,5 +122,23 @@ class ScaffoldManager {
         return Support\download_archive(
             $path, str_replace('/', '_', $module)
         );
+    }
+
+
+    protected function flushDatabase($connection, $path) {
+        $tables = DB::connection($connection)
+            ->table('sqlite_master')
+            ->get();
+
+        array_walk($tables, function($table) {
+            if( $table->name ==  'sqlite_sequence' ) return false;
+
+            Schema::connection('sqlite')
+                ->dropIfExists($table->name);
+        });
+
+        return Support\artisan('migrate', [
+            '--database' => $connection, '--path' => $path
+        ]);
     }
 }

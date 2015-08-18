@@ -100,12 +100,15 @@ class MigrationGenerator extends Generator {
             }
 
             $this->setReplacement([
-                    'table_name'      => $table['name'],
+                    'class_name'      => 'Create'.ucfirst(str_plural($table['name'])).'Table',
+                    'table_name'      => str_plural($table['name']),
                     'table_fields'    => $tableFields,
                     'table_relations' => $tableRelations,
                 ]);
 
-            parent::save($path . DIRECTORY_SEPARATOR . 'migrations/add_' . strtolower(str_singular($table['name'])) . '_migration.php');
+            $time = date('Y_m_d_His');
+
+            parent::save($path . DIRECTORY_SEPARATOR . 'migrations/'.$time.'_create_' . strtolower(str_plural($table['name'])) . '_table.php');
         });
     }
 
