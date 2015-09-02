@@ -31,3 +31,15 @@ packages:
  validable :
   class: Flysap\ScaffoldGenerator\Packs\Validable
   is_default: true
+
+ metaable :
+  class: Flysap\ScaffoldGenerator\Packs\Metaable
+  is_default: true
+
+ imageaable :
+  class: Flysap\ScaffoldGenerator\Packs\Imageable
+  is_default: false
+
+ exportable :
+  class: Flysap\ScaffoldGenerator\Packs\Exportable
+  is_default: true
