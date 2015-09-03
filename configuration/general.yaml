@@ -16,30 +16,43 @@ packages:
  sluggable:
   class: Flysap\ScaffoldGenerator\Packs\Sluggable
   is_default: true
+  description: Your description
 
  scaffold :
   class: Flysap\ScaffoldGenerator\Packs\Scaffold
   is_default: true
+  description: Your description
 
  presentable :
   class: Flysap\ScaffoldGenerator\Packs\Presenter
   is_default: true
+  description: Your description
 
  searchable :
   class: Flysap\ScaffoldGenerator\Packs\Search
+  description: Your description
 
  validable :
   class: Flysap\ScaffoldGenerator\Packs\Validable
   is_default: true
+  description: Your description
+
+ seoable :
+  class: Flysap\ScaffoldGenerator\Packs\Seoable
+  is_default: true
+  description: Your description
 
  metaable :
   class: Flysap\ScaffoldGenerator\Packs\Metaable
   is_default: true
+  description: Your description
 
  imageaable :
   class: Flysap\ScaffoldGenerator\Packs\Imageable
   is_default: false
+  description: Your description
 
  exportable :
   class: Flysap\ScaffoldGenerator\Packs\Exportable
   is_default: true
+  description: Your description
