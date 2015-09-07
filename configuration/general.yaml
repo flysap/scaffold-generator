@@ -56,3 +56,8 @@ packages:
   class: Flysap\ScaffoldGenerator\Packs\Exportable
   is_default: true
   description: Your description
+
+ sortable :
+  class: Flysap\ScaffoldGenerator\Packs\Sortable
+  is_default: true
+  description: Your description
