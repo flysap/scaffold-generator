@@ -61,3 +61,8 @@ packages:
   class: Flysap\ScaffoldGenerator\Packs\Sortable
   is_default: true
   description: Your description
+
+ taggable :
+  class: Flysap\ScaffoldGenerator\Packs\Taggable
+  is_default: true
+  description: Your description
