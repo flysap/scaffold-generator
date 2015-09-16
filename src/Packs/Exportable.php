@@ -24,6 +24,6 @@ class Exportable extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use DataExporter\\DriverAssets\\Eloquent\\Exportable;use DataExporter\\DriverAssets\\Eloquent\\ExportableTrait;\n";
+        return "use DataExporter\\DriverAssets\\Eloquent\\Exportable;\nuse DataExporter\\DriverAssets\\Eloquent\\ExportableTrait;\n";
     }
 }

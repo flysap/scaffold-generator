@@ -24,6 +24,6 @@ class SeoAble extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Laravel\\Meta\\Eloquent\\MetaSeoable;use Laravel\\Meta\\Eloquent\\MetaSeoTrait;\n";
+        return "use Laravel\\Meta\\Eloquent\\MetaSeoable;\nuse Laravel\\Meta\\Eloquent\\MetaSeoTrait;\n";
     }
 }

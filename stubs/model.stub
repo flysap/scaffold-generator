@@ -11,11 +11,13 @@ class {{class}} extends Model {{packs_contracts}} {
 
     {{relations}}
 
-    protected $connection = 'sqlite';
+    protected $connection = 'development';
 
     protected $table = '{{table_name}}';
 
     protected $fillable = [{{table_fields}}];
+
+    public $timestamps = false;
 
     {{table_relations}}
 }

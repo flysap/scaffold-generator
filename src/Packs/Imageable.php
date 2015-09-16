@@ -8,14 +8,14 @@ class Imageable extends Package implements PackageInterface {
      * @return mixed
      */
     public function traits() {
-        return "    use ImageableTrait;\n";
+        return "    use ImageAbleTrait;\n";
     }
 
     /**
      * @return mixed
      */
     public function contracts() {
-        return ', ImageableInterface';
+        return ', ImageAble';
     }
 
     /**
@@ -24,6 +24,6 @@ class Imageable extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Cviebrock\\EloquentImageable\\ImageableInterface;\nuse Cviebrock\\EloquentImageable\\ImageableTrait;\n";
+        return "use Eloquent\\ImageAble\\ImageAble;\nuse Eloquent\\ImageAble\\ImageAbleTrait;\n";
     }
 }

@@ -24,6 +24,6 @@ class MetaAble extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Eloquent\\Meta\\Metaable;use Eloquent\\Meta\\MetaTrait;\n";
+        return "use Eloquent\\Meta\\Metaable;\nuse Eloquent\\Meta\\MetaTrait;\n";
     }
 }
