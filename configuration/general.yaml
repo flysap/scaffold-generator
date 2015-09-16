@@ -15,7 +15,7 @@ fields_type_alias:
 packages:
  sluggable:
   class: Flysap\ScaffoldGenerator\Packs\Sluggable
-  is_default: true
+  is_default: false
   description: Your description
 
  scaffold :
@@ -25,26 +25,27 @@ packages:
 
  presentable :
   class: Flysap\ScaffoldGenerator\Packs\Presenter
-  is_default: true
+  is_default: false
   description: Your description
 
  searchable :
   class: Flysap\ScaffoldGenerator\Packs\Search
+  is_default: false
   description: Your description
 
  validable :
   class: Flysap\ScaffoldGenerator\Packs\Validable
-  is_default: true
+  is_default: false
   description: Your description
 
  seoable :
   class: Flysap\ScaffoldGenerator\Packs\Seoable
-  is_default: true
+  is_default: false
   description: Your description
 
  metaable :
   class: Flysap\ScaffoldGenerator\Packs\Metaable
-  is_default: true
+  is_default: false
   description: Your description
 
  imageaable :
@@ -54,15 +55,15 @@ packages:
 
  exportable :
   class: Flysap\ScaffoldGenerator\Packs\Exportable
-  is_default: true
+  is_default: false
   description: Your description
 
  sortable :
   class: Flysap\ScaffoldGenerator\Packs\Sortable
-  is_default: true
+  is_default: false
   description: Your description
 
  taggable :
   class: Flysap\ScaffoldGenerator\Packs\Taggable
-  is_default: true
+  is_default: false
   description: Your description
