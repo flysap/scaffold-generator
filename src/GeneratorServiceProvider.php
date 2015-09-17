@@ -14,7 +14,6 @@ class GeneratorServiceProvider extends ServiceProvider {
      */
     public function boot() {
         $this->loadRoutes()
-            ->loadConfiguration()
             ->loadViews();
 
         /** Adding namespace to temp modules path to render menu . */
@@ -29,9 +28,22 @@ class GeneratorServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
+        $this->loadConfiguration();
 
-        /** Stub generator . */
-        $this->app->singleton('stub-generator', StubGenerator::class);
+        app()->singleton(
+            'stub-generator',
+            StubGenerator::class
+        );
+
+        app()->singleton('scaffold-package', function() {
+            return (new PackageManager)
+                ->setPackages(config('scaffold-generator.packages'))
+                ->setDefaultPackages(config('scaffold-generator.default_packages'));
+        });
+
+
+
+        #@todo we need that ?
 
         /** Scaffold manager . */
         $this->app->singleton('scaffold-manager', function ($app) {
