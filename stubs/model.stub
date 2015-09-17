@@ -4,7 +4,7 @@ namespace Modules\{{vendor}}\{{name}};
 
 use Illuminate\Database\Eloquent\Model;
 {{import}}
-class {{class}} extends Model {{packs_contracts}} {
+class {{class}} extends Model {{contracts}} {
 
     {{traits}}
     {{options}}
