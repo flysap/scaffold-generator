@@ -35,7 +35,7 @@ abstract class Package implements Arrayable {
      * @return mixed
      */
     public function options() {
-        return '';
+        return ($attributes = $this->getAttribute('attributes')) ? $attributes : '';
     }
 
     /**
