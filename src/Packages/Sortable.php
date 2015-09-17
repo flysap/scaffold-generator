@@ -2,6 +2,7 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
+use Flysap\ScaffoldGenerator\Generator;
 use Flysap\ScaffoldGenerator\PackageAble;
 
 class Sortable extends Package implements PackageAble {
@@ -35,6 +36,24 @@ class Sortable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
+        $generator = app('generator');
+
+        $generator->generate(
+            Generator::GENERATOR_MIGRATION
+        )
+            ->setStub(__DIR__ . '/../../stubs/migration_update.stub')
+            ->setContents([
+                [
+                    'name'      => $this->getAttribute('name'),
+                    'fields'    => 'position:integer',
+                    'relations' => '',
+                ]
+            ])
+            ->save(
+                $this->getAttribute('path')
+            );
+
+
         return $this;
     }
 }
