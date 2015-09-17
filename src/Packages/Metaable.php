@@ -1,21 +1,21 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packs;
+namespace Flysap\ScaffoldGenerator\Packages;
 
-class Sortable extends Package implements PackageInterface {
+class MetaAble extends Package implements PackageInterface {
 
     /**
      * @return mixed
      */
     public function traits() {
-        return "    use SortableTrait;\n";
+        return "    use MetaTrait;\n";
     }
 
     /**
      * @return mixed
      */
     public function contracts() {
-        return ', Sortable';
+        return ', Metaable';
     }
 
     /**
@@ -24,6 +24,6 @@ class Sortable extends Package implements PackageInterface {
      * @return mixed
      */
     public function import() {
-        return "use Eloquent\\Sortable;use Eloquent\\SortableTrait;\n";
+        return "use Eloquent\\Meta\\Metaable;\nuse Eloquent\\Meta\\MetaTrait;\n";
     }
 }

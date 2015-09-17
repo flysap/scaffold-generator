@@ -77,7 +77,7 @@
                                     <div class="table" style="margin-bottom: 5px">
                                         <div class="box-body">
 
-                                            <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> <span class="js-table-number">Table #{{$key + 1}}</span></h4>
+                                            <h3><span onclick="remove_table(this)" style="cursor: pointer;"><i class="fa fa-remove"></i></span> <span class="js-table-number">Table #{{$key + 1}}</span></h3>
 
                                                 <div class="row">
 

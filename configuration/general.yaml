@@ -14,56 +14,56 @@ fields_type_alias:
 # here will be declared all the aliases packages .
 packages:
  sluggable:
-  class: Flysap\ScaffoldGenerator\Packs\Sluggable
+  class: Flysap\ScaffoldGenerator\Packages\Sluggable
   is_default: false
   description: Your description
 
  scaffold :
-  class: Flysap\ScaffoldGenerator\Packs\Scaffold
+  class: Flysap\ScaffoldGenerator\Packages\Scaffold
   is_default: true
   description: Your description
 
  presentable :
-  class: Flysap\ScaffoldGenerator\Packs\Presenter
+  class: Flysap\ScaffoldGenerator\Packages\Presenter
   is_default: false
   description: Your description
 
  searchable :
-  class: Flysap\ScaffoldGenerator\Packs\Search
+  class: Flysap\ScaffoldGenerator\Packages\Search
   is_default: false
   description: Your description
 
  validable :
-  class: Flysap\ScaffoldGenerator\Packs\Validable
+  class: Flysap\ScaffoldGenerator\Packages\Validable
   is_default: false
   description: Your description
 
  seoable :
-  class: Flysap\ScaffoldGenerator\Packs\Seoable
+  class: Flysap\ScaffoldGenerator\Packages\Seoable
   is_default: false
   description: Your description
 
  metaable :
-  class: Flysap\ScaffoldGenerator\Packs\Metaable
+  class: Flysap\ScaffoldGenerator\Packages\Metaable
   is_default: false
   description: Your description
 
  imageaable :
-  class: Flysap\ScaffoldGenerator\Packs\Imageable
+  class: Flysap\ScaffoldGenerator\Packages\Imageable
   is_default: false
   description: Your description
 
  exportable :
-  class: Flysap\ScaffoldGenerator\Packs\Exportable
+  class: Flysap\ScaffoldGenerator\Packages\Exportable
   is_default: false
   description: Your description
 
  sortable :
-  class: Flysap\ScaffoldGenerator\Packs\Sortable
+  class: Flysap\ScaffoldGenerator\Packages\Sortable
   is_default: false
   description: Your description
 
  taggable :
-  class: Flysap\ScaffoldGenerator\Packs\Taggable
+  class: Flysap\ScaffoldGenerator\Packages\Taggable
   is_default: false
   description: Your description

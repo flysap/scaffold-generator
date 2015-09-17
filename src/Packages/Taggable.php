@@ -1,6 +1,6 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packs;
+namespace Flysap\ScaffoldGenerator\Packages;
 
 class Taggable extends Package implements PackageInterface {
 
