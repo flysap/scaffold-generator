@@ -39,10 +39,10 @@ namespace Flysap\ScaffoldGenerator\Generators;
 class ModelGenerator extends Generator  {
 
     protected $templates = [
-        'hasOne'         => 'public function {{function}}() { $this->hasOne("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'hasMany'        => 'public function {{function}}() { $this->hasMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'belongsToMany'  => 'public function {{function}}() { $this->belongsToMany("{{table}}", "{{foreign_key}}", "{{local_key}}"); }',
-        'belongsTo'      => 'public function {{function}}() { $this->belongsTo("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
+        'hasOne'         => "public function {{function}}() { \$this->hasOne('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
+        'hasMany'        => "public function {{function}}() { \$this->hasMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
+        'belongsToMany'  => "public function {{function}}() { \$this->belongsToMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }",
+        'belongsTo'      => "public function {{function}}() { \$this->belongsTo('{{table}}', '{{local_key}}', '{{parent_key}}'); }",
     ];
 
     /**
@@ -71,26 +71,24 @@ class ModelGenerator extends Generator  {
 
                 array_walk($relations, function($relation) use($tableName, & $tables) {
 
-                    $tables[$relation['table']]['relations'] = [
-                        'belongsTo' => [
-                            [
-                                'function'    => str_plural(strtolower($tableName)),
-                                'table'       => str_plural(strtolower($tableName)),
-                                'parent_key'  => $relation['reference'],
-                                'local_key'   => $relation['foreign']
-                            ]
-                        ]
+                    if(! isset( $tables[$relation['table']] ['relations'] ['belongsTo'] ))
+                        $tables [$relation['table']] ['relations'] = ['belongsTo' => []];
+
+                    if(! isset($tables [$tableName] ['relations'] ['hasMany'] ))
+                        $tables [$tableName] ['relations']  = ['hasMany' => []];
+
+                    $tables[$relation['table']]['relations']['belongsTo'][] = [
+                        'function'    => str_plural(strtolower($tableName)),
+                        'table'       => str_plural(strtolower($tableName)),
+                        'parent_key'  => $relation['reference'],
+                        'local_key'   => $relation['foreign']
                     ];
 
-                    $tables[$tableName]['relations'] = [
-                        $relation['relation'] => [
-                            [
-                                'function'   => str_plural(strtolower($relation['table'])),
-                                'table'      => str_plural(strtolower($relation['table'])),
-                                'local_key'  => $relation['reference'],
-                                'foreign_key'=> $relation['foreign']
-                            ]
-                        ]
+                    $tables[$tableName]['relations']['hasMany'][] = [
+                        'function'   => str_plural(strtolower($relation['table'])),
+                        'table'      => str_plural(strtolower($relation['table'])),
+                        'local_key'  => $relation['reference'],
+                        'foreign_key'=> $relation['foreign']
                     ];
                 });
             }
@@ -123,47 +121,44 @@ class ModelGenerator extends Generator  {
         $tables = $this->getContent('tables');
 
         foreach($tables as $tableName => $options) {
+            $this->clearReplacements();
+
+            $class = str_singular(ucfirst($tableName));
+            $table = strtolower(str_plural($tableName));
 
             /** @var Get the full list of installed packages .. $packages */
             $packages = $this->mergeWithDefaultPackages(
-                isset($table['packages']) ? $table['packages'] : []
+                isset($options['packages']) ? $options['packages'] : []
             );
 
             /** @var Get package replacement . $packageReplacement */
             $packageReplacement = $this->buildPackagesAssets(
-                $packages,
-                ['path' => $path, 'class' => str_singular(ucfirst(strtolower($tableName)))]
+                $packages, array_merge(['path' => $path], $options)
             );
 
-            foreach($packageReplacement as $package => $replacements)
-                $this->addReplacement($replacements);
+            $this->addReplacement($packageReplacement);
 
             /** @var Build relation replacements . $relationReplacement */
             $relationReplacement = $this->buildRelations(
-                isset($options['relations']) ? (array)$options['relations'] : []
+                isset($options['relations']) ? is_array($options['relations']) ? $options['relations'] : [] : []
             );
 
             $fields = $this->getFieldsParser()
                 ->setRawFields($options['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
-            $class = str_singular(ucfirst($tableName));
-            $table = strtolower(str_plural($tableName));
-
             $this->addReplacement([
                 'class'              => $class,
                 'table_name'         => $table,
                 'table_fields'       => "'".$fields."'",
-                'table_relations'    => $relationReplacement['string'],
-                'relations'          => 'protected $relation = [\'' . implode(',\'', $relationReplacement['array']) . '\'];',
+                'table_relations'    => $relationReplacement['relations'],
+                'relations'          => $relationReplacement['attributes'],
                 'vendor'             => $this->getContent('vendor'),
                 'name'               => $this->getContent('name'),
             ]);
 
             parent::save($path . DIRECTORY_SEPARATOR . $class . '.php');
         }
-
-
     }
 
     /**
@@ -173,25 +168,32 @@ class ModelGenerator extends Generator  {
      * @return string
      */
     protected function buildRelations(array $relations = array()) {
-        $relationsString = '';
-        $relationsArray  = [];
+        $replacer = ''; $array = [];
 
-        foreach ($relations as $relation => $options) {
-            $template = array_get($this->templates, $relation);
+        foreach($relations as $relation => $values) {
+            if( isset($this->templates[$relation]) ) {
 
-            array_walk($relations, function($relation) use(& $relationsString, $template, & $relationsArray) {
+                $template = $this->templates[$relation];
 
-                $relationsArray[] = $relation['function'];
-                $relationsString .= $template;
-                array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
-                    $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
-                });
-            });
+                foreach ($values as $key => $value) {
+                    $replacer .= $template;
+                    $array[]   = $value['function'];
+
+                    foreach ($value as $k => $v)
+                        $replacer = str_replace('{{'.$k.'}}', $v, $replacer);
+                }
+            }
         }
 
+        $attributes = '';
+        foreach($array as $k => $relation)
+            $attributes .= sprintf("%s'%s'", $k ? ',' : '',$relation);
+
+        $attributes = 'protected $relation = ['.$attributes.'];';
+
         return [
-            'string' => $relationsString,
-            'array'  => $relationsArray,
+            'relations' => $replacer,
+            'attributes'=> $attributes,
         ];
     }
 
@@ -199,9 +201,10 @@ class ModelGenerator extends Generator  {
      * Build packages assets  and get replacement .
      *
      * @param array $packages
+     * @param array $options
      * @return array
      */
-    protected function buildPackagesAssets(array $packages = array()) {
+    protected function buildPackagesAssets(array $packages = array(), array $options = array()) {
 
         $replacements = [];
 
@@ -210,14 +213,18 @@ class ModelGenerator extends Generator  {
             if( ! $this->packageManager->hasPackage($package) )
                 continue;
 
+            if(!is_array($attributes))
+                $attributes = (array)$attributes;
+
             $packageInstance = $this->packageManager
-                ->packageInstance($package, $attributes);
+                ->packageInstance($package, array_merge($attributes, $options));
 
             $replacement = $packageInstance
                 ->buildDependency()
                 ->toArray();
 
-            $replacements[$package] = $replacement;
+            foreach ($replacement as $key => $value)
+                @$replacements[$key] .= $value;
         }
 
         return $replacements;
@@ -231,8 +238,8 @@ class ModelGenerator extends Generator  {
      */
     protected function mergeWithDefaultPackages(array $packages = array()) {
         $packages = array_merge(
-            $packages,
-            $this->getPackageManager()->getDefaultPackages()
+            $this->getPackageManager()->getDefaultPackages(),
+            $packages
         );
 
         return $packages;
