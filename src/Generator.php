@@ -6,7 +6,6 @@ use Flysap\ScaffoldGenerator\Generators\ComposerGenerator;
 use Flysap\ScaffoldGenerator\Generators\ConfigGenerator;
 use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
 use Flysap\ScaffoldGenerator\Generators\ModelGenerator;
-use Symfony\Component\Filesystem\Filesystem;
 
 class Generator {
 
