@@ -3,9 +3,8 @@
     "description": "SMG",
     "require": {
         "laravel/framework": "~5.1",
-        "flysap/scaffold": "dev-master",
-        "symfony/yaml": "~2.7",
-        "symfony/filesystem": "~2.7"
+        "flysap/support": "dev-master",
+        "flysap/scaffold": "dev-master"
     },
     "license": "MIT",
     "authors": [
