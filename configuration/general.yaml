@@ -20,6 +20,7 @@ default_packages:
 packages:
  sluggable:
   class: Flysap\ScaffoldGenerator\Packages\Sluggable
+  attributes: protected $sluggable = [&#10;                      'build_from' => 'title',&#10;                      'save_to'    => 'slug',&#10;                  ];
   is_default: false
   description: Your description
 
@@ -40,6 +41,7 @@ packages:
 
  validable :
   class: Flysap\ScaffoldGenerator\Packages\Validable
+  attributes: /**&#10;                   * Validate fields .&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected \$rules = [&#10;                      'title' => 'required|unique:posts|max:255',&#10;                      'body' => 'required',&#10;                  ];
   is_default: false
   description: Your description
 
