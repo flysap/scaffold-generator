@@ -45,10 +45,6 @@ class ModelGenerator extends Generator  {
         'belongsTo'      => 'public function {{function}}() { $this->belongsTo("{{table}}", "{{local_key}}", "{{parent_key}}"); }',
     ];
 
-    protected $defaultPackages = [
-        'scaffold'
-    ];
-
     /**
      * Prepare ..
      *
@@ -121,92 +117,124 @@ class ModelGenerator extends Generator  {
      * Save all models .
      *
      * @param $path
+     * @return mixed|void
      */
     public function save($path) {
-        $contents = $this->getContents();
+        $tables = $this->getContent('tables');
 
-        array_walk($contents['tables'], function($table, $name) use($path) {
+        foreach($tables as $tableName => $options) {
 
-            $packages = $this->defaultPackages;
-
-            if( isset($table['packages']) )
-                $packages = array_merge($packages, array_keys($table['packages']));
-
-            $packages = $this->getPackagesReplacement(
-                $packages, ['path' => $path, 'class' => str_singular(ucfirst(strtolower($name)))]
+            /** @var Get the full list of installed packages .. $packages */
+            $packages = $this->mergeWithDefaultPackages(
+                isset($table['packages']) ? $table['packages'] : []
             );
 
-            $relationsString = '';
-            $relationsArray  = [];
-            if( isset($table['relations']) && !empty($table['relations']) ) {
-                array_walk($table['relations'], function($relations, $key) use(& $relationsString, & $relationsArray) {
-                    $template = array_get($this->templates, $key);
+            /** @var Get package replacement . $packageReplacement */
+            $packageReplacement = $this->buildPackagesAssets(
+                $packages,
+                ['path' => $path, 'class' => str_singular(ucfirst(strtolower($tableName)))]
+            );
 
-                    array_walk($relations, function($relation) use(& $relationsString, $template, & $relationsArray) {
+            foreach($packageReplacement as $package => $replacements)
+                $this->addReplacement($replacements);
 
-                        $relationsArray[] = $relation['function'];
-                        $relationsString .= $template;
-                        array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
-                            $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
-                        });
-                    });
+            /** @var Build relation replacements . $relationReplacement */
+            $relationReplacement = $this->buildRelations(
+                isset($options['relations']) ? (array)$options['relations'] : []
+            );
 
-                });
-            }
 
             $fields = $this->getFieldsParser()
-                ->setRawFields($table['fields'])
+                ->setRawFields($options['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
 
-            $this->setReplacement(
-                [
-                    'class'              => str_singular(ucfirst($name)),
-                    'table_name'         => strtolower($name),
-                    'table_fields'       => "'".$fields."'",
-                    'table_relations'    => $relationsString,
-                    'relations'          => 'protected $relations = [\'' . implode(',\'', $relationsArray) . '\'];',
-                    'vendor'             => $this->getContent('vendor'),
-                    'name'               => $this->getContent('name'),
-                ] + $packages
-            );
+            $this->addReplacement([
+                'class'              => str_singular(ucfirst($tableName)),
+                'table_name'         => strtolower($tableName),
+                'table_fields'       => "'".$fields."'",
+                'table_relations'    => $relationReplacement['string'],
+                'relations'          => 'protected $relation = [\'' . implode(',\'', $relationReplacement['array']) . '\'];',
+                'vendor'             => $this->getContent('vendor'),
+                'name'               => $this->getContent('name'),
+            ]);
 
-            parent::save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($name))) . '.php');
-        });
+            parent::save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($tableName))) . '.php');
+        }
+
+
     }
 
     /**
-     * Prepare package replacer .
+     * Build relations .
      *
-     * @param $packages
-     * @param array $arguments
-     * @return array
+     * @param array $relations
+     * @return string
      */
-    protected function getPackagesReplacement($packages, $arguments = array()) {
-        $aliases = config('scaffold-generator.packages');
+    protected function buildRelations(array $relations = array()) {
+        $relationsString = '';
+        $relationsArray  = [];
 
-        $replacement = [];
-        foreach($packages as $package => $options) {
-            if(is_numeric($package))
-                $package = $options;
+        foreach ($relations as $relation => $options) {
+            $template = array_get($this->templates, $relation);
 
-            if( ! in_array($package, array_keys($aliases)) )
-                return false;
+            array_walk($relations, function($relation) use(& $relationsString, $template, & $relationsArray) {
 
-            $class = $aliases[$package]['class'];
-
-            if(! class_exists($class))
-                return false;
-
-            $data = (new $class($arguments))
-                ->buildDepency()
-                ->toArray();
-
-            foreach ($data as $key => $value) {
-                @$replacement[$key] .= $value;
-            }
+                $relationsArray[] = $relation['function'];
+                $relationsString .= $template;
+                array_walk($relation, function($value, $key)  use(& $relationsString, $template) {
+                    $relationsString = str_replace('{{'.$key.'}}', $value, $relationsString);
+                });
+            });
         }
 
-        return $replacement;
+        return [
+            'string' => $relationsString,
+            'array'  => $relationsArray,
+        ];
     }
+
+    /**
+     * Build packages assets  and get replacement .
+     *
+     * @param array $packages
+     * @return array
+     */
+    protected function buildPackagesAssets(array $packages = array()) {
+
+        $replacements = [];
+
+        foreach($packages as $package => $attributes) {
+
+            if( ! $this->packageManager->hasPackage($package) )
+                continue;
+
+            $packageInstance = $this->packageManager
+                ->packageInstance($package, $attributes);
+
+            $replacement = $packageInstance
+                ->buildDependency()
+                ->toArray();
+
+            $replacements[$package] = $replacement;
+        }
+
+        return $replacements;
+    }
+
+    /**
+     * Merge current packages with default packages .
+     *
+     * @param array $packages
+     * @return array
+     */
+    protected function mergeWithDefaultPackages(array $packages = array()) {
+        $packages = array_merge(
+            $packages,
+            $this->getPackageManager()->getDefaultPackages()
+        );
+
+        return $packages;
+    }
+
 }
