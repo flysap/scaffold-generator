@@ -11,6 +11,11 @@ fields_type_alias:
  int: integer
  string: varchar
 
+# these packages will be set up automaticly .
+default_packages:
+  scaffold:
+    attribute1: attribute1
+
 # here will be declared all the aliases packages .
 packages:
  sluggable:
