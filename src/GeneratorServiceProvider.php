@@ -5,8 +5,7 @@ namespace Flysap\ScaffoldGenerator;
 use Flysap\ScaffoldGenerator\Parsers\Field;
 use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
+use Flysap\Support;
 
 class GeneratorServiceProvider extends ServiceProvider {
 
@@ -32,11 +31,7 @@ class GeneratorServiceProvider extends ServiceProvider {
     public function register() {
 
         /** Stub generator . */
-        $this->app->singleton('stub-generator', function () {
-            return new StubGenerator(
-                new Filesystem()
-            );
-        });
+        $this->app->singleton('stub-generator', StubGenerator::class);
 
         /** Scaffold manager . */
         $this->app->singleton('scaffold-manager', function ($app) {
@@ -82,13 +77,9 @@ class GeneratorServiceProvider extends ServiceProvider {
      * @return $this
      */
     protected function loadConfiguration() {
-        $array = Yaml::parse(file_get_contents(
-            __DIR__ . '/../configuration/general.yaml'
-        ));
-
-        $config = $this->app['config']->get('scaffold-generator', []);
-
-        $this->app['config']->set('scaffold-generator', array_merge((array)$array, $config));
+        Support\set_config_from_yaml(
+            __DIR__ . '/../configuration/general.yaml' , 'scaffold-generator'
+        );
 
         return $this;
     }

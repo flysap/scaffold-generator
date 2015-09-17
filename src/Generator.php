@@ -21,7 +21,7 @@ class Generator {
      */
     public static function generate($generator = self::GENERATOR_MODEL) {
         return (new $generator(
-            new Filesystem(), app('stub-generator'), app('field-parser'), app('relation-parser')
+           app('stub-generator'), app('field-parser'), app('relation-parser')
         ));
     }
 }

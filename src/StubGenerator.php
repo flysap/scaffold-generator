@@ -3,14 +3,9 @@
 namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
-use Symfony\Component\Filesystem\Filesystem;
+use Flysap\Support;
 
 class StubGenerator {
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
 
     /**
      * @var
@@ -22,11 +17,6 @@ class StubGenerator {
      */
     protected $fields;
 
-    public function __construct(Filesystem $filesystem) {
-
-        $this->filesystem = $filesystem;
-    }
-
     /**
      * Load stub .
      *
@@ -35,7 +25,7 @@ class StubGenerator {
      * @throws StubException
      */
     public function loadStub($path) {
-        if( ! $this->filesystem->exists(
+        if( ! Support\is_path_exists(
             $path
         ) )
             throw new StubException(
@@ -116,13 +106,14 @@ class StubGenerator {
      * Save stub .
      *
      * @param $path
-     * @throws StubException
+     * @return mixed
      */
     public function save($path) {
         $storePath = config('scaffold-generator.temp_path');
 
-        return $this->filesystem
-            ->dumpFile(storage_path($storePath . $path), $this->generate());
+        return Support\dump_file(
+            storage_path($storePath . $path), $this->generate()
+        );
     }
 
 

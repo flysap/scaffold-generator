@@ -5,14 +5,10 @@ namespace Flysap\ScaffoldGenerator\Generators;
 use Flysap\ScaffoldGenerator\Parsers\Field;
 use Flysap\ScaffoldGenerator\Parsers\Relation;
 use Flysap\ScaffoldGenerator\StubGenerator;
-use Symfony\Component\Filesystem\Filesystem;
+use Flysap\Support;
 
 abstract class Generator {
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
 
     /**
      * @var StubGenerator
@@ -55,10 +51,8 @@ abstract class Generator {
     protected $relations;
 
 
-    public function __construct(Filesystem $filesystem, StubGenerator $stubGenerator, Field $fieldParser, Relation $relationParser) {
+    public function __construct(StubGenerator $stubGenerator, Field $fieldParser, Relation $relationParser) {
 
-
-        $this->filesystem = $filesystem;
         $this->stubGenerator = $stubGenerator;
         $this->fieldParser = $fieldParser;
         $this->relationParser = $relationParser;
@@ -174,7 +168,7 @@ abstract class Generator {
      * @return string
      */
     public function loadStub() {
-        if( $this->filesystem->exists(
+        if( Support\is_path_exists(
             $this->getStub()
         ) )
             return file_get_contents(
@@ -289,6 +283,7 @@ abstract class Generator {
      * Save migration .
      *
      * @param $path
+     * @return mixed
      */
     public function save($path) {
         $this->stubGenerator->loadStub(
