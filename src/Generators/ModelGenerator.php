@@ -143,15 +143,16 @@ class ModelGenerator extends Generator  {
                 isset($options['relations']) ? (array)$options['relations'] : []
             );
 
-
             $fields = $this->getFieldsParser()
                 ->setRawFields($options['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
+            $class = str_singular(ucfirst($tableName));
+            $table = strtolower(str_plural($tableName));
 
             $this->addReplacement([
-                'class'              => str_singular(ucfirst($tableName)),
-                'table_name'         => strtolower($tableName),
+                'class'              => $class,
+                'table_name'         => $table,
                 'table_fields'       => "'".$fields."'",
                 'table_relations'    => $relationReplacement['string'],
                 'relations'          => 'protected $relation = [\'' . implode(',\'', $relationReplacement['array']) . '\'];',
@@ -159,7 +160,7 @@ class ModelGenerator extends Generator  {
                 'name'               => $this->getContent('name'),
             ]);
 
-            parent::save($path . DIRECTORY_SEPARATOR . str_singular(ucfirst(strtolower($tableName))) . '.php');
+            parent::save($path . DIRECTORY_SEPARATOR . $class . '.php');
         }
 
 
