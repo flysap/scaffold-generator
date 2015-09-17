@@ -10,6 +10,7 @@ class MigrationGenerator extends Generator {
      * @var array
      */
     protected $typeAlias = [
+        'increments'  => 'increments',
         'int'         => 'integer',
         'tinyint'     => 'tinyInteger',
         'smallint'    => 'smallInteger',
@@ -40,12 +41,12 @@ class MigrationGenerator extends Generator {
     /**
      * @var string
      */
-    protected $fieldTemplate = '$table->{type}("{name}")';
+    protected $fieldTemplate = "\$table->{type}('{name}')";
 
     /**
      * @var string
      */
-    protected $fieldRelation = '$table->foreign("{foreign}")->references("{reference}")->on("{on}")->onDelete("{on_delete}")->onUpdate("{on_update}")';
+    protected $fieldRelation = "\$table->foreign('{foreign}')->references('{reference}')->on('{table}')->onDelete('{on_delete}')->onUpdate('{on_update}')";
 
     /**
      * Save all models ..
@@ -56,14 +57,18 @@ class MigrationGenerator extends Generator {
     public function save($path) {
         $contents = $this->getContents();
 
-        array_walk($contents, function($table) use($path)  {
+        $t = 10;
+        array_walk($contents, function($table) use($path, & $t)  {
 
             $tableFields = [];
             $fields      = $this->setFields(
                 $table['fields']
             )->getFields();
 
+
+            $t += 100;
             array_walk($fields, function($field) use(& $tableFields) {
+
                 $string = $this->fieldTemplate;
 
                 foreach ($field as $key => $value) {
@@ -109,7 +114,8 @@ class MigrationGenerator extends Generator {
                     'table_relations' => $tableRelations,
                 ]);
 
-            $time = date('Y_m_d_His');
+
+            $time = date('Y_m_d_His', time() + $t);
 
             parent::save($path . DIRECTORY_SEPARATOR . 'migrations/'.$time.'_create_' . strtolower(str_plural($table['name'])) . '_table.php');
         });
