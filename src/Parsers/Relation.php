@@ -78,10 +78,10 @@ class Relation {
      */
     public function toType($matches) {
         if(! isset($matches['on_update']))
-            $matches['on_update'] = 'no action';
+            $matches['on_update'] = 'cascade';
 
         if(! isset($matches['on_delete']))
-            $matches['on_delete'] = 'no action';
+            $matches['on_delete'] = 'cascade';
 
         return $matches;
     }
