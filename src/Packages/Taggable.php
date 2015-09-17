@@ -3,6 +3,7 @@
 namespace Flysap\ScaffoldGenerator\Packages;
 
 use Flysap\ScaffoldGenerator\PackageAble;
+use Flysap\Support;
 
 class Taggable extends Package implements PackageAble {
 
@@ -35,6 +36,11 @@ class Taggable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
+        Support\artisan('vendor:publish', [
+            '--provider' => 'Cartalyst\Tags\TagsServiceProvider',
+            '--tag'      => ['migrations']
+        ]);
+
         return $this;
     }
 }
