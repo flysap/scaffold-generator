@@ -108,14 +108,12 @@
                                                             <div class="col-xs-9">
                                                                 @foreach($packages as $package_key => $package)
                                                                     <label>
-                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>$(this).closest('div').find('textarea').toggle(); <?php } ?>">
+                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>$(this).toggle(function() {console.log(1)}, function() {console.log(2)}); <?php } ?>">
                                                                         <span title="{{isset($package['description']) ? $package['description'] : ''}}">{{$package_key}}</span>
-
-
                                                                     </label>
 
                                                                     @if(isset($package['attributes']))
-                                                                        <textarea name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{$package['attributes']}}</textarea>
+                                                                        <textarea disabled name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{isset($package['attributes']) ? $package['attributes'] : ''}}</textarea>
                                                                     @endif
 
                                                                 @endforeach
