@@ -51,6 +51,7 @@ class MigrationGenerator extends Generator {
      * Save all models ..
      *
      * @param $path
+     * @return mixed|void
      */
     public function save($path) {
         $contents = $this->getContents();
@@ -62,9 +63,9 @@ class MigrationGenerator extends Generator {
                 $table['fields']
             )->getFields();
 
-
             array_walk($fields, function($field) use(& $tableFields) {
                 $string = $this->fieldTemplate;
+
                 foreach ($field as $key => $value) {
                     if( $key == 'type' ) {
                         if( isset($this->typeAlias[$value]) )
@@ -73,6 +74,7 @@ class MigrationGenerator extends Generator {
 
                     $string = str_replace('{'.$key.'}', $value, $string);
                 }
+
 
                 foreach ($this->specialValues as $key => $value) {
                     if( isset($field[$key]) )
@@ -99,7 +101,8 @@ class MigrationGenerator extends Generator {
                 });
             }
 
-            $this->setReplacement([
+
+            $this->setReplacements([
                     'class_name'      => 'Create'.ucfirst(str_plural($table['name'])).'Table',
                     'table_name'      => str_plural($table['name']),
                     'table_fields'    => $tableFields,

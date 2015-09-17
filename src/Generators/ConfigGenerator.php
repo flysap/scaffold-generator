@@ -15,6 +15,7 @@ class ConfigGenerator extends Generator {
      * Save module.json
      *
      * @param $path
+     * @return mixed
      */
     public function save($path) {
         $contents = $this->getContents();
@@ -33,7 +34,7 @@ class ConfigGenerator extends Generator {
             ];
         });
 
-        $this->setReplacement([
+        $this->addReplacement([
             'vendor'      => $this->getVendor(),
             'name'        => $this->getUser(),
             'description' => $this->getDescription(),
