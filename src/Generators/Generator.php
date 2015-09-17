@@ -9,7 +9,6 @@ use Flysap\Support;
 
 abstract class Generator {
 
-
     /**
      * @var StubGenerator
      */
@@ -38,7 +37,7 @@ abstract class Generator {
     /**
      * @var
      */
-    protected $replacement;
+    protected $replacements = [];
 
     /**
      * @var
@@ -50,14 +49,34 @@ abstract class Generator {
      */
     protected $relations;
 
+    protected $packageManager;
 
     public function __construct(StubGenerator $stubGenerator, Field $fieldParser, Relation $relationParser) {
 
         $this->stubGenerator = $stubGenerator;
         $this->fieldParser = $fieldParser;
         $this->relationParser = $relationParser;
+
+        $this->init();
     }
 
+    /**
+     * Initialize generator .
+     *
+     * @return mixed
+     */
+    public function init() {
+        $this->packageManager = app('scaffold-package');
+    }
+
+    /**
+     * Get package manager .
+     *
+     * @return mixed
+     */
+    protected function getPackageManager() {
+        return $this->packageManager;
+    }
 
     /**
      * Set contents .
@@ -112,11 +131,11 @@ abstract class Generator {
     /**
      * Set replacement .
      *
-     * @param $fields
+     * @param array $replacements
      * @return $this
      */
-    public function setReplacement($fields) {
-        $this->replacement = $fields;
+    public function setReplacements(array $replacements = array()) {
+        $this->replacements = $replacements;
 
         return $this;
     }
@@ -124,13 +143,11 @@ abstract class Generator {
     /**
      * Merge replacement .
      *
-     * @param $fields
+     * @param array $replacements
      * @return $this
      */
-    public function mergeReplacement($fields) {
-        $this->replacement = array_merge(
-            $fields, $this->getReplacement()
-        );
+    public function addReplacement(array $replacements = array()) {
+        $this->replacements = array_merge($replacements, $this->replacements);
 
         return $this;
     }
@@ -140,8 +157,8 @@ abstract class Generator {
      *
      * @return mixed
      */
-    public function getReplacement() {
-        return $this->replacement;
+    public function getReplacements() {
+        return $this->replacements;
     }
 
 
@@ -291,7 +308,7 @@ abstract class Generator {
         );
 
         return $this->stubGenerator
-                ->addFields($this->getReplacement())
+                ->addFields($this->getReplacements())
                 ->save($path);
     }
 
