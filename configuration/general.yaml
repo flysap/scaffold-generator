@@ -8,7 +8,6 @@ fields_type_alias:
  smallint: smallInteger
  mediumInteger: mediumint
  bigInteger: bigint
- int: integer
  string: varchar
 
 # these packages will be set up automaticly .
