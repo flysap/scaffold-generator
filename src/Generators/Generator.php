@@ -161,6 +161,14 @@ abstract class Generator {
         return $this->replacements;
     }
 
+    /**
+     * Clear replacements .
+     *
+     */
+    public function clearReplacements() {
+        $this->setReplacements([]);
+    }
+
 
     /**
      * Set stub path
