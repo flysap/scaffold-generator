@@ -3,11 +3,11 @@
 namespace Modules\{{vendor}}\{{name}};
 
 use Illuminate\Database\Eloquent\Model;
-{{packs_import}}
+{{import}}
 class {{class}} extends Model {{packs_contracts}} {
 
-    {{packs_traits}}
-    {{packs_options}}
+    {{traits}}
+    {{options}}
 
     {{relations}}
 
