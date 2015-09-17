@@ -14,7 +14,7 @@ fields_type_alias:
 # these packages will be set up automaticly .
 default_packages:
   scaffold:
-    attribute1: attribute1
+    attributes:
 
 # here will be declared all the aliases packages .
 packages:
@@ -41,7 +41,7 @@ packages:
 
  validable :
   class: Flysap\ScaffoldGenerator\Packages\Validable
-  attributes: /**&#10;                   * Validate fields .&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected \$rules = [&#10;                      'title' => 'required|unique:posts|max:255',&#10;                      'body' => 'required',&#10;                  ];
+  attributes: /**&#10;                   * Validate fields .&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected $rules = [&#10;                      'title' => 'required|unique:posts|max:255',&#10;                      'body' => 'required',&#10;                  ];
   is_default: false
   description: Your description
 
