@@ -185,7 +185,9 @@ abstract class Generator {
     /**
      * @return mixed
      */
-    abstract function getStub();
+    public function getStub() {
+        return $this->stub;
+    }
 
     /**
      * Load stub .

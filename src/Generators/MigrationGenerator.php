@@ -48,6 +48,14 @@ class MigrationGenerator extends Generator {
      */
     protected $fieldRelation = "\$table->foreign('{foreign}')->references('{reference}')->on('{table}')->onDelete('{on_delete}')->onUpdate('{on_update}')";
 
+    public function init() {
+        parent::init();
+
+        $this->setStub(
+            __DIR__ . DIRECTORY_SEPARATOR .'../../stubs/migration_create.stub'
+        );
+    }
+
     /**
      * Save all models ..
      *
@@ -58,6 +66,7 @@ class MigrationGenerator extends Generator {
         $contents = $this->getContents();
 
         $t = 10;
+
         array_walk($contents, function($table) use($path, & $t)  {
 
             $tableFields = [];
@@ -119,12 +128,5 @@ class MigrationGenerator extends Generator {
 
             parent::save($path . DIRECTORY_SEPARATOR . 'migrations/'.$time.'_create_' . strtolower(str_plural($table['name'])) . '_table.php');
         });
-    }
-
-    /**
-     * @return mixed
-     */
-    function getStub() {
-        return __DIR__ . DIRECTORY_SEPARATOR .'../../stubs/migration.stub';
     }
 }

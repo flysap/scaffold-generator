@@ -45,6 +45,12 @@ class ModelGenerator extends Generator  {
         'belongsTo'      => "public function {{function}}() { \$this->belongsTo('{{table}}', '{{local_key}}', '{{parent_key}}'); }",
     ];
 
+    public function init() {
+        parent::init();
+
+        $this->setStub(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/model.stub');
+    }
+
     /**
      * Prepare ..
      *
@@ -104,12 +110,6 @@ class ModelGenerator extends Generator  {
         return ['tables' => $tables] + $contents;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getStub() {
-       return __DIR__ . DIRECTORY_SEPARATOR . '../../stubs/model.stub';
-    }
 
     /**
      * Save all models .
