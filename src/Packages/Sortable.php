@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Sortable extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Sortable extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Sortable extends Package implements PackageInterface {
      */
     public function import() {
         return "use Eloquent\\Sortable;use Eloquent\\SortableTrait;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

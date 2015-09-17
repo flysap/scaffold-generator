@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Search extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Search extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -45,5 +47,14 @@ class Search extends Package implements PackageInterface {
 
 EOD;
 
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

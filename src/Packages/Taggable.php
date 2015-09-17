@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Taggable extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Taggable extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Taggable extends Package implements PackageInterface {
      */
     public function import() {
         return "use Cartalyst\\Tags\\TaggableTrait;\nuse Cartalyst\\Tags\\TaggableInterface;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

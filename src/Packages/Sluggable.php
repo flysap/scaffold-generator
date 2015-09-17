@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Sluggable extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Sluggable extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Sluggable extends Package implements PackageInterface {
      */
     public function import() {
         return "use Cviebrock\\EloquentSluggable\\SluggableInterface;\nuse Cviebrock\\EloquentSluggable\\SluggableTrait;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Imageable extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Imageable extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Imageable extends Package implements PackageInterface {
      */
     public function import() {
         return "use Eloquent\\ImageAble\\ImageAble;\nuse Eloquent\\ImageAble\\ImageAbleTrait;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

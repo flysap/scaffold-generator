@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class SeoAble extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class SeoAble extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class SeoAble extends Package implements PackageInterface {
      */
     public function import() {
         return "use Laravel\\Meta\\Eloquent\\MetaSeoable;\nuse Laravel\\Meta\\Eloquent\\MetaSeoTrait;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

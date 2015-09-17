@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Presenter extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Presenter extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -42,6 +44,15 @@ class Presenter extends Package implements PackageInterface {
                 $this->getAttribute('path') . DIRECTORY_SEPARATOR . $this->getAttribute('class') . 'Presenter.php'
             );
 
+        return $this;
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
         return $this;
     }
 }

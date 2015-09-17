@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Scaffold extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Scaffold extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Scaffold extends Package implements PackageInterface {
      */
     public function import() {
         return "use Flysap\\Scaffold\\Traits\\ScaffoldTrait;\nuse Flysap\\Scaffold\\ScaffoldAble;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

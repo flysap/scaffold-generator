@@ -2,7 +2,9 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
-class Exportable extends Package implements PackageInterface {
+use Flysap\ScaffoldGenerator\PackageAble;
+
+class Exportable extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -25,5 +27,14 @@ class Exportable extends Package implements PackageInterface {
      */
     public function import() {
         return "use DataExporter\\DriverAssets\\Eloquent\\Exportable;\nuse DataExporter\\DriverAssets\\Eloquent\\ExportableTrait;\n";
+    }
+
+    /**
+     * Build some templates for that package .
+     *
+     * @return $this
+     */
+    public function buildDependency() {
+        return $this;
     }
 }

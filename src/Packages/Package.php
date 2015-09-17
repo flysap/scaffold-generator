@@ -9,6 +9,9 @@ abstract class Package implements Arrayable {
 
     use ElementAttributes;
 
+    /**
+     * @var \Illuminate\Foundation\Application|mixed
+     */
     protected $stubGenerator;
 
     /**
@@ -56,9 +59,7 @@ abstract class Package implements Arrayable {
      *
      * @return $this
      */
-    public function buildDepency() {
-        return $this;
-    }
+    abstract public function buildDependency();
 
     /**
      * To array convert .
@@ -67,10 +68,10 @@ abstract class Package implements Arrayable {
      */
     public function toArray() {
         return [
-            'Packages_traits'    => $this->traits(),
-            'Packages_options'   => $this->options(),
-            'Packages_contracts' => $this->contracts(),
-            'Packages_import'    => $this->import(),
+            'traits'    => $this->traits(),
+            'options'   => $this->options(),
+            'contracts' => $this->contracts(),
+            'import'    => $this->import(),
         ];
     }
 }

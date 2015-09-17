@@ -1,8 +1,8 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Packages;
+namespace Flysap\ScaffoldGenerator;
 
-interface PackageInterface {
+interface PackageAble {
 
     /**
      * @return mixed
