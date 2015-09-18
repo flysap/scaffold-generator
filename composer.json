@@ -2,6 +2,7 @@
     "name": "flysap/scaffold-generator",
     "description": "SMG",
     "require": {
+        "fabpot/php-cs-fixer": "v1.*",
         "laravel/framework": "~5.1",
         "flysap/support": "dev-master",
         "flysap/scaffold": "dev-master"
