@@ -38,6 +38,15 @@ class Sluggable extends Package implements PackageAble {
     public function buildDependency() {
         $generator = app('generator');
 
+        $attribute = $this->getAttribute('attributes');
+
+        $slug = 'slug';
+        if( preg_match("/(?s)(\\[.*\\])/", $attribute, $matches) ) {
+            #@todo temp ??
+            $jsonArray = eval("return ".$matches[0].";");
+            $slug      = isset($jsonArray['save_to']) ? $jsonArray['save_to'] : $slug;
+        }
+
         $generator->generate(
             Generator::GENERATOR_MIGRATION
         )
@@ -52,7 +61,7 @@ class Sluggable extends Package implements PackageAble {
             ->setContents([
                 [
                     'name'      => $this->getAttribute('name'),
-                    'fields'    => 'slug:integer',
+                    'fields'    => $slug.':integer',
                     'relations' => '',
                 ]
             ])
