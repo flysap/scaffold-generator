@@ -3,6 +3,7 @@
 namespace Flysap\ScaffoldGenerator\Packages;
 
 use Flysap\ScaffoldGenerator\PackageAble;
+use Flysap\Support;
 
 class Imageable extends Package implements PackageAble {
 
@@ -35,6 +36,11 @@ class Imageable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
+        Support\artisan('vendor:publish', [
+            '--provider' => 'Eloquent\ImageAble\ImageAbleServiceProvider',
+            '--tag'      => ['migrations']
+        ]);
+
         return $this;
     }
 }

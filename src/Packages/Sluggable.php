@@ -2,6 +2,7 @@
 
 namespace Flysap\ScaffoldGenerator\Packages;
 
+use Flysap\ScaffoldGenerator\Generator;
 use Flysap\ScaffoldGenerator\PackageAble;
 
 class Sluggable extends Package implements PackageAble {
@@ -35,6 +36,31 @@ class Sluggable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
+        $generator = app('generator');
+
+        $generator->generate(
+            Generator::GENERATOR_MIGRATION
+        )
+            ->setStub(__DIR__ . '/../../stubs/migration_update.stub')
+            ->setFormatter(function(array $replacements, $time) {
+                return [
+                    'class_name'        => 'AddSlug' . $replacements['class_name'] . 'Table',
+                    'table_name'        => strtolower($replacements['table_name']),
+                    'migration_name'    => date('Y_m_d_His', time() + $time) . '_add_slug_' . strtolower($replacements['migration_name']) . '_table.php',
+                ] + $replacements;
+            })
+            ->setContents([
+                [
+                    'name'      => $this->getAttribute('name'),
+                    'fields'    => 'slug:integer',
+                    'relations' => '',
+                ]
+            ])
+            ->save(
+                $this->getAttribute('path')
+            );
+
+
         return $this;
     }
 }
