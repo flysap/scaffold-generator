@@ -27,7 +27,7 @@ class Sortable extends Package implements PackageAble {
      * @return mixed
      */
     public function import() {
-        return "use Eloquent\\Sortable;use Eloquent\\SortableTrait;\n";
+        return "use Eloquent\\Sortable\\Sortable;\nuse Eloquent\\Sortable\\SortableTrait;\n";
     }
 
     /**
