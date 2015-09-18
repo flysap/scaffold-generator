@@ -10,31 +10,32 @@ class MigrationGenerator extends Generator {
      * @var array
      */
     protected $typeAlias = [
-        'increments'  => 'increments',
-        'int'         => 'integer',
-        'tinyint'     => 'tinyInteger',
-        'smallint'    => 'smallInteger',
-        'mediumint'   => 'mediumInteger',
-        'bigint'      => 'bigInteger',
-        'float'       => 'float',
-        'double'      => 'double',
+        'increments' => 'increments',
+        'inc' => 'increments',
+        'int' => 'integer',
+        'tinyint' => 'tinyInteger',
+        'smallint' => 'smallInteger',
+        'mediumint' => 'mediumInteger',
+        'bigint' => 'bigInteger',
+        'float' => 'float',
+        'double' => 'double',
 
-        'char'        => 'char',
-        'varchar'     => 'string',
-        'mediumtext'  => 'mediumText',
-        'longtext'    => 'longText',
-        'text'        => 'text',
+        'char' => 'char',
+        'varchar' => 'string',
+        'mediumtext' => 'mediumText',
+        'longtext' => 'longText',
+        'text' => 'text',
 
-        'enum'        => 'enum',
+        'enum' => 'enum',
 
-        'date'        => 'date',
-        'datetime'    => 'dateTime',
-        'time'        => 'time',
+        'date' => 'date',
+        'datetime' => 'dateTime',
+        'time' => 'time',
     ];
 
     protected $specialValues = [
         'unsigned' => '->unsigned()',
-        'index'    => '->index()',
+        'index' => '->index()',
         'nullable' => '->nullable()',
     ];
 
@@ -46,14 +47,27 @@ class MigrationGenerator extends Generator {
     /**
      * @var string
      */
-    protected $fieldRelation = "\$table->foreign('{foreign}')->references('{reference}')->on('{table}')->onDelete('{on_delete}')->onUpdate('{on_update}')";
+    protected $fieldRelation = "\$table->foreign('{foreign}')->references('{reference}')->on('{table}')->onDelete('{on_delete}')->onUpdate('{on_update}');";
+
+    /**
+     * @var
+     */
+    protected $formatter;
 
     public function init() {
         parent::init();
 
         $this->setStub(
-            __DIR__ . DIRECTORY_SEPARATOR .'../../stubs/migration_create.stub'
+            __DIR__ . DIRECTORY_SEPARATOR . '../../stubs/migration_create.stub'
         );
+
+        $this->setFormatter(function($replacements, $time) {
+             return [
+                'class_name'        => 'Create' . $replacements['class_name'] . 'Table',
+                'table_name'        => strtolower($replacements['table_name']),
+                'migration_name'    => date('Y_m_d_His', time() + $time) . '_create_' . strtolower($replacements['migration_name']) . '_table.php',
+            ] + $replacements;
+        });
     }
 
     /**
@@ -65,68 +79,131 @@ class MigrationGenerator extends Generator {
     public function save($path) {
         $contents = $this->getContents();
 
-        $t = 10;
+        foreach ($contents as $table) {
+            $this->clearReplacements();
 
-        array_walk($contents, function($table) use($path, & $t)  {
+            $className = ucfirst(str_plural($table['name']));
 
-            $tableFields = [];
-            $fields      = $this->setFields(
+            $fields = $this->buildFields(
                 $table['fields']
-            )->getFields();
+            );
+
+            $relations = $this->buildRelations(
+                $table['relations']
+            );
+
+            $replacements = $this->formatReplacements([
+                'class_name'        => $className,
+                'table_name'        => $className,
+                'table_fields'      => $fields,
+                'table_relations'   => $relations,
+                'migration_name'    => $className,
+            ]);
+
+            $this->addReplacement(array_except($replacements, 'migration_name'));
+
+            parent::save($path . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR . $replacements['migration_name']);
+        }
+
+        return $this;
+    }
 
 
-            $t += 100;
-            array_walk($fields, function($field) use(& $tableFields) {
+    /**
+     * Set format title .
+     *
+     * @param $formatter
+     * @return $this
+     */
+    public function setFormatter(\Closure $formatter) {
+        $this->formatter = $formatter;
 
-                $string = $this->fieldTemplate;
+        return $this;
+    }
 
-                foreach ($field as $key => $value) {
-                    if( $key == 'type' ) {
-                        if( isset($this->typeAlias[$value]) )
-                            $value = $this->typeAlias[$value];
-                    }
+    /**
+     * Get formatter .
+     *
+     * @return mixed
+     */
+    public function getFormatter() {
+        return $this->formatter;
+    }
 
-                    $string = str_replace('{'.$key.'}', $value, $string);
-                }
+    /**
+     * Format title .
+     *
+     * @param $title
+     * @return mixed
+     */
+    public function formatReplacements($title) {
+        static $time;
+        $time += 500;
+
+        if( $this->formatter instanceof \Closure ) {
+            $formatter = $this->formatter;
+
+            return $formatter($title, $time);
+        }
+
+        return $title;
+    }
 
 
-                foreach ($this->specialValues as $key => $value) {
-                    if( isset($field[$key]) )
-                        $string .= $value;
-                }
+    /**
+     * Build relations .
+     *
+     * @param array $relations
+     * @return array
+     */
+    protected function buildRelations($relations) {
+        $this->setRelations($relations);
 
-                $tableFields[] = $string . ';';
-            });
-
-
-            $tableRelations = [];
-            if( isset($table['relations']) ) {
-                $this->setRelations($table['relations']);
-
-                $tableRelations = [];
-                $relations      = array_filter($this->getRelations());
-                array_walk($relations, function($relation) use(& $tableRelations) {
-                    $string = $this->fieldRelation;
-                    foreach ($relation as $key => $value) {
-                        $string = str_replace('{'.$key.'}', $value, $string);
-                    }
-
-                    $tableRelations[] = $string . ';';
-                });
+        $tableRelations = [];
+        $relations = array_filter($this->getRelations());
+        array_walk($relations, function ($relation) use (& $tableRelations) {
+            $string = $this->fieldRelation;
+            foreach ($relation as $key => $value) {
+                $string = str_replace('{' . $key . '}', $value, $string);
             }
 
-
-            $this->setReplacements([
-                    'class_name'      => 'Create'.ucfirst(str_plural($table['name'])).'Table',
-                    'table_name'      => str_plural($table['name']),
-                    'table_fields'    => $tableFields,
-                    'table_relations' => $tableRelations,
-                ]);
-
-
-            $time = date('Y_m_d_His', time() + $t);
-
-            parent::save($path . DIRECTORY_SEPARATOR . 'migrations/'.$time.'_create_' . strtolower(str_plural($table['name'])) . '_table.php');
+            $tableRelations[] = $string . ';';
         });
+
+        return $tableRelations;
+    }
+
+    /**
+     * Build fields .
+     *
+     * @param array $fields
+     * @return array
+     */
+    protected function buildFields($fields) {
+        $tableFields = [];
+        $fields = $this->setFields($fields)->getFields();
+
+        array_walk($fields, function ($field) use (& $tableFields) {
+
+            $string = $this->fieldTemplate;
+
+            foreach ($field as $key => $value) {
+                if ($key == 'type') {
+                    if (isset($this->typeAlias[$value]))
+                        $value = $this->typeAlias[$value];
+                }
+
+                $string = str_replace('{' . $key . '}', $value, $string);
+            }
+
+            foreach ($this->specialValues as $key => $value) {
+                if (isset($field[$key]))
+                    $string .= $value;
+            }
+
+            $tableFields[] = $string . ';';
+        });
+
+        return $tableFields;
     }
 }
