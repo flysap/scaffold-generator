@@ -17,7 +17,7 @@ class {{class}} extends Model {{contracts}} {
 
     protected $fillable = [{{table_fields}}];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     {{table_relations}}
 }
