@@ -73,3 +73,8 @@ packages:
   class: Flysap\ScaffoldGenerator\Packages\Taggable
   is_default: false
   description: Your description
+
+ apiable :
+  class: Flysap\ScaffoldGenerator\Packages\ApiAble
+  is_default: false
+  description: Your description
