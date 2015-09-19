@@ -82,6 +82,7 @@ abstract class Generator {
         return $this->packageManager;
     }
 
+
     /**
      * Set contents .
      *
@@ -278,6 +279,7 @@ abstract class Generator {
     public function getRelations() {
         return $this->relations;
     }
+
 
 
     /**
