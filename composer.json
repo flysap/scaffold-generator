@@ -24,7 +24,7 @@
       }
     ],
     "require": {
-        "nicolaslopezj/searchable": "1.*",
+        "nicolaslopezj/searchable": "dev-master",
         "cviebrock/eloquent-sluggable": "3.0",
         "nicolaslopezj/searchable": "1.*",
         "parfumix/laravel-meta": "dev-master",
