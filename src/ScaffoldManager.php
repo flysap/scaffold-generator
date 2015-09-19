@@ -4,6 +4,10 @@ namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
+use Flysap\ScaffoldGenerator\Generators\ComposerGenerator;
+use Flysap\ScaffoldGenerator\Generators\ConfigGenerator;
+use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
+use Flysap\ScaffoldGenerator\Generators\ModelGenerator;
 use Flysap\Support;
 use DB;
 
@@ -13,42 +17,29 @@ class ScaffoldManager {
         try {
             $module = $params['vendor'] . DIRECTORY_SEPARATOR . $params['name'];
 
-            $this->flushModule(
-                $module
-            );
+            $this->flushModule($module);
 
             $path = DIRECTORY_SEPARATOR . $module;
 
-            $generator = app('generator');
             $tables    = $params['tables'];
 
-            $generator->generate(
-                Generator::GENERATOR_MIGRATION
-            )
+            (new MigrationGenerator)
                 ->setContents($tables)
                 ->save(DIRECTORY_SEPARATOR . $module);
 
 
-            $generator->generate(
-                Generator::GENERATOR_MODEL
-            )
+            (new ModelGenerator)
                 ->setContents($params)
                 ->save($path);
 
 
-            $generator->generate(
-                Generator::GENERATOR_COMPOSER
-            )
+            (new ComposerGenerator)
                 ->addReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
 
-
-            $generator->generate(
-                Generator::GENERATOR_CONFIG
-            )
+            (new ConfigGenerator)
                 ->setContents($params)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
-
 
             $this->fixer(storage_path(
                 config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $path
