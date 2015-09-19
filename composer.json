@@ -1,7 +1,39 @@
 {
     "name": "flysap/scaffold-generator",
     "description": "SMG",
+    "repositories": [
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/laravel-meta.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/eloquent-meta.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/eloquent-imageable.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/data-exporter.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/eloquent-sortable.git"
+      }
+    ],
     "require": {
+        "nicolaslopezj/searchable": "1.*",
+        "cviebrock/eloquent-sluggable": "3.0",
+        "nicolaslopezj/searchable": "1.*",
+        "parfumix/laravel-meta": "dev-master",
+        "parfumix/eloquent-meta": "dev-master",
+        "parfumix/eloquent-imageable": "dev-master",
+        "parfumix/data-exporter": "dev-master",
+        "parfumix/eloquent-sortable": "dev-master",
+        "cartalyst/tags": "2.0.*",
+        "watson/validating": "~1.0",
         "laravel/framework": "~5.1",
         "flysap/support": "dev-master",
         "flysap/scaffold": "dev-master"
