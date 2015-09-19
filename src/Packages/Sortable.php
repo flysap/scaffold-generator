@@ -42,6 +42,13 @@ class Sortable extends Package implements PackageAble {
             Generator::GENERATOR_MIGRATION
         )
             ->setStub(__DIR__ . '/../../stubs/migration_update.stub')
+            ->setFormatter(function($replacements, $time) {
+                return [
+                    'class_name'        => 'AddPosition' . $replacements['class_name'] . 'Table',
+                    'table_name'        => strtolower($replacements['table_name']),
+                    'migration_name'    => date('Y_m_d_His', time() + $time) . '_add_position_' . strtolower($replacements['migration_name']) . '_table.php',
+                ] + $replacements;
+            })
             ->setContents([
                 [
                     'name'      => $this->getAttribute('name'),
