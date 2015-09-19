@@ -36,6 +36,9 @@ namespace Flysap\ScaffoldGenerator\Generators;
  * Class ModelGenerator
  * @package Flysap\ScaffoldGenerator
  */
+
+use Flysap\ScaffoldGenerator\Generator;
+
 class ModelGenerator extends Generator  {
 
     protected $templates = [

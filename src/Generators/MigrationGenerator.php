@@ -2,6 +2,8 @@
 
 namespace Flysap\ScaffoldGenerator\Generators;
 
+use Flysap\ScaffoldGenerator\Generator;
+
 class MigrationGenerator extends Generator {
 
     /**

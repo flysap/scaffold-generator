@@ -1,10 +1,9 @@
 <?php
 
-namespace Flysap\ScaffoldGenerator\Generators;
+namespace Flysap\ScaffoldGenerator;
 
 use Flysap\ScaffoldGenerator\Parsers\Field;
 use Flysap\ScaffoldGenerator\Parsers\Relation;
-use Flysap\ScaffoldGenerator\StubGenerator;
 use Flysap\Support;
 
 abstract class Generator {
