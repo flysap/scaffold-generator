@@ -108,13 +108,15 @@
                                                             <div class="col-xs-9">
                                                                 @foreach($packages as $package_key => $package)
                                                                     <label>
-                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>$(this).toggle(function() {console.log(1)}, function() {console.log(2)}); <?php } ?>">
+                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>showPackageAttributes(this); <?php } ?>">
                                                                         <span title="{{isset($package['description']) ? $package['description'] : ''}}">{{$package_key}}</span>
+
+                                                                        @if(isset($package['attributes']))
+                                                                            <textarea disabled name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{isset($package['attributes']) ? $package['attributes'] : ''}}</textarea>
+                                                                        @endif
                                                                     </label>
 
-                                                                    @if(isset($package['attributes']))
-                                                                        <textarea disabled name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{isset($package['attributes']) ? $package['attributes'] : ''}}</textarea>
-                                                                    @endif
+
 
                                                                 @endforeach
                                                             </div>
@@ -161,7 +163,27 @@
     </section>
     <!-- /.content -->
 
-    <script>
+    <script type="text/javascript">
+        /**
+         * Show package attributes if selected ..
+         *
+         * @param object
+         */
+        function showPackageAttributes(object) {
+            var textarea = $(object).closest('label').find('textarea');
+
+            if( textarea ) {
+                textarea.toggle(function() {
+                    $(object).prop('checked') ? textarea.removeAttr('disabled').show() : textarea.attr('disabled', true).attr('hidden', true);
+                });
+            }
+        }
+
+        /**
+         * Remove table .
+         *
+         * @param span
+         */
         function remove_table(span) {
             if( $('.table').length > 1 )
                 $(span).closest('.table').remove();
