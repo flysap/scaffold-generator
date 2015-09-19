@@ -26,7 +26,6 @@
     "require": {
         "nicolaslopezj/searchable": "dev-master",
         "cviebrock/eloquent-sluggable": "3.0",
-        "nicolaslopezj/searchable": "1.*",
         "parfumix/laravel-meta": "dev-master",
         "parfumix/eloquent-meta": "dev-master",
         "parfumix/eloquent-imageable": "dev-master",
