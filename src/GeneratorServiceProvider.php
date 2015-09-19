@@ -2,10 +2,13 @@
 
 namespace Flysap\ScaffoldGenerator;
 
-use Flysap\ScaffoldGenerator\Parsers\Field;
-use Flysap\ScaffoldGenerator\Parsers\Relation;
+use Cartalyst\Tags\TagsServiceProvider;
+use Cviebrock\EloquentSluggable\SluggableServiceProvider;
+use Eloquent\ImageAble\ImageAbleServiceProvider;
+use Eloquent\Meta\MetaServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Flysap\Support;
+use Laravel\Meta\MetaSeoServiceProvider;
 
 class GeneratorServiceProvider extends ServiceProvider {
 
@@ -41,8 +44,6 @@ class GeneratorServiceProvider extends ServiceProvider {
                 ->setDefaultPackages(config('scaffold-generator.default_packages'));
         });
 
-
-
         #@todo we need that ?
 
         /** Scaffold manager . */
@@ -50,24 +51,8 @@ class GeneratorServiceProvider extends ServiceProvider {
             return new ScaffoldManager;
         });
 
-        /** Register field parser. */
-        $this->app->singleton('field-parser', function() {
-            return new Field(
-                config('scaffold-generator.fields_type_alias')
-            );
-        });
-
-        /** Register field parser. */
-        $this->app->singleton('relation-parser', function() {
-            return new Relation;
-        });
-
-        /**
-         * Register generator factory .
-         */
-        $this->app->singleton('generator', function() {
-            return new Generator;
-        });
+        /** Register service providers depency . */
+        $this->registerPackageServices();
     }
 
     /**
@@ -103,5 +88,23 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadViewsFrom(__DIR__ . '/../views', 'scaffold-generator');
 
         return $this;
+    }
+
+    /**
+     * Register service provider dependencies .
+     *
+     */
+    protected function registerPackageServices() {
+        $providers = [
+            SluggableServiceProvider::class,
+            MetaSeoServiceProvider::class,
+            MetaServiceProvider::class,
+            ImageAbleServiceProvider::class,
+            TagsServiceProvider::class,
+        ];
+
+        array_walk($providers, function($provider) {
+            app()->register($provider);
+        });
     }
 }
