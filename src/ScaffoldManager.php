@@ -5,8 +5,7 @@ namespace Flysap\ScaffoldGenerator;
 use Flysap\ScaffoldGenerator\Exceptions\ExportException;
 use Flysap\ScaffoldGenerator\Exceptions\StubException;
 use Flysap\Support;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use DB;
 
 class ScaffoldManager {
 
@@ -40,7 +39,7 @@ class ScaffoldManager {
             $generator->generate(
                 Generator::GENERATOR_COMPOSER
             )
-                ->setReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
+                ->addReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
 
 
@@ -51,9 +50,13 @@ class ScaffoldManager {
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
 
+            $this->fixer(storage_path(
+                config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $path
+            ));
+
             $path = 'storage/' . config('scaffold-generator.temp_path') . $path;
 
-            $this->flushDatabase('sqlite', $path . DIRECTORY_SEPARATOR . 'migrations');
+            $this->flushDatabase('development', $path . DIRECTORY_SEPARATOR . 'migrations');
 
             return $path;
 
@@ -125,24 +128,22 @@ class ScaffoldManager {
     }
 
 
-    /**
-     * Refresh migration
-     *
-     * @param $connection
-     * @param $path
-     * @return mixed
-     */
+    #@todo fix generated code ..
+    protected function fixer($path) {
+        $finder = \Symfony\CS\Finder\DefaultFinder::create()
+            ->in($path)
+        ;
+
+        return \Symfony\CS\Config\Config::create()
+            ->level(\Symfony\CS\FixerInterface::PSR2_LEVEL)
+            ->finder($finder);
+    }
+
+    #@todo find a clear way to rollback migrations .
     protected function flushDatabase($connection, $path) {
-        $tables = DB::connection($connection)
-            ->table('sqlite_master')
-            ->get();
-
-        array_walk($tables, function($table) {
-            if( $table->name ==  'sqlite_sequence' ) return false;
-
-            Schema::connection('sqlite')
-                ->dropIfExists($table->name);
-        });
+        $db = DB::connection($connection)->getDatabaseName();
+        DB::statement('DROP DATABASE `'.$db.'`');
+        DB::statement('CREATE DATABASE `'.$db.'`');
 
         return Support\artisan('migrate', [
             '--database' => $connection, '--path' => $path
