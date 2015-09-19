@@ -49,14 +49,12 @@ abstract class Generator {
      */
     protected $relations;
 
+    /**
+     * @var
+     */
     protected $packageManager;
 
-    public function __construct(StubGenerator $stubGenerator, Field $fieldParser, Relation $relationParser) {
-
-        $this->stubGenerator = $stubGenerator;
-        $this->fieldParser = $fieldParser;
-        $this->relationParser = $relationParser;
-
+    public function __construct() {
         $this->init();
     }
 
@@ -66,6 +64,13 @@ abstract class Generator {
      * @return mixed
      */
     public function init() {
+        $this->stubGenerator = new StubGenerator;
+        $this->fieldParser = new Field(
+            config('scaffold-generator.fields_type_alias')
+        );
+        $this->relationParser = new Relation;
+
+
         $this->packageManager = app('scaffold-package');
     }
 
