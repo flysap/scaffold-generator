@@ -9,5 +9,9 @@
       "label"  : "Generate",
       "href"   : "/scaffold-generator/generate"
     }
+  ],
+
+  "autoload": [
+    "Flysap\\ScaffoldGenerator\\GeneratorServiceProvider"
   ]
 }
