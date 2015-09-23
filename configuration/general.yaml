@@ -81,3 +81,8 @@ packages:
   class: Flysap\ScaffoldGenerator\Packages\ApiAble
   is_default: false
   description: Your description
+
+ translateable :
+  class: Flysap\ScaffoldGenerator\Packages\TranslatAble
+  is_default: false
+  description: Your description

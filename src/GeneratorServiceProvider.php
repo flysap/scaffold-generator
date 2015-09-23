@@ -9,7 +9,9 @@ use Eloquent\Meta\MetaServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Flysap\Support;
 use Laravel\Meta\MetaSeoServiceProvider;
+use Localization\LocaleServiceProvider;
 use Parfumix\Imageonfly\ImageOnFlyServiceProvider;
+use Translator\TranslatorServiceProvider;
 
 class GeneratorServiceProvider extends ServiceProvider {
 
@@ -126,6 +128,8 @@ class GeneratorServiceProvider extends ServiceProvider {
             ImageAbleServiceProvider::class,
             ImageOnFlyServiceProvider::class,
             TagsServiceProvider::class,
+            TranslatorServiceProvider::class,
+            LocaleServiceProvider::class,
         ];
 
         array_walk($providers, function($provider) {
