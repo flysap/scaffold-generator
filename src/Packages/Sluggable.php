@@ -3,6 +3,7 @@
 namespace Flysap\ScaffoldGenerator\Packages;
 
 use Flysap\ScaffoldGenerator\Generator;
+use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
 use Flysap\ScaffoldGenerator\PackageAble;
 
 class Sluggable extends Package implements PackageAble {
@@ -36,8 +37,6 @@ class Sluggable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
-        $generator = app('generator');
-
         $attribute = $this->getAttribute('attributes');
 
         $slug = 'slug';
@@ -47,9 +46,8 @@ class Sluggable extends Package implements PackageAble {
             $slug      = isset($jsonArray['save_to']) ? $jsonArray['save_to'] : $slug;
         }
 
-        $generator->generate(
-            Generator::GENERATOR_MIGRATION
-        )
+
+        (new MigrationGenerator)
             ->setStub(__DIR__ . '/../../stubs/migration_update.stub')
             ->setFormatter(function(array $replacements, $time) {
                 return [

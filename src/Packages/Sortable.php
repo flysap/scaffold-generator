@@ -3,6 +3,7 @@
 namespace Flysap\ScaffoldGenerator\Packages;
 
 use Flysap\ScaffoldGenerator\Generator;
+use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
 use Flysap\ScaffoldGenerator\PackageAble;
 
 class Sortable extends Package implements PackageAble {
@@ -36,11 +37,7 @@ class Sortable extends Package implements PackageAble {
      * @return $this
      */
     public function buildDependency() {
-        $generator = app('generator');
-
-        $generator->generate(
-            Generator::GENERATOR_MIGRATION
-        )
+        (new MigrationGenerator)
             ->setStub(__DIR__ . '/../../stubs/migration_update.stub')
             ->setFormatter(function($replacements, $time) {
                 return [
