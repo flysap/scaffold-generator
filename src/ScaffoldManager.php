@@ -136,6 +136,10 @@ class ScaffoldManager {
         DB::statement('DROP DATABASE `'.$db.'`');
         DB::statement('CREATE DATABASE `'.$db.'`');
 
+        Support\artisan('migrate', [
+            '--database' => $connection,
+        ]);
+
         return Support\artisan('migrate', [
             '--database' => $connection, '--path' => $path
         ]);
