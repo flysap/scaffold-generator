@@ -52,6 +52,10 @@ class ModelGenerator extends Generator  {
         parent::init();
 
         $this->setStub(__DIR__ . DIRECTORY_SEPARATOR . '../../stubs/model.stub');
+
+        $this->setFormatter(function($replacements, $time) {
+            return $replacements;
+        });
     }
 
     /**
@@ -136,7 +140,10 @@ class ModelGenerator extends Generator  {
 
             /** @var Get package replacement . $packageReplacement */
             $packageReplacement = $this->buildPackagesAssets(
-                $packages, array_merge(['path' => $path], $options)
+                $packages, array_merge(['path' => $path], $options + ['module' => [
+                    'vendor' => $this->getContent('vendor'),
+                    'name' => $this->getContent('name')
+                ]])
             );
 
             $this->addReplacement($packageReplacement);
@@ -150,7 +157,7 @@ class ModelGenerator extends Generator  {
                 ->setRawFields($options['fields'])
                 ->getFieldsOnly("','", null, ["id"]);
 
-            $this->addReplacement([
+            $replacements = $this->formatReplacements([
                 'class'              => $class,
                 'table_name'         => $table,
                 'table_fields'       => "'".$fields."'",
@@ -160,7 +167,9 @@ class ModelGenerator extends Generator  {
                 'name'               => $this->getContent('name'),
             ]);
 
-            parent::save($path . DIRECTORY_SEPARATOR . $class . '.php');
+            $this->addReplacement($replacements);
+
+            parent::save($path . DIRECTORY_SEPARATOR . $replacements['class'] . '.php');
         }
     }
 

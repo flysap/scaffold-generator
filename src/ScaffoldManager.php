@@ -27,7 +27,6 @@ class ScaffoldManager {
                 ->setContents($tables)
                 ->save(DIRECTORY_SEPARATOR . $module);
 
-
             (new ModelGenerator)
                 ->setContents($params)
                 ->save($path);

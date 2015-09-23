@@ -41,7 +41,6 @@ class SeoAble extends Package implements PackageAble {
             '--tag'      => ['migrations']
         ]);
 
-
         return $this;
     }
 }
