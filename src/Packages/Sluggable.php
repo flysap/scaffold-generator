@@ -59,7 +59,7 @@ class Sluggable extends Package implements PackageAble {
             ->setContents([
                 [
                     'name'      => $this->getAttribute('name'),
-                    'fields'    => $slug.':integer',
+                    'fields'    => $slug.':string',
                     'relations' => '',
                 ]
             ])
