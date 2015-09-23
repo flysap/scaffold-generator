@@ -9,6 +9,7 @@ use Eloquent\Meta\MetaServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Flysap\Support;
 use Laravel\Meta\MetaSeoServiceProvider;
+use Parfumix\Imageonfly\ImageOnFlyServiceProvider;
 
 class GeneratorServiceProvider extends ServiceProvider {
 
@@ -123,6 +124,7 @@ class GeneratorServiceProvider extends ServiceProvider {
             MetaSeoServiceProvider::class,
             MetaServiceProvider::class,
             ImageAbleServiceProvider::class,
+            ImageOnFlyServiceProvider::class,
             TagsServiceProvider::class,
         ];
 
