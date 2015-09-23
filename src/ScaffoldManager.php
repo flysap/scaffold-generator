@@ -47,7 +47,7 @@ class ScaffoldManager {
 
             $path = 'storage/' . config('scaffold-generator.temp_path') . $path;
 
-            $this->flushDatabase('development', $path . DIRECTORY_SEPARATOR . 'migrations');
+            $this->flushDatabase(config('scaffold-generator.development_database'), $path . DIRECTORY_SEPARATOR . 'migrations');
 
             return $path;
 

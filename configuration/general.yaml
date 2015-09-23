@@ -1,3 +1,6 @@
+# here will be develpment database adapter
+development_database: development
+
 # here will be stored temporary modules
 temp_path: modules
 
