@@ -82,7 +82,8 @@ packages:
   is_default: false
   description: Your description
 
- translateable :
+ translatable :
   class: Flysap\ScaffoldGenerator\Packages\TranslatAble
+  attributes: /**&#10;                   * Translated fields .&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected $translatedAttributes = [&#10;                      'title',&#10;                      'description',&#10;                  ];
   is_default: false
   description: Your description
