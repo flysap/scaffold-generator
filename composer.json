@@ -21,6 +21,10 @@
       {
         "type": "git",
         "url": "git@github.com:parfumix/eloquent-sortable.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/eloquent-translatable.git"
       }
     ],
     "require": {
@@ -28,6 +32,7 @@
         "cviebrock/eloquent-sluggable": "3.0",
         "parfumix/laravel-meta": "dev-master",
         "parfumix/eloquent-meta": "dev-master",
+        "parfumix/eloquent-translatable": "dev-master",
         "parfumix/eloquent-imageable": "dev-master",
         "parfumix/data-exporter": "dev-master",
         "parfumix/eloquent-sortable": "dev-master",
@@ -35,7 +40,8 @@
         "watson/validating": "~1.0",
         "laravel/framework": "~5.1",
         "flysap/support": "dev-master",
-        "flysap/scaffold": "dev-master"
+        "flysap/scaffold": "dev-master",
+        "fabpot/php-cs-fixer": "^2.0@dev"
     },
     "license": "MIT",
     "authors": [
