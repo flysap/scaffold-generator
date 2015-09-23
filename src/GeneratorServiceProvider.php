@@ -19,6 +19,10 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadRoutes()
             ->loadViews();
 
+        $this->publishes([
+            __DIR__.'/../configuration' => config_path('yaml/scaffold-generator'),
+        ]);
+
         $this->registerMenu();
     }
 
@@ -44,7 +48,7 @@ class GeneratorServiceProvider extends ServiceProvider {
         #@todo we need that ?
 
         /** Scaffold manager . */
-        $this->app->singleton('scaffold-manager', function ($app) {
+        $this->app->singleton('scaffold-manager', function () {
             return new ScaffoldManager;
         });
 
@@ -75,6 +79,10 @@ class GeneratorServiceProvider extends ServiceProvider {
             __DIR__ . '/../configuration/general.yaml' , 'scaffold-generator'
         );
 
+        Support\merge_yaml_config_from(
+            config_path('yaml/scaffold-generator/general.yaml') , 'scaffold-generator'
+        );
+
         return $this;
     }
 
@@ -96,7 +104,6 @@ class GeneratorServiceProvider extends ServiceProvider {
         $namespaces = [
             storage_path(config('scaffold-generator.temp_path')),
             realpath(__DIR__ . '/../')
-
         ];
 
         $menuManager = app('menu-manager');
