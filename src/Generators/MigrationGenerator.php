@@ -51,11 +51,6 @@ class MigrationGenerator extends Generator {
      */
     protected $fieldRelation = "\$table->foreign('{foreign}')->references('{reference}')->on('{table}')->onDelete('{on_delete}')->onUpdate('{on_update}');";
 
-    /**
-     * @var
-     */
-    protected $formatter;
-
     public function init() {
         parent::init();
 
@@ -108,47 +103,6 @@ class MigrationGenerator extends Generator {
         }
 
         return $this;
-    }
-
-
-    /**
-     * Set format title .
-     *
-     * @param $formatter
-     * @return $this
-     */
-    public function setFormatter(\Closure $formatter) {
-        $this->formatter = $formatter;
-
-        return $this;
-    }
-
-    /**
-     * Get formatter .
-     *
-     * @return mixed
-     */
-    public function getFormatter() {
-        return $this->formatter;
-    }
-
-    /**
-     * Format title .
-     *
-     * @param $title
-     * @return mixed
-     */
-    public function formatReplacements($title) {
-        static $time;
-        $time += 500;
-
-        if( $this->formatter instanceof \Closure ) {
-            $formatter = $this->formatter;
-
-            return $formatter($title, $time);
-        }
-
-        return $title;
     }
 
 

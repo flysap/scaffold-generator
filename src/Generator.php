@@ -53,6 +53,11 @@ abstract class Generator {
      */
     protected $packageManager;
 
+    /**
+     * @var
+     */
+    protected $formatter;
+
     public function __construct() {
         $this->init();
     }
@@ -174,6 +179,46 @@ abstract class Generator {
         $this->setReplacements([]);
     }
 
+
+    /**
+     * Set format title .
+     *
+     * @param $formatter
+     * @return $this
+     */
+    public function setFormatter(\Closure $formatter) {
+        $this->formatter = $formatter;
+
+        return $this;
+    }
+
+    /**
+     * Get formatter .
+     *
+     * @return mixed
+     */
+    public function getFormatter() {
+        return $this->formatter;
+    }
+
+    /**
+     * Format params .
+     *
+     * @param $params
+     * @return mixed
+     */
+    public function formatReplacements($params) {
+        static $time;
+        $time += 500;
+
+        if( $this->formatter instanceof \Closure ) {
+            $formatter = $this->formatter;
+
+            return $formatter($params, $time);
+        }
+
+        return $params;
+    }
 
     /**
      * Set stub path
