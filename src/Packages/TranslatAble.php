@@ -91,9 +91,12 @@ class TranslatAble extends Package implements PackageAble {
          */
         (new ModelGenerator)
             ->setFormatter(function(array $replacements, $time) {
+                $class = ucfirst(str_singular($this->getAttribute('name'))) . 'Translations';
+
                 return [
-                    'class' => ucfirst(str_singular($this->getAttribute('name'))) . 'Translations',
-                    'table_name' => strtolower(str_singular($this->getAttribute('name'))) . '_translations'
+                    'class' => $class,
+                    'table_name' => strtolower(str_singular($this->getAttribute('name'))) . '_translations',
+                    'options' => $class
                 ] + $replacements;
             })
             ->setContents(['vendor' => $this->getAttribute('module')['vendor'], 'name' => $this->getAttribute('module')['name'], 'tables' => [
