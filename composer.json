@@ -16,6 +16,10 @@
       },
       {
         "type": "git",
+        "url": "git@github.com:parfumix/laravel-image-uploader.git"
+      },
+      {
+        "type": "git",
         "url": "git@github.com:parfumix/data-exporter.git"
       },
       {
@@ -29,6 +33,7 @@
         "parfumix/laravel-meta": "dev-master",
         "parfumix/eloquent-meta": "dev-master",
         "parfumix/eloquent-imageable": "dev-master",
+        "parfumix/laravel-image-uploader": "dev-master",
         "parfumix/data-exporter": "dev-master",
         "parfumix/eloquent-sortable": "dev-master",
         "cartalyst/tags": "2.0.*",
