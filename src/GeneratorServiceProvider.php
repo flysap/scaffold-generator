@@ -19,11 +19,7 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadRoutes()
             ->loadViews();
 
-        /** Adding namespace to temp modules path to render menu . */
-        app('menu-manager')->addNamespace(
-            storage_path(config('scaffold-generator.temp_path')), true
-        );
-
+        $this->registerMenu();
     }
 
     /**
@@ -89,6 +85,25 @@ class GeneratorServiceProvider extends ServiceProvider {
         $this->loadViewsFrom(__DIR__ . '/../views', 'scaffold-generator');
 
         return $this;
+    }
+
+
+    /**
+     * Register menu .
+     *
+     */
+    protected function registerMenu() {
+        $namespaces = [
+            storage_path(config('scaffold-generator.temp_path')),
+            realpath(__DIR__ . '/../')
+
+        ];
+
+        $menuManager = app('menu-manager');
+
+        array_walk($namespaces, function($namespace) use($menuManager) {
+            $menuManager->addNamespace($namespace, true);
+        });
     }
 
     /**
