@@ -24,6 +24,15 @@ class TranslatAble extends Package implements PackageAble {
     }
 
     /**
+     * Options translatable .
+     */
+    public function options() {
+        $class = ucfirst(str_singular($this->getAttribute('name'))) . 'Translations';
+
+        return "protected \$translationClass = {$class}::class;\n";
+    }
+
+    /**
      * Get import data .
      *
      * @return mixed
@@ -91,12 +100,9 @@ class TranslatAble extends Package implements PackageAble {
          */
         (new ModelGenerator)
             ->setFormatter(function(array $replacements, $time) {
-                $class = ucfirst(str_singular($this->getAttribute('name'))) . 'Translations';
-
                 return [
-                    'class' => $class,
-                    'table_name' => strtolower(str_singular($this->getAttribute('name'))) . '_translations',
-                    'options' => $class
+                    'class' => $class = ucfirst(str_singular($this->getAttribute('name'))) . 'Translations',
+                    'table_name' => strtolower(str_plural($this->getAttribute('name'))) . '_translations',
                 ] + $replacements;
             })
             ->setContents(['vendor' => $this->getAttribute('module')['vendor'], 'name' => $this->getAttribute('module')['name'], 'tables' => [
