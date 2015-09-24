@@ -1,6 +1,8 @@
 <?php
 
-use Laracasts\Presenter\Presenter;
+namespace Modules\{{vendor}}\{{name}};
+
+use Robbo\Presenter\Presenter;
 
 class {{class}}Presenter extends Presenter {
 

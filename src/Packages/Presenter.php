@@ -6,26 +6,31 @@ use Flysap\ScaffoldGenerator\PackageAble;
 
 class Presenter extends Package implements PackageAble {
 
-    /**
-     * @return mixed
-     */
-    public function traits() {
-        return "    use PresentableTrait;\n";
-    }
-
      /**
      * Get import data .
      *
      * @return mixed
      */
     public function import() {
-        return "use Laracasts\\Presenter\\PresentableTrait;\n";
+        return "use Robbo\\Presenter\\PresentableInterface;\n";
     }
 
-    public function options() {
-        $class = $this->getAttribute('class');
+    /**
+     * @return mixed
+     */
+    public function contracts() {
+        return ', PresentableInterface';
+    }
 
-        return "protected \$presenter = '{$class}Presenter';\n";
+    /**
+     * Return options .
+     *
+     * @return string
+     */
+    public function options() {
+        $class = ucfirst(str_singular($this->getAttribute('name')));
+
+        return "public function getPresenter() {        return new {$class}Presenter(\$this);    }";
     }
 
     /**
@@ -33,26 +38,22 @@ class Presenter extends Package implements PackageAble {
      *
      * @return $this
      */
-    public function buildDepency() {
+    public function buildDependency() {
         $this->stubGenerator
             ->loadStub(__DIR__ . '/../../stubs/packages/presenter.stub');
 
+        $class = ucfirst(str_singular($this->getAttribute('name')));
+
         $this->stubGenerator
             ->addFields([
-               'class' => $this->getAttribute('class')
+               'class' => $class,
+               'vendor' => $this->getAttribute('module')['vendor'],
+               'name' => $this->getAttribute('module')['name'],
             ])->save(
-                $this->getAttribute('path') . DIRECTORY_SEPARATOR . $this->getAttribute('class') . 'Presenter.php'
+                $this->getAttribute('path') . DIRECTORY_SEPARATOR . $class . 'Presenter.php'
             );
 
         return $this;
     }
 
-    /**
-     * Build some templates for that package .
-     *
-     * @return $this
-     */
-    public function buildDependency() {
-        return $this;
-    }
 }
