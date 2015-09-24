@@ -121,6 +121,9 @@ class Field {
         else
             $field = array_merge($field, ['type' => $matches['type']]);
 
+        if( $matches['type'] == 'enum' )
+            $matches['value'] = str_replace('|', ',', $matches['value']);
+
         if( isset($matches['value']) )
             $field = array_merge($field, [
                'value' => $matches['value']
