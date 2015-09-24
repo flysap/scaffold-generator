@@ -30,7 +30,8 @@ Route::group(['prefix' => 'scaffold-generator'], function() {
             'pathModule'  => $pathModule,
             'vendor'      => $vendor,
             'name'        => $name,
-            'packages'    => array_except($packages, ['scaffold'])
+            'packages'    => array_except($packages, ['scaffold']),
+            'scaffold'    => config('scaffold')
         ]);
     }]);
 
