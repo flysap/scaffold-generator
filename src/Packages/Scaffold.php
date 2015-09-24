@@ -10,7 +10,7 @@ class Scaffold extends Package implements PackageAble {
      * @return mixed
      */
     public function traits() {
-        return "use ScaffoldTrait;\n";
+        return "use ScaffoldTrait;\nuse RelationTrait;\n";
     }
 
     /**
@@ -26,7 +26,7 @@ class Scaffold extends Package implements PackageAble {
      * @return mixed
      */
     public function import() {
-        return "use Flysap\\Scaffold\\Traits\\ScaffoldTrait;\nuse Flysap\\Scaffold\\ScaffoldAble;\n";
+        return "use Flysap\\Scaffold\\Traits\\ScaffoldTrait;\nuse Flysap\\Scaffold\\ScaffoldAble;\nuse Laravel\\Relations\\RelationTrait;";
     }
 
     /**
