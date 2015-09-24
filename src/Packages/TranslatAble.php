@@ -69,7 +69,7 @@ class TranslatAble extends Package implements PackageAble {
         ];
 
         foreach ($relationsFields as $field) {
-            $fields .= ', '. $field .':int(11)|unsigned';
+            $fields .= ', '. $field .':int|unsigned';
         }
 
         /**
