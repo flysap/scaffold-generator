@@ -4,7 +4,7 @@ namespace Flysap\ScaffoldGenerator\Packages;
 
 use Flysap\ScaffoldGenerator\PackageAble;
 
-class Search extends Package implements PackageAble {
+class SearchAble extends Package implements PackageAble {
 
     /**
      * @return mixed
@@ -20,33 +20,6 @@ class Search extends Package implements PackageAble {
      */
     public function import() {
         return "use Nicolaslopezj\\Searchable\\SearchableTrait;\n";
-    }
-
-    public function options() {
-        return <<<EOD
-
-
-    /**
-     * Searchable rules.
-     *
-     * @var array
-     */
-    protected \$searchable = [
-        'columns' => [
-            'first_name' => 10,
-            'last_name' => 10,
-            'bio' => 2,
-            'email' => 5,
-            'posts.title' => 2,
-            'posts.body' => 1,
-        ],
-        'joins' => [
-            'posts' => ['users.id','posts.user_id'],
-        ],
-    ];
-
-EOD;
-
     }
 
     /**
