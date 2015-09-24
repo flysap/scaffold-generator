@@ -4,6 +4,7 @@ namespace Flysap\ScaffoldGenerator;
 
 use Cartalyst\Tags\TagsServiceProvider;
 use Cviebrock\EloquentSluggable\SluggableServiceProvider;
+use DataExporter\ExporterServiceProvider;
 use Eloquent\ImageAble\ImageAbleServiceProvider;
 use Eloquent\Meta\MetaServiceProvider;
 use Illuminate\Support\ServiceProvider;
@@ -121,7 +122,7 @@ class GeneratorServiceProvider extends ServiceProvider {
      *
      */
     protected function registerPackageServices() {
-        $providers = [
+        $providers = array(
             SluggableServiceProvider::class,
             MetaSeoServiceProvider::class,
             MetaServiceProvider::class,
@@ -130,7 +131,8 @@ class GeneratorServiceProvider extends ServiceProvider {
             TagsServiceProvider::class,
             TranslatorServiceProvider::class,
             LocaleServiceProvider::class,
-        ];
+            ExporterServiceProvider::class
+        );
 
         array_walk($providers, function($provider) {
             app()->register($provider);
