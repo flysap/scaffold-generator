@@ -12,6 +12,7 @@ use Flysap\Support;
 use Laravel\Meta\MetaSeoServiceProvider;
 use Localization\LocaleServiceProvider;
 use Parfumix\Imageonfly\ImageOnFlyServiceProvider;
+use Robbo\Presenter\PresenterServiceProvider;
 use Translator\TranslatorServiceProvider;
 
 class GeneratorServiceProvider extends ServiceProvider {
@@ -131,7 +132,8 @@ class GeneratorServiceProvider extends ServiceProvider {
             TagsServiceProvider::class,
             TranslatorServiceProvider::class,
             LocaleServiceProvider::class,
-            ExporterServiceProvider::class
+            ExporterServiceProvider::class,
+            PresenterServiceProvider::class,
         );
 
         array_walk($providers, function($provider) {
