@@ -108,7 +108,7 @@
                                                             <div class="col-xs-9">
                                                                 @foreach($packages as $package_key => $package)
                                                                     <label>
-                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>showPackageAttributes(this); <?php } ?>">
+                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{isset($package['is_disabled']) && $package['is_disabled'] == true ? 'disabled' : ''}} {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>showPackageAttributes(this); <?php } ?>">
                                                                         <span title="{{isset($package['description']) ? $package['description'] : ''}}">{{$package_key}}</span>
 
                                                                         @if(isset($package['attributes']))

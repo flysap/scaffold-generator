@@ -80,6 +80,7 @@ packages:
  apiable :
   class: Flysap\ScaffoldGenerator\Packages\ApiAble
   is_default: false
+  is_disabled: true
   description: Your description
 
  translatable :
