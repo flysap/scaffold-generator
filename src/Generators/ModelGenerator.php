@@ -42,10 +42,10 @@ use Flysap\ScaffoldGenerator\Generator;
 class ModelGenerator extends Generator  {
 
     protected $templates = [
-        'hasOne'         => "public function {{function}}() { \$this->hasOne('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
-        'hasMany'        => "public function {{function}}() { \$this->hasMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
-        'belongsToMany'  => "public function {{function}}() { \$this->belongsToMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }",
-        'belongsTo'      => "public function {{function}}() { \$this->belongsTo('{{table}}', '{{local_key}}', '{{parent_key}}'); }",
+        'hasOne'         => "public function {{function}}() { return \$this->hasOne('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
+        'hasMany'        => "public function {{function}}() { return \$this->hasMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
+        'belongsToMany'  => "public function {{function}}() { return \$this->belongsToMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }",
+        'belongsTo'      => "public function {{function}}() { return \$this->belongsTo('{{table}}', '{{local_key}}', '{{parent_key}}'); }",
     ];
 
     public function init() {
@@ -82,6 +82,13 @@ class ModelGenerator extends Generator  {
 
                 $relations = $this->getRelations();
 
+                /**
+                 * The relations will be processed as follow rules:
+                 *  1. each table can have many relations
+                 *  2. as we foreach through relations we have to set up relations for the current table and related
+                 *  3. if table a has relations with by using 1:n relation there must be set relation to both tables.
+                 *
+                 */
                 array_walk($relations, function($relation) use($tableName, & $tables) {
 
                     if(! isset( $tables[$relation['table']] ['relations'] ['belongsTo'] ))
@@ -201,7 +208,7 @@ class ModelGenerator extends Generator  {
         foreach($array as $k => $relation)
             $attributes .= sprintf("%s'%s'", $k ? ',' : '',$relation);
 
-        $attributes = 'protected $relation = ['.$attributes.'];';
+        $attributes = 'public $relation = ['.$attributes.'];';
 
         return [
             'relations' => $replacer,
