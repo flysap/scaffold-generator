@@ -44,7 +44,7 @@ class MigrationGenerator extends Generator {
     /**
      * @var string
      */
-    protected $fieldTemplate = "\$table->{type}('{name}')";
+    protected $fieldTemplate = "\$table->{type}('{name}'{value})";
 
     /**
      * @var string
@@ -143,11 +143,18 @@ class MigrationGenerator extends Generator {
 
             $string = $this->fieldTemplate;
 
+            if(! isset($field['value']))
+                $field['value'] = '';
+
             foreach ($field as $key => $value) {
-                if ($key == 'type') {
+                if ($key == 'type')
                     if (isset($this->typeAlias[$value]))
                         $value = $this->typeAlias[$value];
-                }
+
+                if( $key == 'value' && $field['type'] == 'enum' )
+                    $value = ', [' . $value . ']';
+                elseif($key == 'value')
+                    $value =  $value ? ', ' .$value : '';
 
                 $string = str_replace('{' . $key . '}', $value, $string);
             }
