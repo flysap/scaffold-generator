@@ -50,6 +50,7 @@
         "parfumix/data-exporter": "dev-master",
         "parfumix/eloquent-sortable": "dev-master",
         "cartalyst/tags": "2.0.*",
+        "robclancy/presenter": "1.3.*",
         "watson/validating": "~1.0",
         "laravel/framework": "~5.1",
         "flysap/support": "dev-master",
