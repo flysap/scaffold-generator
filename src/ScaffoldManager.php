@@ -7,6 +7,8 @@ use Flysap\ScaffoldGenerator\Generators\ComposerGenerator;
 use Flysap\ScaffoldGenerator\Generators\ConfigGenerator;
 use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
 use Flysap\ScaffoldGenerator\Generators\ModelGenerator;
+use Flysap\ScaffoldGenerator\Generators\RoutesGenerator;
+use Flysap\ScaffoldGenerator\Generators\ServiceProviderGenerator;
 use Flysap\Support;
 use DB;
 
@@ -38,6 +40,30 @@ class ScaffoldManager {
             (new ConfigGenerator)
                 ->setContents($params)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
+
+            /**
+             * Save service provider class .
+             */
+            $class = ucfirst(str_singular($params['name']));
+            $serviceProvider = ServiceProviderGenerator::getInstance();
+            $serviceProvider
+                ->addReplacement([
+                    'class' => ucfirst($class),
+                    'vendor' => $params['vendor'],
+                    'name' => $params['name'],
+                ])
+                ->save(
+                $path . DIRECTORY_SEPARATOR . ucfirst(str_singular($params['name'])) . 'ServiceProvider.php'
+            );
+
+            /**
+             * Save routes .
+             */
+            /*$routesGenerator = RoutesGenerator::getInstance();
+            $routesGenerator->save(
+                $path . DIRECTORY_SEPARATOR . 'routes.php'
+            );*/
+
 
             $this->fixer(storage_path(
                 config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $path
