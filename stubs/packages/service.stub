@@ -1,0 +1,42 @@
+<?php
+
+namespace Modules\{{vendor}}\{{name}};
+
+use Illuminate\Support\ServiceProvider;
+
+class {{class}}ServiceProvider extends ServiceProvider {
+
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
+    public function boot() {
+        $this->loadRoutes();
+
+        {{boot_action}}
+    }
+
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
+    public function register() {
+        {{register_action}}
+    }
+
+   /**
+     * Load routes .
+     *
+     * @return $this
+     */
+    protected function loadRoutes() {
+        if (! $this->app->routesAreCached()) {
+            if( file_exists(__DIR__ . '/routes.php') )
+                require __DIR__ . '/routes.php';
+        }
+
+        return $this;
+    }
+}
