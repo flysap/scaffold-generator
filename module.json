@@ -7,7 +7,7 @@
     {
       "section": "Scaffold",
       "label"  : "Generate",
-      "href"   : "/scaffold-generator/generate"
+      "href"   : "/admin/scaffold-generator/generate"
     }
   ],
 

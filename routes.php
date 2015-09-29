@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 
-Route::group(['prefix' => 'scaffold-generator'], function() {
+Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admin'], function() {
 
     Route::match(['post', 'get'], 'generate', ['as' => 'scaffold-generate', function(Request $request) {
         $service = app('scaffold-manager');
