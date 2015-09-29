@@ -7,11 +7,6 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
     Route::match(['post', 'get'], 'generate', ['as' => 'scaffold-generate', function(Request $request) {
         $service = app('scaffold-manager');
 
-        $isGenerated = false;
-        $pathModule  = null;
-        $vendor      = null;
-        $name        = null;
-
         if( $request->method() == 'POST' ) {
             $isGenerated = true;
 
@@ -19,17 +14,22 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
                 $request->all()
             );
 
-            $vendor = $request->get('vendor');
-            $name   = $request->get('name');
+        return back()
+            ->withInput([
+                'is_generated' => $isGenerated,
+                'path_module'  => $pathModule,
+                'vendor'      => $request->get('vendor'),
+                'name'        => $request->get('name'),
+            ] + $request->all());
         }
 
         $packages = config('scaffold-generator.packages');
 
         return view('scaffold-generator::generate', [
-            'isGenerated' => $isGenerated,
-            'pathModule'  => $pathModule,
-            'vendor'      => $vendor,
-            'name'        => $name,
+            'is_generated' => old('is_generated'),
+            'path_module'  => old('path_module'),
+            'vendor'      => old('vendor'),
+            'name'        => old('name'),
             'packages'    => array_except($packages, ['scaffold']),
             'scaffold'    => config('scaffold')
         ]);
