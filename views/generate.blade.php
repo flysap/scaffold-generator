@@ -31,7 +31,7 @@
                             <ul class="dropdown-menu">
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-modules')}}">{{_('Flush modules')}}</a></li>
 
-                                @if($isGenerated)
+                                @if($is_generated)
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Flush module')}}</a></li>
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('export-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Export module')}}</a></li>
                                 @endif
@@ -39,7 +39,7 @@
                             </ul>
                         </li>
 
-                        @if($isGenerated)
+                        @if($is_generated)
                             <li><a href="#tab_2" data-toggle="tab" class="editor">{{_('Editor')}}</a></li>
                         @endif
                     </ul>
@@ -54,23 +54,21 @@
                                         <div class="col-xs-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-users"></i></span>
-                                                <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor" value="{{Input::get('vendor')}}">
+                                                <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor" value="{{old('vendor')}}">
                                             </div>
                                         </div>
 
                                         <div class="col-xs-2">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                                <input type="text" class="form-control input-lg" name="name" placeholder="Name" value="{{Input::get('name')}}">
+                                                <input type="text" class="form-control input-lg" name="name" placeholder="Name" value="{{old('name')}}">
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
 
-                                <?php
-                                    $tables = Input::has('tables') ? Input::get('tables') : [0];
-                                ?>
+                                <?php $tables = old('tables', [null]); ?>
 
                                 <?php $key = 0; ?>
                                 @foreach($tables as $table)
@@ -141,10 +139,10 @@
                             </form>
                         </div>
 
-                        @if($isGenerated)
+                        @if($is_generated)
                             <!-- /.tab-pane -->
                             <div class="tab-pane" id="tab_2">
-                                @if($pathModule)
+                                @if($path_module)
                                     @include('scaffold-generator::editor')
                                 @endif
                             </div>
