@@ -88,7 +88,7 @@ class TranslatAble extends Package implements PackageAble {
                 [
                     'name'      => $this->getAttribute('name'),
                     'fields'    => $fields,
-                    'relations' => $relationsFields[0] . ':id|'.   $this->getAttribute('name'). ', '. $relationsFields[1].':id|languages',
+                    'relations' => $relationsFields[0] . ':id|'.   str_plural($this->getAttribute('name')). ', '. $relationsFields[1].':id|languages',
                 ]
             ])
             ->save(
