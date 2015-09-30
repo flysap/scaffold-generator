@@ -60,6 +60,7 @@ packages:
 
  imageaable :
   class: Flysap\ScaffoldGenerator\Packages\Imageable
+  attributes: /**&#10;                   * Image filters .&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected $filters = [&#10;                      'fit_100',&#10;                  ];
   is_default: false
   description: Your description
 
