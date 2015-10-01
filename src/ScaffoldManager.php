@@ -7,7 +7,6 @@ use Flysap\ScaffoldGenerator\Generators\ComposerGenerator;
 use Flysap\ScaffoldGenerator\Generators\ConfigGenerator;
 use Flysap\ScaffoldGenerator\Generators\MigrationGenerator;
 use Flysap\ScaffoldGenerator\Generators\ModelGenerator;
-use Flysap\ScaffoldGenerator\Generators\RoutesGenerator;
 use Flysap\ScaffoldGenerator\Generators\ServiceProviderGenerator;
 use Flysap\Support;
 use DB;
