@@ -31,20 +31,50 @@
                             <ul class="dropdown-menu">
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-modules')}}">{{_('Flush modules')}}</a></li>
 
-                                @if($is_generated)
-                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Flush module')}}</a></li>
-                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('export-module')}}?module={{$vendor . DIRECTORY_SEPARATOR . $name}}">{{_('Export module')}}</a></li>
+                                @if(old('is_generated'))
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('flush-module')}}?module={{old('vendor') . DIRECTORY_SEPARATOR . old('name')}}">{{_('Flush module')}}</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{route('export-module')}}?module={{old('vendor') . DIRECTORY_SEPARATOR . old('name')}}">{{_('Export module')}}</a></li>
                                 @endif
 
                             </ul>
                         </li>
 
-                        @if($is_generated)
+                        @if(old('is_generated'))
                             <li><a href="#tab_2" data-toggle="tab" class="editor">{{_('Editor')}}</a></li>
                         @endif
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
+
+                            <!-- form start -->
+                            <form role="form" method="post" action="{{route('upload-template')}}" enctype="multipart/form-data">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"></h3>
+                                        <div class="box-tools pull-right">
+                                            <!-- Buttons, labels, and many other things can be placed here! -->
+                                            <!-- Here is a label for example -->
+                                            <span class="label label-primary">Templates</span>
+                                        </div><!-- /.box-tools -->
+                                    </div><!-- /.box-header -->
+                                    <div class="box-body">
+                                        <ul class="bs-glyphicons" style="padding-left: 10px">
+                                        @foreach($templates as $key => $value)
+                                            <li style="list-style-type: none">
+                                                <span class="glyphicon glyphicon-tag"></span>
+                                                <a href="{{route('upload-template', ['template' => $key])}}"><span class="glyphicon-class">{{ isset($value['title']) ? $value['title'] : '' }}</span></a>
+                                            </li>
+                                        @endforeach
+                                        </ul>
+                                    </div><!-- /.box-body -->
+
+                                    <div class="box-footer">
+                                        <input type="file" name="template" label="{{trans('Upload template')}}" class="btn bg-olive" style="margin-left: 45%" onchange="$(this).closest('form').submit()">
+                                    </div>
+                                </div><!-- /.box -->
+                            </form>
+
+
                             <!-- form start -->
                             <form role="form" method="post" action="">
                                 <input type="hidden" name="_token" value="{{csrf_token()}}">
@@ -68,7 +98,7 @@
                                     </div>
                                 </div>
 
-                                <?php $tables = old('tables', [null]); ?>
+                                <?php $tables = old('tables', [null]);?>
 
                                 <?php $key = 0; ?>
                                 @foreach($tables as $table)
@@ -105,16 +135,24 @@
                                                         @if($packages)
                                                             <div class="col-xs-9">
                                                                 @foreach($packages as $package_key => $package)
+
+                                                                    <?php $attributes = []; $isChecked = false; ?>
+                                                                    @if( isset($table['packages']) )
+                                                                        @foreach($table['packages'] as $package)
+                                                                            @if( $package_key == $package['package'] )
+                                                                                <?php $attributes = $package['attributes']; $isChecked = true; ?>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+
                                                                     <label>
-                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{$package_key == 'searchable' && (isset($scaffold['smart_search']) && $scaffold['smart_search'] == true) ? 'checked' : ''}} {{isset($package['is_disabled']) && $package['is_disabled'] == true ? 'disabled' : ''}} {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>showPackageAttributes(this); <?php } ?>">
+                                                                        <input type="checkbox" name="tables[{{$key}}][packages][{{$package_key}}]" value="0" {{$isChecked ? 'checked' : ''}} {{$package_key == 'searchable' && (isset($scaffold['smart_search']) && $scaffold['smart_search'] == true) ? 'checked' : ''}} {{isset($package['is_disabled']) && $package['is_disabled'] == true ? 'disabled' : ''}} {{isset($package['is_default']) && $package['is_default'] == true ? 'checked' : ''}} onclick="<?php if(isset($package['attributes'])) { ?>showPackageAttributes(this); <?php } ?>">
                                                                         <span title="{{isset($package['description']) ? $package['description'] : ''}}">{{$package_key}}</span>
 
                                                                         @if(isset($package['attributes']))
-                                                                            <textarea disabled name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{isset($package['attributes']) ? $package['attributes'] : ''}}</textarea>
+                                                                            <textarea disabled name="tables[{{$key}}][packages][{{$package_key}}][attributes]" hidden rows="10" cols="30">{{count($attributes) ? $attributes : (isset($package['attributes']) ? $package['attributes'] : '')}}</textarea>
                                                                         @endif
                                                                     </label>
-
-
 
                                                                 @endforeach
                                                             </div>
@@ -139,10 +177,10 @@
                             </form>
                         </div>
 
-                        @if($is_generated)
+                        @if(old('is_generated'))
                             <!-- /.tab-pane -->
                             <div class="tab-pane" id="tab_2">
-                                @if($path_module)
+                                @if(old('path_module'))
                                     @include('scaffold-generator::editor')
                                 @endif
                             </div>
