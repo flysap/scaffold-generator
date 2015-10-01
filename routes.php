@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Flysap\Support;
 
 Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admin'], function() {
 
@@ -8,30 +9,22 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
         $service = app('scaffold-manager');
 
         if( $request->method() == 'POST' ) {
-            $isGenerated = true;
+            $pathModule = $service->generate($request->all());
 
-            $pathModule = $service->generate(
-                $request->all()
-            );
-
-        return back()
-            ->withInput([
-                'is_generated' => $isGenerated,
-                'path_module'  => $pathModule,
-                'vendor'      => $request->get('vendor'),
-                'name'        => $request->get('name'),
-            ] + $request->all());
+            return back()
+                ->withInput([
+                    'is_generated' => true,
+                    'path_module'  => $pathModule,
+                ] + $request->all());
         }
 
-        $packages = config('scaffold-generator.packages');
+        $packages  = config('scaffold-generator.packages');
+        $templates = config('scaffold-generator.templates');
 
         return view('scaffold-generator::generate', [
-            'is_generated' => old('is_generated'),
-            'path_module'  => old('path_module'),
-            'vendor'      => old('vendor'),
-            'name'        => old('name'),
-            'packages'    => array_except($packages, ['scaffold']),
-            'scaffold'    => config('scaffold')
+            'packages'  => array_except($packages, ['scaffold']),
+            'templates' => $templates,
+            'scaffold'  => config('scaffold')
         ]);
     }]);
 
@@ -74,5 +67,37 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
         return $scaffold->exportModule(
             $request->get('module')
         );
+    }]);
+
+    /**
+     * Upload an template .
+     */
+    Route::any('upload-template/{template?}', ['as' => 'upload-template', function(Request $request, $template = null) {
+        if( $template ) {
+            $templates = config('scaffold-generator.templates');
+
+            if(! array_key_exists($template, $templates))
+                return back();
+
+            $template = $templates[$template];
+
+            if( $contents = Support\get_file_contents( storage_path($template['path']) ) ) {
+                return redirect(route('scaffold-generate'))
+                    ->withInput($contents);
+            }
+        }
+
+        if(! $request->hasFile('template'))
+            return back();
+
+        $file = $request->file('template');
+
+        if( $moved = $file->move(
+            storage_path(), $file->getClientOriginalName()
+        ) ) {
+            if( $contents = Support\get_file_contents( $moved->getRealPath() ) )
+                return redirect(route('scaffold-generate'))
+                    ->withInput($contents);
+        }
     }]);
 });
