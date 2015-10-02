@@ -139,7 +139,7 @@
                                                                     <?php $attributes = []; $isChecked = false; ?>
                                                                     @if( isset($table['packages']) )
                                                                         @foreach($table['packages'] as $tablePackage)
-                                                                            @if( $package_key == $tablePackage['package'] )
+                                                                            @if( $package_key == (isset($tablePackage['package']) ? $tablePackage['package'] : '' ))
                                                                                 <?php $attributes = isset( $tablePackage['attributes'] ) ? $tablePackage['attributes'] : []; $isChecked = true; ?>
                                                                             @endif
                                                                         @endforeach
