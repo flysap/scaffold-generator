@@ -20,7 +20,7 @@ class LikeAble extends Package implements PackageAble {
      * @return mixed
      */
     public function import() {
-        return "use Conner\\Likeable\\LikeableTrait;\n";
+        return "\nuse Parfumix\\Likeable\\LikeableTrait;\n";
     }
 
     /**
@@ -30,7 +30,8 @@ class LikeAble extends Package implements PackageAble {
      */
     public function buildDependency() {
         Support\artisan('vendor:publish', [
-            '--provider' => 'Conner\Likeable\LikeableServiceProvider'
+            '--provider' => 'Parfumix\Likeable\LikeableServiceProvider',
+            '--tag'      => ['migrations']
         ]);
 
         return $this;

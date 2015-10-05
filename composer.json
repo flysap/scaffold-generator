@@ -37,6 +37,10 @@
       {
         "type": "git",
         "url": "git@github.com:parfumix/laravel-translator.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/laravel-likeable.git"
       }
     ],
     "require": {
@@ -53,7 +57,7 @@
         "cartalyst/tags": "2.0.*",
         "robclancy/presenter": "1.3.*",
         "watson/validating": "~1.0",
-        "rtconner/laravel-likeable": "~1.0.7",
+        "parfumix/laravel-likeable": "dev-master",
         "laravel/framework": "~5.1",
         "flysap/support": "dev-master",
         "flysap/scaffold": "dev-master",
