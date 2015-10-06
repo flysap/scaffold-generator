@@ -167,9 +167,13 @@ class ScaffoldManager {
             '--database' => $connection,
         ]);
 
-        return Support\artisan('migrate', [
+        Support\artisan('migrate', [
             '--database' => $connection, '--path' => $path
         ]);
+
+        Support\artisan('db:seed');
+
+        return true;
     }
 
     /**

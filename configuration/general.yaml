@@ -102,3 +102,13 @@ templates:
     path: templates/simple.json
     title: Shop system
     description: Shop description
+
+  books:
+    path: templates/books.json
+    title: Books system
+    description: Books description
+
+  university:
+    path: templates/university.json
+    title: University system
+    description: University description
