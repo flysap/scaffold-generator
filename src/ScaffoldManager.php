@@ -15,6 +15,9 @@ class ScaffoldManager {
 
     public function generate($params) {
         try {
+            $params['vendor'] = $this->sluggify($params['vendor']);
+            $params['name'] = $this->sluggify($params['name']);
+
             $module = $params['vendor'] . DIRECTORY_SEPARATOR . $params['name'];
 
             $this->flushModule($module);
@@ -50,6 +53,8 @@ class ScaffoldManager {
                     'class' => ucfirst($class),
                     'vendor' => $params['vendor'],
                     'name' => $params['name'],
+                    'boot_action' => '',
+                    'register_action' => '',
                 ])
                 ->save(
                 $path . DIRECTORY_SEPARATOR . ucfirst(str_singular($params['name'])) . 'ServiceProvider.php'
@@ -165,5 +170,15 @@ class ScaffoldManager {
         return Support\artisan('migrate', [
             '--database' => $connection, '--path' => $path
         ]);
+    }
+
+    /**
+     * Sluggify string .
+     *
+     * @param $string
+     * @return mixed
+     */
+    protected function sluggify($string) {
+        return str_replace(' ', '', $string);
     }
 }
