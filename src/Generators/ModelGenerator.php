@@ -105,7 +105,7 @@ class ModelGenerator extends Generator  {
                     ];
 
                     $tables[$tableName]['relationsRaw'][$remoteRelationType][] = [
-                        'function'    => str_plural(strtolower($relation['table'])),
+                        'function'    => str_singular(strtolower($relation['table'])),
                         'table'       => ucfirst(str_singular(strtolower($relation['table']))) . '::class',
                         'foreign_key'  => $relation['foreign'],
                         'local_key'   => $relation['reference']
