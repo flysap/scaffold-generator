@@ -15,12 +15,19 @@ class LikeAble extends Package implements PackageAble {
     }
 
     /**
+     * @return mixed
+     */
+    public function contracts() {
+        return ', LikeAble';
+    }
+
+    /**
      * Get import data .
      *
      * @return mixed
      */
     public function import() {
-        return "\nuse Parfumix\\Likeable\\LikeableTrait;\n";
+        return "\nuse Parfumix\\Likeable\\LikeableTrait;\nuse Parfumix\\Likeable\\LikeAble;";
     }
 
     /**
