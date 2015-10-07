@@ -42,10 +42,10 @@ use Flysap\ScaffoldGenerator\Generator;
 class ModelGenerator extends Generator  {
 
     protected $templates = [
-        'hasOne'         => "public function {{function}}() { return \$this->hasOne('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
-        'hasMany'        => "public function {{function}}() { return \$this->hasMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }\n",
-        'belongsToMany'  => "public function {{function}}() { return \$this->belongsToMany('{{table}}', '{{foreign_key}}', '{{local_key}}'); }",
-        'belongsTo'      => "public function {{function}}() { return \$this->belongsTo('{{table}}', '{{local_key}}', '{{parent_key}}'); }",
+        'hasOne'         => "public function {{function}}() { return \$this->hasOne({{table}}, '{{foreign_key}}', '{{local_key}}'); }\n",
+        'hasMany'        => "public function {{function}}() { return \$this->hasMany({{table}}, '{{foreign_key}}', '{{local_key}}'); }\n",
+        'belongsToMany'  => "public function {{function}}() { return \$this->belongsToMany({{table}}, '{{foreign_key}}', '{{local_key}}'); }",
+        'belongsTo'      => "public function {{function}}() { return \$this->belongsTo({{table}}, '{{foreign_key}}', '{{local_key}}'); }",
     ];
 
     public function init() {
@@ -82,35 +82,36 @@ class ModelGenerator extends Generator  {
 
                 $relations = $this->getRelations();
 
-                /**
-                 * The relations will be processed as follow rules:
-                 *  1. each table can have many relations
-                 *  2. as we foreach through relations we have to set up relations for the current table and related
-                 *  3. if table a has relations with by using 1:n relation there must be set relation to both tables.
-                 *
-                 */
-                array_walk($relations, function($relation) use($tableName, & $tables) {
+                foreach($relations as $relation) {
 
-                    if(! isset( $tables[$relation['table']] ['relations'] ['belongsTo'] ))
-                        $tables [$relation['table']] ['relations'] = ['belongsTo' => []];
+                    $localRelationType = isset($relation['relation']) ? $relation['relation'] : 'hasMany';
+                    $remoteRelationType = $localRelationType == 'belongsToMany' ? 'belongsToMany' : 'belongsTo';
 
-                    if(! isset($tables [$tableName] ['relations'] ['hasMany'] ))
-                        $tables [$tableName] ['relations']  = ['hasMany' => []];
+                    if( $localRelationType == 'belongsToMany' ) {
+                        #@todo if relation is many to many than is needed to create new table .
+                    }
 
-                    $tables[$relation['table']]['relations']['belongsTo'][] = [
+                    if( !isset($tables[$relation['table']]['relationsRaw'][$localRelationType]) )
+                        $tables[$relation['table']]['relationsRaw'][$localRelationType] = [];
+
+                    if( !isset($tables[$tableName]['relationsRaw'][$remoteRelationType]) )
+                        $tables[$tableName]['relationsRaw'][$remoteRelationType] = [];
+
+                    $tables[$relation['table']]['relationsRaw'][$localRelationType][] = [
                         'function'    => str_plural(strtolower($tableName)),
-                        'table'       => str_plural(strtolower($tableName)),
-                        'parent_key'  => $relation['reference'],
-                        'local_key'   => $relation['foreign']
+                        'table'       => ucfirst(str_singular(strtolower($tableName))) . '::class',
+                        'foreign_key'  => $relation['foreign'],
+                        'local_key'   => $relation['reference']
                     ];
 
-                    $tables[$tableName]['relations']['hasMany'][] = [
-                        'function'   => str_plural(strtolower($relation['table'])),
-                        'table'      => str_plural(strtolower($relation['table'])),
-                        'local_key'  => $relation['reference'],
-                        'foreign_key'=> $relation['foreign']
+                    $tables[$tableName]['relationsRaw'][$remoteRelationType][] = [
+                        'function'    => str_plural(strtolower($relation['table'])),
+                        'table'       => ucfirst(str_singular(strtolower($relation['table']))) . '::class',
+                        'foreign_key'  => $relation['foreign'],
+                        'local_key'   => $relation['reference']
                     ];
-                });
+
+                }
             }
 
             if( ! is_array($table['fields']) )
@@ -157,7 +158,7 @@ class ModelGenerator extends Generator  {
 
             /** @var Build relation replacements . $relationReplacement */
             $relationReplacement = $this->buildRelations(
-                isset($options['relations']) ? is_array($options['relations']) ? $options['relations'] : [] : []
+                isset($options['relationsRaw']) ? is_array($options['relationsRaw']) ? $options['relationsRaw'] : [] : []
             );
 
             $fields = $this->getFieldsParser()

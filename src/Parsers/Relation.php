@@ -12,7 +12,7 @@ class Relation {
     /**
      * @var string
      */
-    protected $regex = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?\\|?(?<relation>hasOne|hasMany|belongsTo|belongsToMany)?/i";
+    protected $regex = "/(?<foreign>\\w+):(?<reference>\\w+)\\|(?<table>\\w+)\\|?(?<on_update>\\w+)?\\|?(?<on_delete>\\w+)?\\|?(?<relation>hasOne|hasMany|belongsToMany)?/i";
 
     /**
      * Set raw relations ..
