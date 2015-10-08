@@ -39,6 +39,13 @@ class MigrationGenerator extends Generator {
         'unsigned' => '->unsigned()',
         'index' => '->index()',
         'nullable' => '->nullable()',
+
+        /**
+         * Short variant of ..
+         */
+        'uns' => '->unsigned()',
+        'ind' => '->index()',
+        'null' => '->nullable()',
     ];
 
     /**
@@ -60,9 +67,9 @@ class MigrationGenerator extends Generator {
 
         $this->setFormatter(function($replacements, $time) {
              return [
-                'class_name'        => 'Create' . $replacements['class_name'] . 'Table',
-                'table_name'        => strtolower($replacements['table_name']),
-                'migration_name'    => date('Y_m_d_His', time() + $time) . '_create_' . strtolower($replacements['migration_name']) . '_table.php',
+                'class_name'        => 'Create' . preg_replace('/([ _-]+)/i', '', $replacements['class_name']) . 'Table',
+                'table_name'        => strtolower(preg_replace('/[ -]+/i', '_', $replacements['table_name'])),
+                'migration_name'    => date('Y_m_d_His', time() + $time) . '_create_' . strtolower(preg_replace('/[ -]+/i', '_', $replacements['migration_name'])) . '_table.php',
             ] + $replacements;
         });
     }
