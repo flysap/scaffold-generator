@@ -24,9 +24,15 @@ class ConfigGenerator extends Generator {
         $contents = $this->getContents();
 
         $menus = [];
-
         array_walk($contents['tables'], function ($table) use (& $menus) {
+
+            #@todo temporary way .
+            if( isset($table['relations']) && !empty($table['relations']) )
+                if( strpos($table['relations'], 'belongsToMany') )
+                    return false;
+
             $table = str_singular(strtolower($table['name']));
+
 
             $menus[] = [
                 'section'   => $this->getVendor(),

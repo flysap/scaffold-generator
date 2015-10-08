@@ -88,7 +88,10 @@ class ModelGenerator extends Generator  {
                     $remoteRelationType = $localRelationType == 'belongsToMany' ? 'belongsToMany' : 'belongsTo';
 
                     if( $localRelationType == 'belongsToMany' ) {
-                        #@todo if relation is many to many than is needed to create new table .
+                        #@todo temporary .
+                        unset($tables[$tableName]);
+
+                        continue;
                     }
 
                     if( !isset($tables[$relation['table']]['relationsRaw'][$localRelationType]) )
@@ -121,6 +124,7 @@ class ModelGenerator extends Generator  {
 
             $tables[$tableName]['fields'] = $this->getFields();
         });
+
 
         return ['tables' => $tables] + $contents;
     }
