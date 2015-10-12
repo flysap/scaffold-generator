@@ -38,7 +38,7 @@ packages:
 
  searchable :
   class: Flysap\ScaffoldGenerator\Packages\SearchAble
-  attributes:     /**&#10;                   * Searchable rules.&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  protected $searchable = [&#10;                      'columns' => [&#10;                          'first_name' => 10,&#10;                          'last_name' => 10,&#10;                          'bio' => 2,&#10;                          'email' => 5,&#10;                          'posts.title' => 2, &#10;                         'posts.body' => 1,&#10;                      ],&#10;                      'joins' => [&#10;                          'posts' => ['users.id','posts.user_id'],&#10;                      ],&#10;                  ];
+  attributes:     /**&#10;                   * Searchable rules.&#10;                   *&#10;                   * @var array&#10;                   */&#10;                  public $searchable = [&#10;                      'columns' => [&#10;                          'first_name' => 10,&#10;                          'last_name' => 10,&#10;                          'bio' => 2,&#10;                          'email' => 5,&#10;                          'posts.title' => 2, &#10;                         'posts.body' => 1,&#10;                      ],&#10;                      'joins' => [&#10;                          'posts' => ['users.id','posts.user_id'],&#10;                      ],&#10;                  ];
   is_default: false
   description: Your description
 
