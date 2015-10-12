@@ -34,7 +34,6 @@ class ScaffoldManager {
                 ->setContents($params)
                 ->save($path);
 
-
             (new ComposerGenerator)
                 ->addReplacement(array_only($params, ['name', 'vendor', 'description', 'version']))
                 ->save($path . DIRECTORY_SEPARATOR . 'composer.json');
@@ -43,12 +42,8 @@ class ScaffoldManager {
                 ->setContents($params)
                 ->save($path . DIRECTORY_SEPARATOR . 'module.json');
 
-            /**
-             * Save service provider class .
-             */
             $class = ucfirst(str_singular($params['name']));
-            $serviceProvider = ServiceProviderGenerator::getInstance();
-            $serviceProvider
+            (new ServiceProviderGenerator)
                 ->addReplacement([
                     'class' => ucfirst($class),
                     'vendor' => $params['vendor'],
@@ -59,19 +54,6 @@ class ScaffoldManager {
                 ->save(
                 $path . DIRECTORY_SEPARATOR . ucfirst(str_singular($params['name'])) . 'ServiceProvider.php'
             );
-
-            /**
-             * Save routes .
-             */
-            /*$routesGenerator = RoutesGenerator::getInstance();
-            $routesGenerator->save(
-                $path . DIRECTORY_SEPARATOR . 'routes.php'
-            );*/
-
-
-            $this->fixer(storage_path(
-                config('scaffold-generator.temp_path') . DIRECTORY_SEPARATOR . $path
-            ));
 
             $path = 'storage/' . config('scaffold-generator.temp_path') . $path;
 
@@ -139,11 +121,9 @@ class ScaffoldManager {
         if( ! Support\is_path_exists(
             $path
         ) )
-            throw new StubException(_("Invalid module path."));
+            return back();
 
-        return Support\download_archive(
-            $path, str_replace('/', '_', $module)
-        );
+        return Support\download_archive($path, str_replace(['/','\\','-'], '', $module) .'.zip');
     }
 
 

@@ -33,7 +33,6 @@ class ConfigGenerator extends Generator {
 
             $table = str_singular(strtolower($table['name']));
 
-
             $menus[] = [
                 'section'   => $this->getVendor(),
                 'label'     => str_plural(ucfirst($table)),
@@ -69,6 +68,8 @@ JSON;
                 }
 
                 $html .= '  ]';
+
+
 
                 return $html;
             },
