@@ -47,6 +47,15 @@ class ConfigGenerator extends Generator {
             'name'        => $this->getUser(),
             'description' => $this->getDescription(),
             'version'     => $this->getVersion(),
+            'autoload'    => function() {
+                $html = ',"autoload": [';
+
+                $html .= '"Modules\\\\'.$this->getVendor().'\\\\'.$this->getUser().'\\\\'.ucfirst(str_singular($this->getUser())).'ServiceProvider"';
+
+                $html .= '  ]';
+
+                return $html;
+            },
             'menus'       => function () use($menus) {
                 $html = ',"menu": [';
 
@@ -64,15 +73,12 @@ class ConfigGenerator extends Generator {
 JSON;
                     if( $count < count($menus) )
                         $html .= ',';
-
                 }
 
                 $html .= '  ]';
 
-
-
                 return $html;
-            },
+            }
         ]);
 
         return parent::save($path);
