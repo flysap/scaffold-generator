@@ -48,13 +48,7 @@ class ConfigGenerator extends Generator {
             'description' => $this->getDescription(),
             'version'     => $this->getVersion(),
             'autoload'    => function() {
-                $html = ',"autoload": [';
-
-                $html .= '"Modules\\\\'.$this->getVendor().'\\\\'.$this->getUser().'\\\\'.ucfirst(str_singular($this->getUser())).'ServiceProvider"';
-
-                $html .= '  ]';
-
-                return $html;
+                return',"autoload": "Modules\\\\'.$this->getVendor().'\\\\'.$this->getUser().'\\\\'.ucfirst(str_singular($this->getUser())).'ServiceProvider"';
             },
             'menus'       => function () use($menus) {
                 $html = ',"menu": [';
