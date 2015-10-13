@@ -5,7 +5,7 @@
 
   "menu": [
     {
-      "section": "Scaffold",
+      "section": "Generator",
       "label"  : "Generate",
       "href"   : "/admin/scaffold-generator/generate"
     }

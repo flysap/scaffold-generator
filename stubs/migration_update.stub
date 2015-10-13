@@ -11,10 +11,12 @@ class {{class_name}} extends Migration
      * @return void
      */
     public function up() {
-        Schema::table('{{table_name}}', function (Blueprint $table) {
-            {{table_fields}}
-            {{table_relations}}
-        });
+        if ( Schema::hasTable('{{table_name}}')) {
+            Schema::table('{{table_name}}', function (Blueprint $table) {
+                {{table_fields}}
+                {{table_relations}}
+            });
+        }
     }
 
     /**
@@ -24,6 +26,8 @@ class {{class_name}} extends Migration
      */
     public function down()
     {
-        Schema::drop('{{table_name}}');
+        if ( Schema::hasTable('{{table_name}}') ) {
+             Schema::drop('{{table_name}}');
+         }
     }
 }
