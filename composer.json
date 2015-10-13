@@ -41,6 +41,10 @@
       {
         "type": "git",
         "url": "git@github.com:parfumix/laravel-likeable.git"
+      },
+      {
+        "type": "git",
+        "url": "git@github.com:parfumix/eloquent-commentable.git"
       }
     ],
     "require": {
@@ -54,6 +58,7 @@
         "parfumix/laravel-image-uploader": "dev-master",
         "parfumix/data-exporter": "dev-master",
         "parfumix/eloquent-sortable": "dev-master",
+        "parfumix/eloquent-commentable": "dev-master",
         "cartalyst/tags": "2.0.*",
         "robclancy/presenter": "1.3.*",
         "watson/validating": "~1.0",

@@ -96,6 +96,11 @@ packages:
   is_default: false
   description: Your description
 
+ commentsable :
+  class: Flysap\ScaffoldGenerator\Packages\CommentsAble
+  is_default: false
+  description: Your description
+
 # there will be listed all do templates
 templates:
   my_shop:
