@@ -27,7 +27,7 @@ class CommentsAble extends Package implements PackageAble {
      * @return mixed
      */
     public function import() {
-        return "\nuse Eloquent\\Commentable\\CommentTrait;\nEloquent\\Commentable\\Commentable;";
+        return "\nuse Eloquent\\Commentable\\CommentTrait;\nuse Eloquent\\Commentable\\Commentable;";
     }
 
     /**
