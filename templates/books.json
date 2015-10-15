@@ -1,0 +1,50 @@
+{
+  "vendor": "yourvendor",
+  "name": "yourname",
+
+  "tables": [
+    {
+      "name": "contacts",
+      "fields": "first_name:string, last_name:string",
+      "relations": "",
+      "packages": [
+        {
+          "package": "seoable"
+        }
+      ]
+    },
+    {
+      "name": "accounts",
+      "fields": "name:string, type:enum('competitor'|'customer'|'partner')",
+      "relations": "",
+      "packages": [
+        {
+          "package": "seoable"
+        }
+      ]
+    },
+    {
+      "name": "activities",
+      "fields": "subject:string, priority:enum('high'|'low'|'medium')",
+      "relations": "",
+      "packages": [
+        {
+          "package": "seoable"
+        }
+      ]
+    },
+    {
+      "name": "properties",
+      "fields": "name:string",
+      "relations": "",
+      "packages": [
+        {
+          "package": "seoable"
+        },
+        {
+          "package": "imageaable"
+        }
+      ]
+    }
+  ]
+}

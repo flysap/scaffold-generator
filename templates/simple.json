@@ -1,0 +1,22 @@
+{
+  "vendor": "yourvendor",
+  "name": "yourname",
+
+  "tables": [
+    {
+      "name": "members",
+      "fields": "name:string",
+      "relations": ""
+    },
+    {
+      "name": "accounts",
+      "fields": "name:string",
+      "relations": ""
+    },
+    {
+      "name": "members_accounts",
+      "fields": "member_id:int|unsigned, account_id:int|unsigned",
+      "relations": "member_id:id|members|cascade|cascade|belongsToMany, account_id:id|accounts|cascade|cascade|belongsToMany"
+    }
+  ]
+}

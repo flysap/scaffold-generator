@@ -1,0 +1,22 @@
+{
+  "vendor": "yourvendor",
+  "name": "yourname",
+
+  "tables": [
+    {
+      "name": "accounts",
+      "fields": "first_name:string, last_name:string",
+      "relations": ""
+    },
+    {
+      "name": "contacts",
+      "fields": "first_name:string, last_name:string, account_id:int|unsigned|nullable",
+      "relations": "account_id:id|accounts"
+    },
+    {
+      "name": "countries",
+      "fields": "name:string, level:int, account_id:int|unsigned|nullable",
+      "relations": "account_id:id|accounts|cascade|cascade|hasOne"
+    }
+  ]
+}
