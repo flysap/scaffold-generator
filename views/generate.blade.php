@@ -1,7 +1,6 @@
 @extends('themes::layouts.default')
 
 @section('content')
-
     <section class="content-header">
         <h1>
             General Form Elements
@@ -86,7 +85,9 @@
                                                 <span class="input-group-addon"><i class="fa fa-users"></i></span>
                                                 <input type="text" class="form-control input-lg" name="vendor" placeholder="Vendor" value="{{old('vendor')}}">
                                             </div>
+
                                         </div>
+
 
                                         <div class="col-xs-2">
                                             <div class="input-group">

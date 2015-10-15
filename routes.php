@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Flysap\Support;
+use Flysap\FileManager;
 
 Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admin'], function() {
 
@@ -29,14 +30,14 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
     }]);
 
     Route::post('update-file', ['as' => 'update-file', function(Request $request) {
-        Flysap\FileManager\updateFile(
+        FileManager\updateFile(
             $request['file'],
             $request['content']
         );
     }]);
 
     Route::get('load-file', ['as' => 'load-file', function(Request $request) {
-        return Flysap\FileManager\getFile(
+        return FileManager\getFile(
             $request['file']
         );
     }]);
