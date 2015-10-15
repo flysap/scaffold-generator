@@ -81,10 +81,12 @@ Route::group(['prefix' => 'admin/scaffold-generator', 'middleware' => 'role:admi
 
             $template = $templates[$template];
 
-            if( $contents = Support\get_file_contents( storage_path($template['path']) ) ) {
+            /** @var If template no exists in storage path than load from local templates . $path */
+            $path = file_exists(storage_path($template['path'])) ? storage_path($template['path']) : __DIR__ . DIRECTORY_SEPARATOR . $template['path'];
+
+            if( $contents = Support\get_file_contents( $path ) )
                 return redirect(route('scaffold-generate'))
                     ->withInput($contents);
-            }
         }
 
         if(! $request->hasFile('template'))
