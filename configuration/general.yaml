@@ -101,6 +101,11 @@ packages:
   is_default: false
   description: Your description
 
+ shopable :
+  class: Flysap\ScaffoldGenerator\Packages\ShopAble
+  is_default: false
+  description: Your description
+
 # there will be listed all do templates
 templates:
   my_shop:
