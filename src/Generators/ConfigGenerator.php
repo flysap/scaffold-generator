@@ -6,6 +6,8 @@ use Flysap\ScaffoldGenerator\Generator;
 
 class ConfigGenerator extends Generator {
 
+    const PREFIX_NAMESPACE = 'Modules';
+
     public function init() {
         parent::init();
 
@@ -48,7 +50,7 @@ class ConfigGenerator extends Generator {
             'description' => $this->getDescription(),
             'version'     => $this->getVersion(),
             'autoload'    => function() {
-                return',"autoload": "Modules\\\\'.$this->getVendor().'\\\\'.$this->getUser().'\\\\'.ucfirst(str_singular($this->getUser())).'ServiceProvider"';
+                return',"autoload": "' . sprintf('%s\\\\%s\\\\%s\\\\%s', self::PREFIX_NAMESPACE, ($this->getVendor()), ($this->getUser()), ucfirst(str_singular($this->getUser())).'ServiceProvider') .'"';
             },
             'menus'       => function () use($menus) {
                 $html = ',"menu": [';
