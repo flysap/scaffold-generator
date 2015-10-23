@@ -38,7 +38,7 @@ class ShopAble extends Package implements PackageAble {
     public function buildDependency() {
         Support\artisan('vendor:publish', [
             '--provider' => 'Laravel\Shop\ShopServiceProvider',
-            '--tag'      => ['migrations']
+            '--tag'      => ['migrations', 'seeds', 'configuration']
         ]);
 
         return $this;
