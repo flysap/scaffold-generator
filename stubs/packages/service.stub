@@ -3,6 +3,7 @@
 namespace Modules\{{vendor}}\{{name}};
 
 use Illuminate\Support\ServiceProvider;
+use Flysap\Support;
 
 class {{class}}ServiceProvider extends ServiceProvider {
 
@@ -14,9 +15,20 @@ class {{class}}ServiceProvider extends ServiceProvider {
     public function boot() {
         $this->loadRoutes();
 
-        $this->publishes([
-            __DIR__ . DIRECTORY_SEPARATOR . 'migrations/' => base_path('database/migrations')
-        ], 'migrations');
+        if( Support\is_path_exists(__DIR__ . DIRECTORY_SEPARATOR . 'migrations/') )
+            $this->publishes([
+                __DIR__ . DIRECTORY_SEPARATOR . 'migrations/' => base_path('database/migrations')
+            ], 'migrations');
+
+        if( Support\is_path_exists(__DIR__ . DIRECTORY_SEPARATOR . 'seeds/') )
+            $this->publishes([
+                __DIR__ . DIRECTORY_SEPARATOR . 'seeds/' => base_path('database/seeds')
+            ], 'seeds');
+
+        if( Support\is_path_exists(__DIR__ . DIRECTORY_SEPARATOR . 'configuration/') )
+            $this->publishes([
+                __DIR__ . DIRECTORY_SEPARATOR . 'configuration/' => config_path('yaml/{{class}}')
+            ], 'config');
 
         {{boot_action}}
     }
