@@ -25,22 +25,17 @@
             <div class="col-md-12">
                 <div class="box">
 
-
-                    <!-- Button trigger modal -->
-                    {{--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                        Launch demo modal
-                    </button>--}}
-
                     <button type="button" class="btn btn-primary btn-small add_table" data-toggle="modal">
                         Add table
                     </button>
 
+                    <div id="diagram"></div>
 
 
-                    <div id="diagram">
-
-                    </div>
-
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                        Launch demo modal
+                    </button>
 
                     @include('scaffold-generator::addtable')
                 </div>
@@ -54,15 +49,17 @@
     <style>
         #diagram {
             padding: 20px;
-            width: 80%;
+            width: 90%;
             height: 400px;
         }
 
-        .item {
+        .panel-heading {
+            cursor: pointer;
+        }
+        
+        .panel_table {
+            width: 200px;
             position: absolute;
-            height: 80px;
-            width: 80px;
-            border: 1px solid blue;
         }
 
     </style>
@@ -88,6 +85,12 @@
     ?>
 
     <script type="text/javascript">
+
+        Array.prototype.remove = function(from, to) {
+            var rest = this.slice((to || from) + 1 || this.length);
+            this.length = from < 0 ? this.length + from : from;
+            return this.push.apply(this, rest);
+        };
 
         var Field = function(name, type, size, default_value, is_primary, is_unique) {
 
@@ -146,9 +149,9 @@
              * Render current table .
              *
              * */
-            this.render = function() {
+            this.render = function(container) {
 
-                var html = '<div id="'+this.name+'" class="panel panel-primary"><div class="panel-heading">'+ this.name +'</div><div class="panel-body"></div>';
+                var html = '<div id="'+this.name+'" class="panel panel-primary panel_table"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove"></span><span class="pull-right glyphicon glyphicon-edit"></span>'+ this.name +'</div><div class="panel-body"></div>';
 
                 html += '<table class="table">';
 
@@ -164,10 +167,17 @@
                     html += '</tr>';
                 });
 
-
                 html += '</table>';
 
                 html += '</div>';
+
+                if( container ) {
+                    container.append(html);
+
+                    jsPlumb.draggable(this.name, {
+                        containment: true
+                    });
+                }
 
                 return html;
             }
@@ -189,20 +199,22 @@
                     console.log(message);
             },
 
-            
+
             /**
              * Load from storage current canvas state .
              * */
-            loadCanvasState: function () {
+            loadCanvasState: function (tables) {
                 if (! this.is_supports_html5_storage())
                     throw new Error('Browser do not support local storage.!');
 
-                var tables = Lockr.get('scaffold-tables');
+                if( tables === undefined ) {
+                    var tables = Lockr.get('scaffold-tables');
 
-                if( tables )
-                    tables = JSON.parse(tables);
-                 else
-                    tables = [];
+                    if( tables )
+                        tables = JSON.parse(tables);
+                    else
+                        tables = [];
+                }
 
                 this.addTables(tables);
 
@@ -273,10 +285,18 @@
              *
              * */
             removeTable: function(table) {
+                var self = this;
 
                 this.debugg('removed table "' + table + '" from database source');
 
+                this.tables.map(function(val, i) {
+                    if( val.name == table )
+                        self.tables.remove(i);
+                });
+
                 this.saveCanvasState();
+
+                return true;
             },
 
             /**
@@ -298,13 +318,9 @@
 
                 this.debugg('rendering tables from database source');
 
-                var html = '';
-
                 tables.map(function(val) {
-                    html += val.render();
+                    val.render(container)
                 });
-
-                container.append(html);
             },
 
             /**
@@ -317,7 +333,7 @@
             }
         };
 
-        $(function () {
+        jsPlumb.ready(function() {
 
             try {
                 tableDesigner.loadCanvasState();
@@ -325,15 +341,32 @@
                 $('.add_table').on('click', function() {
                     var table = prompt('Please enter table name!');
 
-                    if( table && table !== undefined ) {
-                        var tableObj = {};
-
+                    if( table && table !== undefined )
                         if( tableObj = tableDesigner.addTable(table) )
-                            $("#diagram").append(
-                                tableObj.render()
-                            );
-                    }
+                            tableObj.render($("#diagram"))
                 });
+
+
+                $('.tbl-remove').on('click', function() {
+
+                    /**
+                     * If user want delete table i have to:
+                     *
+                     *  a. remove the table.
+                     *  b. remove all the connections for the fields
+                     *  c. remove endPoints from jsPlumb instance .
+                     *  d. save the state to the database source
+                     *  e. remove from html dom obj .
+                     *
+                     */
+
+                    var div = $(this).closest('.panel_table');
+
+                    if( confirm('You really want delete that table?') ) {
+                        if( tableDesigner.removeTable(div.attr('id')) )
+                            div.remove()
+                    }
+                })
 
             } catch (e) {
                 alert('Error ' + e.name + ":" + e.message + "\n" + e.stack);
