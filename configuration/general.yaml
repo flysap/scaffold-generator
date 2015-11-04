@@ -4,6 +4,17 @@ development_database: development
 # here will be stored temporary modules
 temp_path: modules
 
+# here will be displayed mysql field types .
+fields:
+   - int
+   - enum
+   - tinyint
+   - varchar
+   - longtext
+   - text
+   - timestamp
+   - date
+
 # here will be listed aliases types .
 fields_type_alias:
  int: integer
