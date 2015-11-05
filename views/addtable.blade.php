@@ -10,25 +10,23 @@
 
                 <div class="form-inline" style="margin-bottom: 10px">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Field" aria-describedby="basic-addon1">
+                        <input type="text" class="form-control field-name" placeholder="Field" aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
-                        <select class="form-control">
+                        <select class="form-control" name="field-type">
                             @foreach($fields as $field)
-                                <option>{{ucFirst($field)}}</option>
+                                <option value="{{$field}}">{{ucFirst($field)}}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <input type="number" class="form-control" placeholder="Size"
-                               aria-describedby="basic-addon1">
+                        <input type="number" class="form-control field-size" placeholder="Size" aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Default"
-                               aria-describedby="basic-addon1">
+                        <input type="text" class="form-control field-default" placeholder="Default"aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
@@ -61,7 +59,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button class="btn btn-inline btn-success btn-flat">Add field</button>
+                    <button class="btn btn-inline btn-success btn-flat add-field">Add field</button>
                 </div>
 
                 <table class="table">
@@ -79,7 +77,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="tableDesigner.closePanel()">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

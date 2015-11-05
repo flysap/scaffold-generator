@@ -92,7 +92,7 @@
             return this.push.apply(this, rest);
         };
 
-        var Field = function (name, type, size, default_value, is_primary, is_unique) {
+        var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned) {
 
             this.name = name;
             this.type = type;
@@ -100,6 +100,7 @@
             this.default_value = default_value;
             this.is_primary = is_primary;
             this.is_unique = is_unique;
+            this.is_unsigned = is_unsigned;
 
             /** Check if field is primary  */
             this.isPrimary = function () {
@@ -109,6 +110,11 @@
             /** Check if field is unique  */
             this.isUnique = function () {
                 return (this.is_unique === true);
+            }
+
+            /** Check if field is unsigned  */
+            this.isUnsigned = function () {
+                return (this.is_unsigned === true);
             }
 
         };
@@ -135,8 +141,24 @@
             }
 
             this.addField = function(field) {
-                if( ! self.fields[field] )
-                    self.fields[field] = new Field(field);
+                if( field instanceof Field) {
+                    if(! self.fields[field.name])
+                        self.fields[field.name] = field;
+                } else {
+                    if( field instanceof String) {
+                        if( ! self.fields[field] )
+                            self.fields[field] = new Field(field);
+                    }
+                }
+            }
+
+            /**
+             * Get field from table .
+             *
+             * */
+            this.getField = function(field) {
+                if( this.fields[field] !== undefiend )
+                    return this.fields[field];
             }
 
             /**
@@ -220,7 +242,6 @@
 
         };
 
-
         var TablePanel = function(table) {
 
             this.table = tableDesigner.getTable(table);
@@ -230,21 +251,13 @@
              *
              * */
             this.loadPanel = function() {
-                var html = '';
+                var self = this;
 
                 this.table.fields.map(function(field) {
-                    html += '<tr>';
-
-                    html += '<td>'+field.name+'</td>';
-                    html += '<td>'+field.type+'</td>';
-                    html += '<td>'+field.size+'</td>';
-                    html += '<td>'+field.name+'</td>';
-                    html += '<td>delete</td>';
-
-                    html += '</tr>';
+                    self.insertField(field);
                 });
 
-                $('#tableModal .table-fields').html(html);
+                $('#tableModal').attr('data-table', this.table.name);
 
                 /** Open the modal .. */
                 $('#tableModal').modal('show')
@@ -253,6 +266,8 @@
             this.closePanel = function() {
                 $('#tableModal .table-fields').html('');
 
+                $('#tableModal').removeAttr('data-table');
+
                 /** Open the modal .. */
                 $('#tableModal').modal('hide');
 
@@ -260,21 +275,79 @@
                 this.saveState();
             }
 
+
+            this.insertField = function(field) {
+                var html = '<tr>';
+
+                html += '<td>'+field.name+'</td>';
+                html += '<td>'+field.type+'</td>';
+                html += '<td>'+field.size+'</td>';
+                html += '<td>'+field.name+'</td>';
+                html += '<td>delete</td>';
+
+                html += '</tr>';
+
+                $('#tableModal .table-fields').append(html);
+            }
+
             /**
              * Add field for current table .
              *
              * */
-            this.addField = function() {
+            this.addField = function(field, type, size, defaultVal, isPrimary, isUnique, isUnsigned) {
+                /**
+                 * When user try to add a field i have to:
+                 *
+                 *  a. have to check if field with the same name already exists in current table
+                 *  b. check if field name is valid (i mean it have no spaces, numbers no -, it must use cameCase style and use _ instead of spaces)
+                 *  c. check if field name is no too long ..
+                 *  d. check the combination of params entered by user , primary not null etc ..
+                 *  e. i have to get the current table and insert that field to current table.
+                 *  f. i have to use template and insert current field to the current panel
+                 *  g. i have to save table current state.
+                 *  m. i have to repaint current table to the diagram.
+                 *
+                 * */
+
+                if( this.table.getField(field) )
+                    throw new Error('Field with the same name already exists!')
+
+                if( ! field.match('/^([a-zA-Z_]){2,20}$/gi') )
+                    throw new Error('Invalid field name. Please choose another name!');
+
+                //#@todo check the combination
+
+                var fieldObj = new Field(field, type, size, defaultVal, isPrimary, isUnique, isUnsigned);
+
+                this.table.addField(
+                    fieldObj
+                );
+
+                this.insertField(fieldObj);
 
 
                 this.saveState();
+
+                //@todo repaint current table to diagram .
             }
 
             /**
              * Remove field from current table .
              *
              * */
-            this.removeField = function() {
+            this.removeField = function(field) {
+
+                /**
+                 *  When user try to delete field from current table i have to:
+                 *
+                 *      a. i have to check if that field persist in current table
+                 *      b. i have to get all connections between fields and check if current field have no connections with other fields.
+                 *      c. i have to delete that field from current table
+                 *      d. i have to save current state to the source database.
+                 *      e. i have to delete html from current panel
+                 *      f. i have to repaint current table from diagram .
+                 * */
+
 
                 this.saveState();
             }
@@ -291,7 +364,6 @@
                 tableDesigner.debugg('Save state for table ' + this.table.name);
             }
         }
-
 
 
         var tableDesigner = {
@@ -532,6 +604,24 @@
                     );
 
                     tablePanelObj.loadPanel();
+
+                });
+
+                $('.add-field').on('click', function() {
+                    var div = $(this).closest('#tableModal');
+
+                    var tablePanelObj = new TablePanel(
+                        div.attr('data-table')
+                    );
+
+                    var form = $(this).prev('form-inline');
+
+                    tablePanelObj.addField(
+                       form.find('.field-name').val(),
+                       form.find('.field-type').val(),
+                       form.find('.field-size').val(),
+                       form.find('.field-default').val()
+                    );
 
                 });
 
