@@ -208,7 +208,7 @@
 
                 fieldKeys.map(function (field) {
                     html += '<tr>';
-                    html += '<td>' + this.fields[field].name + '</td>';
+                    html += '<td>' + self.fields[field].name + '</td>';
                     html += '</tr>';
                 });
 
@@ -249,10 +249,10 @@
              *
              * */
             this.flush = function() {
-                if( element = window.getElementById(this.name) ) {
-                    element.removeChild();
+                if( element = $('#' + this.name) ) {
+                    element.remove();
 
-                    this.render();
+                    this.render($("#diagram"));
                 }
             }
 
@@ -345,7 +345,7 @@
 
                 this.saveState();
 
-                //@todo repaint current table to diagram .
+                this.table.flush();
             }
 
             /**
