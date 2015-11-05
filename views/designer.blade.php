@@ -86,6 +86,11 @@
 
     <script type="text/javascript">
 
+        function clearForm() {
+            $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+            $(':checkbox, :radio').prop('checked', false);
+        }
+
         Array.prototype.remove = function (from, to) {
             var rest = this.slice((to || from) + 1 || this.length);
             this.length = from < 0 ? this.length + from : from;
@@ -178,6 +183,8 @@
             this.removeField = function(field) {
                 if( this.isFieldExists(field) )
                     delete this.fields[field];
+
+                //#@todo check if there is no relations .
             }
 
             this.addPackages = function (packages) {
@@ -204,7 +211,13 @@
 
                 var fieldKeys = Object.keys(this.fields);
 
+                var counter = 0;
                 fieldKeys.map(function (field) {
+                    counter++;
+
+                    if( counter > 5 )
+                        return false;
+
                     html += '<tr>';
                     html += '<td>' + self.fields[field].name + '</td>';
                     html += '</tr>';
@@ -294,13 +307,13 @@
 
 
             this.insertField = function(field) {
-                var html = '<tr>';
+                var html = '<tr class="'+field.name+'">';
 
                 html += '<td>'+field.name+'</td>';
                 html += '<td>'+field.type+'</td>';
                 html += '<td>'+field.size+'</td>';
                 html += '<td>'+field.name+'</td>';
-                html += '<td>delete</td>';
+                html += '<td><a href="#"><span class="glyphicon glyphicon-trash delete-field" aria-hidden="true" data-field="'+field.name+'"></span></a></td>';
 
                 html += '</tr>';
 
@@ -346,6 +359,8 @@
                 this.saveState();
 
                 this.table.flush();
+
+                clearForm();
             }
 
             /**
@@ -365,6 +380,12 @@
                  *      f. i have to repaint current table from diagram .
                  * */
 
+                if(! this.table.getField(field) )
+                    throw new Error('Field with this name aren\'t exists!')
+
+                this.table.removeField(field);
+
+                $(".table-fields ." + field).remove();
 
                 this.saveState();
 
@@ -607,7 +628,6 @@
                     );
 
                     tablePanelObj.loadPanel();
-
                 });
 
                 $('.add-field').on('click', function() {
@@ -626,6 +646,18 @@
                        form.find('.field-default').val()
                     );
 
+                });
+
+                $('#tableModal').on('click', '.delete-field', function() {
+                    var div = $(this).closest('#tableModal');
+
+                    var tablePanelObj = new TablePanel(
+                        div.attr('data-table')
+                    );
+
+                    tablePanelObj.removeField(
+                        $(this).data('field')
+                    );
                 });
 
             } catch (e) {
