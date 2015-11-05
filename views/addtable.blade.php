@@ -75,17 +75,7 @@
                     </tr>
                     </thead>
 
-                    <tbody class="table-fields">
-
-                    {{--<tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>aa</td>
-                        <td>@mdo</td>
-                    </tr>--}}
-
-                    </tbody>
+                    <tbody class="table-fields"></tbody>
                 </table>
             </div>
             <div class="modal-footer">
