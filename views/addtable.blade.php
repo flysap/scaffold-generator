@@ -31,7 +31,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox">
+                                <input type="checkbox" class="field-primary">
                                 Primary
                             </label>
                         </div>
@@ -40,7 +40,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox">
+                                <input type="checkbox" class="field-unique">
                                 Unique
                             </label>
                         </div>
@@ -49,7 +49,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox">
+                                <input type="checkbox" class="field-unsigned">
                                 Unsigned
                             </label>
                         </div>

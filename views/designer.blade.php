@@ -153,16 +153,38 @@
             this.x = x ? x : 0;
             this.y = y ? y : 0;
 
-            this.addFields = function (fields) {
-                var self = this;
-
-                fields.map(function (val) {
-                    self.addField(val);
-                });
-            }
 
             this.isFieldExists = function(field) {
                 return field in this.fields;
+            }
+
+            this.isPackageExists = function(package) {
+                return package in this.packages;
+            }
+
+
+            this.addFields = function (fields) {
+                var self = this;
+
+                if( fields ) {
+                    if( fields instanceof Object ) {
+                        var fieldKeys = Object.keys(fields);
+
+                        fieldKeys.map(function(val) {
+                            var field = fields[val];
+
+                            self.addField(
+                                    new Field(field.name, field.type, field.size, field.default_value)
+                            )
+                        })
+
+                    } else {
+                        fields.map(function (val) {
+                            self.addField(val);
+                        });
+                    }
+                }
+
             }
 
             this.addField = function(field) {
@@ -203,15 +225,54 @@
                 //#@todo check if there is no relations .
             }
 
+
+            /**
+             * Adding an package .
+             *
+             * */
+            this.addPackage = function(package) {
+                var self = this;
+
+                if( package instanceof Package) {
+                    if( this.isPackageExists(package.name) )
+                        tableDesigner.debugg('Package already exists. Choose another one!');
+
+                    self.packages[package.name] = package;
+                } else {
+                    if( package instanceof String) {
+                        if( this.isPackageExists(package) )
+                            tableDesigner.debugg('Package already exists. Choose another one!');
+
+                        self.packages.package = new Package(package);
+                    }
+                }
+            }
+
             this.addPackages = function (packages) {
                 var self = this;
 
-                packages.map(function (val) {
-                    var packageObj = new Package(val);
+                if( packages ) {
+                    if( packages instanceof Object ) {
+                        var packageKeys = Object.keys(packages);
 
-                    self.packages.val = packageObj;
-                });
+                        packageKeys.map(function(val) {
+                            var packageObj = packages[val];
+
+                            self.addPackage(
+                                    new Package(packageObj.name)
+                            )
+                        })
+
+                    } else {
+                        packages.map(function (val) {
+                            var packageObj = new Package(val);
+
+                            self.addPackage(packageObj);
+                        });
+                    }
+                }
             }
+
 
             /**
              * Render current table .
@@ -234,8 +295,10 @@
                     if( counter > 5 )
                         return false;
 
+                    var fieldObj = self.fields[field];
+
                     html += '<tr>';
-                    html += '<td>' + self.fields[field].name + '</td>';
+                    html += '<td>' + (fieldObj.isPrimary() ? '<i class="fa fa-fw fa-key"></i>' : '')  + fieldObj.name + ' -   <i>' + fieldObj.type + ' (' +  fieldObj.size + ')</i></td>';
                     html += '</tr>';
                 });
 
@@ -497,7 +560,10 @@
                 if( this.isTableExists(table) )
                     throw new Error('Table already exists. Choose another name!');
 
-                var tableObj = new Table(table, fields, packages, x, y);
+                var tableObj = new Table(table, null, null, x, y);
+
+                tableObj.addFields(fields);
+                tableObj.addPackages(packages);
 
                 this.tables[table] = tableObj;
 
@@ -517,11 +583,20 @@
                 var self = this;
 
                 if (tables !== undefined) {
-                    var keys = Object.keys(tables);
 
-                    keys.map(function (val) {
-                        self.addTable(tables[val].name, tables[val].fields, tables[val].packages, tables[val].x, tables[val].y);
-                    });
+                    if( tables instanceof  Object ) {
+                        var keys = Object.keys(tables);
+
+                        keys.map(function (val) {
+                            var tableObj = tables[val];
+
+                            self.addTable(tableObj.name, tableObj.fields, tableObj.packages, tableObj.x, tableObj.y);
+                        });
+                    } else {
+                        tables.map(function(table) {
+                            self.addTable(table);
+                        });
+                    }
                 }
 
                 return this;
@@ -663,7 +738,10 @@
                        form.find('.field-name').val(),
                        form.find('select option:selected').val(),
                        form.find('.field-size').val(),
-                       form.find('.field-default').val()
+                       form.find('.field-default').val(),
+                       form.find('.field-primary').val(),
+                       form.find('.field-unique').val(),
+                       form.find('.field-unsigned').val()
                     );
 
                 });
