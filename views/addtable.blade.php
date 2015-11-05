@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="form-group">
-                        <select class="form-control" name="field-type">
+                        <select class="form-control" class="field-type">
                             @foreach($fields as $field)
                                 <option value="{{$field}}">{{ucFirst($field)}}</option>
                             @endforeach
@@ -77,20 +77,19 @@
 
                 <h4>Packages</h4>
 
-                <div class="panel panel-default">
+                <div class="panel panel-default" style="margin-bottom: 0">
                     <div class="panel-body">
                         @foreach($packages as $title => $package)
-                            <div class="btn-group" data-toggle="buttons">
-                                <label class="btn btn-primary active">
+                            <div class="btn-group bs-example" data-toggle="buttons">
+                                <label class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Tooltip on left">
                                     <input type="checkbox" name="{{$title}}" autocomplete="off" checked> {{ucfirst($title)}}
                                 </label>
                             </div>
                         @endforeach
                     </div>
                 </div>
-
-
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
@@ -101,5 +100,8 @@
 <style>
     .form-control {
         border-radius: 5px;
+    }
+    .bs-example>.btn{
+        margin:5px 0px;
     }
 </style>

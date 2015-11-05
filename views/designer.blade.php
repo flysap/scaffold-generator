@@ -26,13 +26,19 @@
                 <div class="box">
 
                     <div style="clear:both; overflow: hidden; margin-bottom: 10px">
-                        <div style="width:50px; height:400px; background:#000; float:left;">
+                        <div style="width:33px; height:400px; background:#ecf0f5; float:left;">
+
+                            <div class="btn-group-vertical">
+                                <button type="button" class="btn btn-link add_table"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></button>
+                            </div>
+
+                            {{--
                             <button type="button" class="btn btn-primary btn-small add_table" data-toggle="modal">
                                 Add table
-                            </button>
+                            </button>--}}
                         </div>
 
-                        <div id="diagram" style="width: calc(100% - 50px); float:left;"></div>
+                        <div id="diagram" style="width: calc(100% - 33px); float:left;"></div>
                     </div>
 
                     @include('scaffold-generator::addtable')
@@ -52,14 +58,24 @@
             position: relative;
         }
 
-        .panel-heading {
+        #diagram .panel-heading {
             cursor: pointer;
+            padding: 7px 8px;
+
+        }
+
+        #diagram .table>tbody>tr>td {
+            padding: 5px 8px;
         }
 
         .panel_table {
             width: 200px;
             position: absolute;
             margin: 0;
+        }
+
+        .btn{
+            padding:6px 9px;
         }
 
     </style>
@@ -87,7 +103,7 @@
     <script type="text/javascript">
 
         function clearForm() {
-            $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+            $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio, :select').val('');
             $(':checkbox, :radio').prop('checked', false);
         }
 
@@ -205,7 +221,7 @@
 
                 var self = this;
 
-                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span>' + this.name + '</div>';
+                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px;"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span><strong>' + this.name + '</strong></div>';
 
                 html += '<table class="table">';
 
@@ -346,7 +362,11 @@
                 if( ! field.match(/^([a-zA-Z_]){2,20}$/gi) )
                     throw new Error('Invalid field name. Please choose another name!');
 
-                //#@todo check the combination
+                if( ! type)
+                    throw new Error('Please select field type');
+
+                if(! size)
+                    size = 55;
 
                 var fieldObj = new Field(field, type, size, defaultVal, isPrimary, isUnique, isUnsigned);
 
@@ -641,7 +661,7 @@
 
                     tablePanelObj.addField(
                        form.find('.field-name').val(),
-                       form.find('.field-type').val(),
+                       form.find('select option:selected').val(),
                        form.find('.field-size').val(),
                        form.find('.field-default').val()
                     );
