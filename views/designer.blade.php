@@ -205,7 +205,7 @@
 
                 var self = this;
 
-                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span>' + this.name + '</div><div class="panel-body"></div>';
+                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span>' + this.name + '</div>';
 
                 html += '<table class="table">';
 
@@ -590,7 +590,7 @@
                             tableObj.render($("#diagram"))
                 });
 
-                $('.tbl-remove').on('click', function () {
+                $('#diagram').on('click', '.tbl-remove', function () {
 
                     /**
                      * If user want delete table i have to:
@@ -609,9 +609,9 @@
                         if (tableDesigner.removeTable(div.attr('id')))
                             div.remove()
                     }
-                })
+                });
 
-                $('.tbl-edit').on('click', function() {
+                $('#diagram').on('click', '.tbl-edit', function() {
                     /**
                      *
                      * If user click on edit table i have to:

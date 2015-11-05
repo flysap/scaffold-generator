@@ -2,8 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
@@ -75,6 +74,22 @@
 
                     <tbody class="table-fields"></tbody>
                 </table>
+
+                <h4>Packages</h4>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @foreach($packages as $title => $package)
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-primary active">
+                                    <input type="checkbox" name="{{$title}}" autocomplete="off" checked> {{ucfirst($title)}}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
