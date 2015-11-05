@@ -30,11 +30,6 @@
                             <button type="button" class="btn btn-primary btn-small add_table" data-toggle="modal">
                                 Add table
                             </button>
-
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#tableModal">
-                                Launch demo modal
-                            </button>
                         </div>
 
                         <div id="diagram" style="width: calc(100% - 50px); float:left;"></div>
@@ -123,11 +118,13 @@
             this.name = name;
         };
 
-        var Table = function (name) {
+        var Table = function (name, fields, packages, x, y) {
 
             this.name = name;
-            this.fields = [];
-            this.packages = [];
+            this.fields = fields ? fields : [];
+            this.packages = packages ? packages : [];
+            this.x = x ? x : 0;
+            this.y = y ? y : 0;
 
             this.addFields = function (fields) {
                 var self = this;
@@ -167,7 +164,9 @@
              * */
             this.render = function (container) {
 
-                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span>' + this.name + '</div><div class="panel-body"></div>';
+                var self = this;
+
+                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span>' + this.name + '</div><div class="panel-body"></div>';
 
                 html += '<table class="table">';
 
@@ -187,13 +186,22 @@
 
                 html += '</div>';
 
-                if (container) {
+                if (container)
                     container.append(html);
 
-                    jsPlumb.draggable(this.name, {
-                        containment: true
-                    });
-                }
+                jsPlumb.draggable(this.name, {
+                    containment: true,
+                    grid:[50,50],
+                    drag:function(e){
+                        jsPlumb.repaint($(this));
+                    },
+                    stop: function(e) {
+                        self.x = e.pos[0];
+                        self.y = e.pos[1];
+
+                        tableDesigner.updateTable(self);
+                    }
+                });
 
                 return html;
             }
@@ -212,6 +220,80 @@
 
         };
 
+
+        var TablePanel = function(table) {
+
+            this.table = tableDesigner.getTable(table);
+
+            /**
+             * Load edit table panel .
+             *
+             * */
+            this.loadPanel = function() {
+                var html = '';
+
+                this.table.fields.map(function(field) {
+                    html += '<tr>';
+
+                    html += '<td>'+field.name+'</td>';
+                    html += '<td>'+field.type+'</td>';
+                    html += '<td>'+field.size+'</td>';
+                    html += '<td>'+field.name+'</td>';
+                    html += '<td>delete</td>';
+
+                    html += '</tr>';
+                });
+
+                $('#tableModal .table-fields').html(html);
+
+                /** Open the modal .. */
+                $('#tableModal').modal('show')
+            }
+
+            this.closePanel = function() {
+                $('#tableModal .table-fields').html('');
+
+                /** Open the modal .. */
+                $('#tableModal').modal('hide');
+
+                /** Save state for current table . */
+                this.saveState();
+            }
+
+            /**
+             * Add field for current table .
+             *
+             * */
+            this.addField = function() {
+
+
+                this.saveState();
+            }
+
+            /**
+             * Remove field from current table .
+             *
+             * */
+            this.removeField = function() {
+
+                this.saveState();
+            }
+
+            /**
+             * Save state for current table .
+             *
+             * */
+            this.saveState = function() {
+                tableDesigner.updateTable(
+                    this.table
+                );
+
+                tableDesigner.debugg('Save state for table ' + this.table.name);
+            }
+        }
+
+
+
         var tableDesigner = {
 
             DEBUGG: true,
@@ -227,12 +309,11 @@
                     console.log(message);
             },
 
-            
             /**
              * Load from storage current canvas state .
              * */
             loadCanvasState: function (tables, block) {
-                if (!this.is_supports_html5_storage())
+                if (! this.is_supports_html5_storage())
                     throw new Error('Browser do not support local storage.!');
 
                 if (! tables) {
@@ -269,65 +350,22 @@
 
 
             /**
-             * Load edit table panel .
+             * Update table .
              *
              * */
-            loadPanel: function(table) {
-                if( table ) {
-                    if(! this.isTableExists(table))
-                        throw new Error('Invalid table!');
-
-                    var tableObj = this.getTable(table);
-
-                    var html = '';
-
-                    tableObj.fields.map(function(field) {
-                        html += '<tr>';
-
-                        html += '<td>'+field.name+'</td>';
-                        html += '<td>'+field.type+'</td>';
-                        html += '<td>'+field.size+'</td>';
-                        html += '<td>'+field.name+'</td>';
-                        html += '<td>delete</td>';
-
-                        html += '</tr>';
-                    });
-
-                    $('#tableModal .table-fields').html(html);
-                }
-
-                /** Open the modal .. */
-                $('#tableModal').modal('show')
+            updateTable: function(table) {
+                this.removeTable(table.name);
+                this.addTable(table.name, table.fields, table.packages, table.x, table.y);
             },
-
-            closePanel: function() {
-                $('#tableModal .table-fields').html('');
-
-                /** Open the modal .. */
-                $('#tableModal').modal('hide')
-            },
-
 
             /**
              *  Add new table to the stack .
              * */
-            addTable: function (table, fields, relations, packages) {
+            addTable: function (table, fields, packages, x, y) {
                 if( this.isTableExists(table) )
                     throw new Error('Table already exists. Choose another name!');
 
-                var tableObj = new Table(table);
-
-                /**
-                 * Add fields if they exists .
-                 * */
-                if (fields !== undefined)
-                    tableObj.addFields(fields);
-
-                /**
-                 * Add packages if they exists .
-                 * */
-                if (packages !== undefined)
-                    tableObj.addPackages(packages);
+                var tableObj = new Table(table, fields, packages, x, y);
 
                 this.tables.push(tableObj);
 
@@ -348,7 +386,7 @@
 
                 if (tables !== undefined)
                     tables.map(function (table) {
-                        self.addTable(table.name, table.fields, table.packages);
+                        self.addTable(table.name, table.fields, table.packages, table.x, table.y);
                     });
 
                 return this;
@@ -487,12 +525,14 @@
                      *      c. open modal
                      */
 
-
                     var div = $(this).closest('.panel_table');
 
-                    tableDesigner.loadPanel(
+                    var tablePanelObj = new TablePanel(
                         div.attr('id')
                     );
+
+                    tablePanelObj.loadPanel();
+
                 });
 
             } catch (e) {
