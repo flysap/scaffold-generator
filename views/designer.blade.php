@@ -127,8 +127,8 @@
         var Table = function (name, fields, packages, x, y) {
 
             this.name = name;
-            this.fields = fields ? fields : [];
-            this.packages = packages ? packages : [];
+            this.fields = fields ? fields : {};
+            this.packages = packages ? packages : {};
             this.x = x ? x : 0;
             this.y = y ? y : 0;
 
@@ -140,14 +140,26 @@
                 });
             }
 
+            this.isFieldExists = function(field) {
+                return field in this.fields;
+            }
+
             this.addField = function(field) {
+                var self = this;
+
                 if( field instanceof Field) {
-                    if(! self.fields[field.name])
-                        self.fields[field.name] = field;
+                    if( this.isFieldExists(field.name) )
+                        tableDesigner.debugg('Field already exists. Choose another one!');
+
+                    var fieldname = field.name;
+
+                    self.fields.fieldname = field;
                 } else {
                     if( field instanceof String) {
-                        if( ! self.fields[field] )
-                            self.fields[field] = new Field(field);
+                        if( this.isFieldExists(field) )
+                            tableDesigner.debugg('Field already exists. Choose another one!');
+
+                        self.fields.field = new Field(field);
                     }
                 }
             }
@@ -157,7 +169,7 @@
              *
              * */
             this.getField = function(field) {
-                if( this.fields[field] !== undefiend )
+                if( this.isFieldExists(field) )
                     return this.fields[field];
             }
 
@@ -166,8 +178,8 @@
              *
              * */
             this.removeField = function(field) {
-                if( this.fields[field] !== undefined )
-                    this.fields[field].remove(field);
+                if( this.isFieldExists(field) )
+                    delete this.fields[field];
             }
 
             this.addPackages = function (packages) {
@@ -176,7 +188,7 @@
                 packages.map(function (val) {
                     var packageObj = new Package(val);
 
-                    self.packages[val] = packageObj;
+                    self.packages.val = packageObj;
                 });
             }
 
@@ -192,15 +204,19 @@
 
                 html += '<table class="table">';
 
-                this.fields.map(function (field) {
+                var fieldKeys = Object.keys(this.fields);
+
+                fieldKeys.map(function (field) {
                     html += '<tr>';
-                    html += '<td>' + field.name + '</td>';
+                    html += '<td>' + this.fields[field].name + '</td>';
                     html += '</tr>';
                 });
 
-                this.packages.map(function (package) {
+                var packageKeys = Object.keys(this.packages);
+
+                packageKeys.map(function (package) {
                     html += '<tr>';
-                    html += '<td>' + package.name + '</td>';
+                    html += '<td>' + this.packages[package].name + '</td>';
                     html += '</tr>';
                 });
 
@@ -253,8 +269,10 @@
             this.loadPanel = function() {
                 var self = this;
 
-                this.table.fields.map(function(field) {
-                    self.insertField(field);
+                var fieldKeys = Object.keys(self.table.fields);
+
+                fieldKeys.map(function(field) {
+                    self.insertField(self.table.fields[field]);
                 });
 
                 $('#tableModal').attr('data-table', this.table.name);
@@ -312,7 +330,7 @@
                 if( this.table.getField(field) )
                     throw new Error('Field with the same name already exists!')
 
-                if( ! field.match('/^([a-zA-Z_]){2,20}$/gi') )
+                if( ! field.match(/^([a-zA-Z_]){2,20}$/gi) )
                     throw new Error('Invalid field name. Please choose another name!');
 
                 //#@todo check the combination
@@ -324,7 +342,6 @@
                 );
 
                 this.insertField(fieldObj);
-
 
                 this.saveState();
 
@@ -370,7 +387,7 @@
 
             DEBUGG: true,
 
-            tables: [],
+            tables: {},
 
             /**
              * Debugg message .
@@ -394,7 +411,7 @@
                     if (tables)
                         tables = JSON.parse(tables);
                     else
-                        tables = [];
+                        tables = {};
                 }
 
                 this.addTables(tables);
@@ -415,6 +432,8 @@
              * */
             saveCanvasState: function () {
                 this.debugg('save tables current status to database source.');
+
+                console.log(this.tables);
 
                 Lockr.flush();
                 Lockr.set('scaffold-tables', JSON.stringify(this.tables));
@@ -439,7 +458,7 @@
 
                 var tableObj = new Table(table, fields, packages, x, y);
 
-                this.tables.push(tableObj);
+                this.tables[table] = tableObj;
 
                 this.debugg('adding table "' + table + '" to database source');
 
@@ -456,10 +475,13 @@
             addTables: function (tables) {
                 var self = this;
 
-                if (tables !== undefined)
-                    tables.map(function (table) {
-                        self.addTable(table.name, table.fields, table.packages, table.x, table.y);
+                if (tables !== undefined) {
+                    var keys = Object.keys(tables);
+
+                    keys.map(function (val) {
+                        self.addTable(tables[val].name, tables[val].fields, tables[val].packages, tables[val].x, tables[val].y);
                     });
+                }
 
                 return this;
             },
@@ -470,31 +492,14 @@
              *
              * */
             isTableExists: function(table) {
-                var is_table_exists = false;
-
-                this.tables.map(function(val) {
-                   if( val.name == table ) {
-                       is_table_exists = true;
-                       return false;
-                   }
-                });
-
-                return is_table_exists;
+                return table in this.tables;
             },
 
             getTable: function(table) {
                 if(! this.isTableExists(table))
                     throw new Error('Table not exists!');
 
-                var tableObj = null;
-                this.tables.map(function(val) {
-                     if( val.name == table ) {
-                         tableObj = val;
-                         return false;
-                     }
-                });
-
-                return tableObj;
+                return this.tables[table];
             },
 
 
@@ -503,14 +508,12 @@
              *
              * */
             removeTable: function (table) {
-                var self = this;
+                if( ! this.isTableExists(table) )
+                    throw new Error('Table are not exists. Cannot be deleted!');
 
                 this.debugg('removed table "' + table + '" from database source');
 
-                this.tables.map(function (val, i) {
-                    if (val.name == table)
-                        self.tables.remove(i);
-                });
+                delete this.tables[table];
 
                 this.saveCanvasState();
 
@@ -522,11 +525,9 @@
              *
              * */
             removeTables: function () {
-                var self = this;
+                this.tables = {};
 
-                this.tables.map(function (table) {
-                    self.removeTable(table.name);
-                });
+                this.saveCanvasState();
             },
 
 
@@ -539,8 +540,10 @@
 
                 this.debugg('rendering tables from database source');
 
-                tables.map(function (val) {
-                    val.render(container)
+                var keys = Object.keys(tables);
+
+                keys.map(function (val) {
+                    tables[val].render(container)
                 });
             },
 
@@ -614,7 +617,7 @@
                         div.attr('data-table')
                     );
 
-                    var form = $(this).prev('form-inline');
+                    var form = div.find('.form-fields');
 
                     tablePanelObj.addField(
                        form.find('.field-name').val(),

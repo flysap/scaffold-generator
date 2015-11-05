@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
 
-                <div class="form-inline" style="margin-bottom: 10px">
+                <div class="form-inline form-fields" style="margin-bottom: 10px">
                     <div class="form-group">
                         <input type="text" class="form-control field-name" placeholder="Field" aria-describedby="basic-addon1">
                     </div>
