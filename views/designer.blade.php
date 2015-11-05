@@ -151,9 +151,7 @@
                     if( this.isFieldExists(field.name) )
                         tableDesigner.debugg('Field already exists. Choose another one!');
 
-                    var fieldname = field.name;
-
-                    self.fields.fieldname = field;
+                    self.fields[field.name] = field;
                 } else {
                     if( field instanceof String) {
                         if( this.isFieldExists(field) )
@@ -216,7 +214,7 @@
 
                 packageKeys.map(function (package) {
                     html += '<tr>';
-                    html += '<td>' + this.packages[package].name + '</td>';
+                    html += '<td>' + self.packages[package].name + '</td>';
                     html += '</tr>';
                 });
 
@@ -271,6 +269,7 @@
 
                 var fieldKeys = Object.keys(self.table.fields);
 
+                $('#tableModal .table-fields').html('');
                 fieldKeys.map(function(field) {
                     self.insertField(self.table.fields[field]);
                 });
@@ -324,6 +323,7 @@
                  *  f. i have to use template and insert current field to the current panel
                  *  g. i have to save table current state.
                  *  m. i have to repaint current table to the diagram.
+                 *  n. i have to clear panel form fields.
                  *
                  * */
 
@@ -367,6 +367,8 @@
 
 
                 this.saveState();
+
+                this.table.flush();
             }
 
             /**
@@ -432,8 +434,6 @@
              * */
             saveCanvasState: function () {
                 this.debugg('save tables current status to database source.');
-
-                console.log(this.tables);
 
                 Lockr.flush();
                 Lockr.set('scaffold-tables', JSON.stringify(this.tables));
