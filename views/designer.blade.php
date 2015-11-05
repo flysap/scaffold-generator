@@ -103,7 +103,7 @@
     <script type="text/javascript">
 
         function clearForm() {
-            $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio, :select').val('');
+            $(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
             $(':checkbox, :radio').prop('checked', false);
         }
 
@@ -119,9 +119,22 @@
             this.type = type;
             this.size = size;
             this.default_value = default_value;
-            this.is_primary = is_primary;
-            this.is_unique = is_unique;
-            this.is_unsigned = is_unsigned;
+            this.is_primary = is_primary ? is_primary : false;
+            this.is_unique = is_unique ? is_unique : false;
+            this.is_unsigned = is_unsigned ? is_unsigned : false;
+            this.ref = null;
+
+            /**
+             * Check if field have type number .
+             *
+             * */
+            this.isNumber = function() {
+                return this.type == 'int';
+            }
+
+            this.haveRelation = function() {
+                return this.ref !== null;
+            }
 
             /** Check if field is primary  */
             this.isPrimary = function () {
@@ -174,7 +187,7 @@
                             var field = fields[val];
 
                             self.addField(
-                                    new Field(field.name, field.type, field.size, field.default_value)
+                                new Field(field.name, field.type, field.size, field.default_value, field.is_primary, field.is_unique, field.is_unsigned)
                             )
                         })
 
@@ -292,13 +305,14 @@
                 fieldKeys.map(function (field) {
                     counter++;
 
+                    //@todo add less show more button and make it hidden.
                     if( counter > 5 )
                         return false;
 
                     var fieldObj = self.fields[field];
 
                     html += '<tr>';
-                    html += '<td>' + (fieldObj.isPrimary() ? '<i class="fa fa-fw fa-key"></i>' : '')  + fieldObj.name + ' -   <i>' + fieldObj.type + ' (' +  fieldObj.size + ')</i></td>';
+                    html += '<td><div id="'+self.name + '_' + fieldObj.name+'">' + fieldObj.name + ' -   <i>' + fieldObj.type + ' (' +  fieldObj.size + ')</i> ' + (fieldObj.isPrimary() ? '<i class="fa fa-fw fa-key" style="color: #c1a203"></i>' : '') + '</div></td>';
                     html += '</tr>';
                 });
 
@@ -314,22 +328,54 @@
 
                 html += '</div>';
 
-                if (container)
+                if (container) {
                     container.append(html);
 
-                jsPlumb.draggable(this.name, {
-                    containment: true,
-                    grid:[50,50],
-                    drag:function(e){
-                        jsPlumb.repaint($(this));
-                    },
-                    stop: function(e) {
-                        self.x = e.pos[0];
-                        self.y = e.pos[1];
+                    fieldKeys.map(function (field) {
 
-                        tableDesigner.updateTable(self);
-                    }
-                });
+                        var fieldObj = self.fields[field];
+
+                        /**
+                         * Here we will adding source and target for fields which are numbers and is unsigned ..
+                         *
+                         *  1. if field is number and is unsigned or is primary key .
+                         *  2. check if current have some relations and connect if needed
+                         *
+                         * */
+                        if( fieldObj.isNumber() && ( fieldObj.isPrimary() || fieldObj.isUnsigned() ) ) {
+
+                            /** Use js plumb window instance to add new endpoint .*/
+                            jsPlumb.addEndpoint(self.name + '_' + fieldObj.name, {
+                                isTarget: true,
+                                isSource: true
+                            });
+
+                            if( fieldObj.haveRelation() ) {
+                                var relation = fieldObj.ref;
+
+                                //#@todo connect relation .
+                            }
+                        }
+                    });
+
+                    //@todo repaint .
+                    jsPlumb.repaint(this.name);
+
+                    jsPlumb.draggable(this.name, {
+                        containment: true,
+                        grid:[50,50],
+                        drag:function(e){
+                            jsPlumb.repaint($(this));
+                        },
+                        stop: function(e) {
+                            self.x = e.pos[0];
+                            self.y = e.pos[1];
+
+                            tableDesigner.updateTable(self);
+                        }
+                    });
+                }
+
 
                 return html;
             }
@@ -524,6 +570,10 @@
 
                 if(! block)
                     block = $("#diagram");
+
+                jsPlumb.importDefaults({
+                    ConnectionsDetachable:false
+                });
 
                 jsPlumb.setContainer(block);
                 jsPlumb.empty(block);
@@ -739,9 +789,9 @@
                        form.find('select option:selected').val(),
                        form.find('.field-size').val(),
                        form.find('.field-default').val(),
-                       form.find('.field-primary').val(),
-                       form.find('.field-unique').val(),
-                       form.find('.field-unsigned').val()
+                       form.find('.field-primary').val() > 0,
+                       form.find('.field-unique').val() > 0,
+                       form.find('.field-unsigned').val() > 0
                     );
 
                 });

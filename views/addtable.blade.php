@@ -31,7 +31,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" class="field-primary">
+                                <input type="checkbox" class="field-primary" value="0">
                                 Primary
                             </label>
                         </div>
@@ -40,7 +40,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" class="field-unique">
+                                <input type="checkbox" class="field-unique" value="0">
                                 Unique
                             </label>
                         </div>
@@ -49,7 +49,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" class="field-unsigned">
+                                <input type="checkbox" class="field-unsigned" value="0">
                                 Unsigned
                             </label>
                         </div>
@@ -96,6 +96,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    $( "[type=checkbox]").on('click', function() {
+        $(this).val(this.checked ? 1 : 0)
+    })
+</script>
 
 <style>
     .form-control {
