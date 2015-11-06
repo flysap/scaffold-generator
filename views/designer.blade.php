@@ -158,14 +158,21 @@
             this.name = name;
         };
 
-        var Table = function (name, fields, packages, x, y) {
+        var Table = function (name, fields, packages, x, y, order) {
 
             this.name = name;
             this.fields = fields ? fields : {};
             this.packages = packages ? packages : {};
             this.x = x ? x : 0;
             this.y = y ? y : 0;
+            this.order = order ? order : 0;
 
+            /** If that option is setup to true i have to render hidden input fields . */
+            this.showInputs = true;
+
+            this.renderInputs = function() {
+                return this.showInputs;
+            }
 
             this.isFieldExists = function(field) {
                 return field in this.fields;
@@ -299,29 +306,46 @@
 
                 html += '<table class="table">';
 
+
+                if( self.renderInputs() )
+                    html += '<input type="hidden" name="tables['+self.order+'][name]" value="'+self.name+'">';
+
                 var fieldKeys = Object.keys(this.fields);
 
                 var counter = 0;
                 fieldKeys.map(function (field) {
+                    var fieldObj = self.fields[field];
+
+                    html += '<tr>';
+
+                    if( self.renderInputs() )
+                        html += '<input type="hidden" name="tables['+self.order+'][fields]['+counter+'][name]" value="'+fieldObj.name+'">';
+
+                    html += '<td><div id="'+self.name + '_' + fieldObj.name+'">' + fieldObj.name + ' -   <i>' + fieldObj.type + ' (' +  fieldObj.size + ')</i> ' + (fieldObj.isPrimary() ? '<i class="fa fa-fw fa-key" style="color: #c1a203"></i>' : '') + '</div></td>';
+                    html += '</tr>';
+
                     counter++;
 
                     //@todo add less show more button and make it hidden.
                     if( counter > 5 )
                         return false;
-
-                    var fieldObj = self.fields[field];
-
-                    html += '<tr>';
-                    html += '<td><div id="'+self.name + '_' + fieldObj.name+'">' + fieldObj.name + ' -   <i>' + fieldObj.type + ' (' +  fieldObj.size + ')</i> ' + (fieldObj.isPrimary() ? '<i class="fa fa-fw fa-key" style="color: #c1a203"></i>' : '') + '</div></td>';
-                    html += '</tr>';
                 });
 
                 var packageKeys = Object.keys(this.packages);
 
+                var counter = 0;
                 packageKeys.map(function (package) {
                     html += '<tr>';
+
+                    if( self.renderInputs() ) {
+                        html += '<input type="hidden" name="tables['+self.order+'][packages]['+counter+'][name]" value="'+self.packages[package].name+'">';
+                        html += '<input type="hidden" name="tables['+self.order+'][packages]['+counter+'][attributtes]" value="'+self.packages[package].attributes +'">';
+                    }
+
                     html += '<td>' + self.packages[package].name + '</td>';
                     html += '</tr>';
+
+                    counter++;
                 });
 
                 html += '</table>';
@@ -347,7 +371,7 @@
                             /** Use js plumb window instance to add new endpoint .*/
                             jsPlumb.addEndpoint(self.name + '_' + fieldObj.name, {
                                 isTarget: true,
-                                isSource: true
+                                isSource: (fieldObj.name == 'id') ? false : true
                             });
 
                             if( fieldObj.haveRelation() ) {
@@ -600,20 +624,23 @@
              * */
             updateTable: function(table) {
                 this.removeTable(table.name);
-                this.addTable(table.name, table.fields, table.packages, table.x, table.y);
+                this.addTable(table.name, table.fields, table.packages, table.x, table.y, table.order);
             },
 
             /**
              *  Add new table to the stack .
              * */
-            addTable: function (table, fields, packages, x, y) {
+            addTable: function (table, fields, packages, x, y, order) {
                 if( this.isTableExists(table) )
                     throw new Error('Table already exists. Choose another name!');
 
-                var tableObj = new Table(table, null, null, x, y);
+                var tableObj = new Table(table, null, null, x, y, order);
 
-                tableObj.addFields(fields);
-                tableObj.addPackages(packages);
+                if( fields )
+                    tableObj.addFields(fields);
+
+                if( packages )
+                    tableObj.addPackages(packages);
 
                 this.tables[table] = tableObj;
 
@@ -640,7 +667,7 @@
                         keys.map(function (val) {
                             var tableObj = tables[val];
 
-                            self.addTable(tableObj.name, tableObj.fields, tableObj.packages, tableObj.x, tableObj.y);
+                            self.addTable(tableObj.name, tableObj.fields, tableObj.packages, tableObj.x, tableObj.y, tableObj.order);
                         });
                     } else {
                         tables.map(function(table) {
@@ -730,8 +757,10 @@
                 $('.add_table').on('click', function () {
                     var table = prompt('Please enter table name!');
 
+                    var order = $('.panel_table').length + 1;
+
                     if (table && table !== undefined)
-                        if (tableObj = tableDesigner.addTable(table))
+                        if (tableObj = tableDesigner.addTable(table, null, null, null, null, order))
                             tableObj.render($("#diagram"))
                 });
 
