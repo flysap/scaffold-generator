@@ -2,7 +2,6 @@
 
 @section('content')
 
-    <script src="https://raw.githubusercontent.com/ethaizone/Bootstrap-Confirmation/master/bootstrap-confirmation.js" type="text/javascript"></script>
     <script src="{{ asset("/bower_components/lockr/lockr.min.js") }}" type="text/javascript"></script>
     <script src="{{ asset("/bower_components/jsPlumb/dist/js/jsPlumb-2.0.4-min.js") }}" type="text/javascript"></script>
     <link href="{{ asset("/bower_components/jsPlumb/dist/css/jsPlumbToolkit-defaults.css") }}" rel="stylesheet" type="text/css"/>
@@ -112,6 +111,47 @@
             this.length = from < 0 ? this.length + from : from;
             return this.push.apply(this, rest);
         };
+
+        var Relation = function(connection) {
+
+            this.connection = connection;
+            this.source = connection.source;
+            this.target = connection.target;
+
+            this.drop = function() {
+
+            }
+
+            this.save = function() {
+
+            }
+
+            this.bind = function() {
+                var self = this;
+
+                var button = $('[data-relation="'+this.connection.id+'"]');
+
+                button.confirmation({
+                    title: 'Edit Relationship',
+                    onConfirm: function() {
+
+                        self.save();
+
+                        tableDesigner.debugg('Selected relation for connection' + self.connection.id)
+                    },
+                    onCancel: function() {
+                        tableDesigner.debugg('Selected 1:1 relation for connection' + self.connection.id)
+                    }
+                });
+            }
+
+            this.show = function() {
+                var button = $('[data-relation="'+this.connection.id+'"]');
+                button.closest('div').removeClass('hidden')
+
+                button.confirmation('show');
+            }
+        }
 
         var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned) {
 
@@ -371,7 +411,11 @@
 
                             /** Use js plumb window instance to add new endpoint .*/
                             jsPlumb.addEndpoint(self.name + '_' + fieldObj.name, {
+                                filter:function(event, element) {
+                                    //#@todo write filter ..
+                                },
                                 isTarget: true,
+                                maxConnections: 15,
                                 isSource: (fieldObj.name == 'id') ? false : true
                             });
 
@@ -437,7 +481,9 @@
                     self.insertField(self.table.fields[field]);
                 });
 
-                $('#tableModal').attr('data-table', this.table.name);
+                var tableName = this.table.name;
+                $('#tableModal').attr('data-table', tableName);
+                $('#tableModal .modal-title').html( tableName.charAt(0).toUpperCase() + tableName.slice(1) );
 
                 /** Open the modal .. */
                 $('#tableModal').modal('toggle');
@@ -524,6 +570,7 @@
 
                 this.saveState();
 
+                //#@todo we really need flush?? maybe try to insert new filed into dom ..
                 this.table.flush();
 
                 clearForm();
@@ -590,9 +637,76 @@
             },
 
             /**
+             * Set up the connection .
+             *
+             * */
+            setUpConnection: function(connection, triggerSetup) {
+                var self = this;
+
+                /**
+                 * When new connection is made i have to:
+                 *
+                 *  1. show popup to let user select the connection type -- done
+                 *  2. if user selected connection type need an trigger which will catch that
+                 *  3. get source and check if there is no more relation for that field exists
+                 *  4. get source and check if that field type permit to have an connection
+                 *  5. get target and check if field type permit to have an connection (id|primary)
+                 *  6. get source and write to database source new relation and save to database and repaint table
+                 *  7. get the target write to database the connection which are in connections: [target1:params, target2:params] and repaint table
+                 *  8. when table render it have to check if field some connections and connect them if needed
+                 *  9. when user try to delete some of field it have to check if that field aren't into relation
+                 *  10. check if source and target cannot belong to the same table than show alert and return false. it can have relation to the same table.
+                 *
+                 * */
+
+                var source = connection.source, target = connection.target, relationObj = new Relation(connection);
+
+                connection.addOverlay(["Custom", {
+                    create:function(component) {
+
+                        var template = '<input type="radio">';
+
+                        return $('<div>' +
+                        '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
+                            '<div class="hidden">' +
+                                '<span data-container="'+template+'" data-relation="'+connection.id+'" data-toggle="confirmation" data-btn-ok-label="Save" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-class="btn-success"></span>' +                            '</div>' +
+                        '</div>');
+                    },
+                    location:0.5,
+                    id: connection.id
+                }]);
+
+                connection.addOverlay(["Label", {
+                    label:"source", location:0.25, id: "source_" + connection.id
+                }]);
+
+                connection.addOverlay(["Label", {
+                    label:"target", location:0.75, id: "target_" + connection.id
+                }]);
+
+                connection.bind("dblclick", function(connection) {
+                    relationObj.show();
+
+                    self.debugg('connection was clicked.')
+                });
+
+                relationObj.bind();
+
+                /**
+                 * If triggerSetup is set to true that mean relation was created recently and i have to show popup
+                 *  to choose relation type .
+                 *
+                 * */
+                if( triggerSetup )
+                    relationObj.show();
+            },
+
+            /**
              * Load from storage current canvas state .
              * */
             loadCanvasState: function (tables, block) {
+                var self = this;
+
                 if (! this.is_supports_html5_storage())
                     throw new Error('Browser do not support local storage.!');
 
@@ -616,24 +730,10 @@
 
                 jsPlumb.setContainer(block);
                 jsPlumb.empty(block);
-
-                /**
-                 * When new connection is made i have to:
-                 *
-                 *  1. show popup to let user select the connection type
-                 *  2. if user selected connection type need an trigger which will catch that
-                 *  3. get source and check if there is no more relation for that field exists
-                 *  4. get source and check if that field type permit to have an connection
-                 *  5. get target and check if field type permit to have an connection (id|primary)
-                 *  6. get source and write to database source new relation and save to database and repaint table
-                 *  7. get the target write to database the connection which are in connections: [target1:params, target2:params] and repaint table
-                 *  8. when table render it have to check if field some connections and connect them if needed
-                 *  9. when user try to delete some of field it have to check if that field aren't into relation
-                 *  10. check if source and target cannot belong to the same table than show alert and return false. it can have relation to the same table.
-                 *
-                 * */
                 jsPlumb.bind("connection", function(info) {
-                    console.log(info);
+                    self.setUpConnection(
+                        info.connection, true
+                    )
                 });
 
                 this.render(block);
