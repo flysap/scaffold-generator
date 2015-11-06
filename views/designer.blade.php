@@ -153,9 +153,10 @@
 
         };
 
-        var Package = function (name) {
+        var Package = function (name, attributes) {
 
             this.name = name;
+            this.attributes = attributes;
         };
 
         var Table = function (name, fields, packages, x, y, order) {
@@ -279,7 +280,7 @@
                             var packageObj = packages[val];
 
                             self.addPackage(
-                                    new Package(packageObj.name)
+                                new Package(packageObj.name, packageObj.attributes)
                             )
                         })
 
@@ -760,8 +761,18 @@
                     var order = $('.panel_table').length + 1;
 
                     if (table && table !== undefined)
-                        if (tableObj = tableDesigner.addTable(table, null, null, null, null, order))
-                            tableObj.render($("#diagram"))
+                        if (tableObj = tableDesigner.addTable(table, null, null, null, null, order)) {
+
+                            tableObj.addField(new Field(
+                                'id', 'int', 11, null, true, false, false
+                            ));
+
+                            tableDesigner.saveCanvasState();
+
+                            tableObj.render($("#diagram"));
+
+                            $('#' + table).find('.tbl-edit').trigger('click');
+                        }
                 });
 
                 $('#diagram').on('click', '.tbl-remove', function () {
