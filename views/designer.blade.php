@@ -2,10 +2,10 @@
 
 @section('content')
 
+    <script src="https://raw.githubusercontent.com/ethaizone/Bootstrap-Confirmation/master/bootstrap-confirmation.js" type="text/javascript"></script>
     <script src="{{ asset("/bower_components/lockr/lockr.min.js") }}" type="text/javascript"></script>
     <script src="{{ asset("/bower_components/jsPlumb/dist/js/jsPlumb-2.0.4-min.js") }}" type="text/javascript"></script>
-    <link href="{{ asset("/bower_components/jsPlumb/dist/css/jsPlumbToolkit-defaults.css") }}" rel="stylesheet"
-          type="text/css"/>
+    <link href="{{ asset("/bower_components/jsPlumb/dist/css/jsPlumbToolkit-defaults.css") }}" rel="stylesheet" type="text/css"/>
 
     <section class="content-header">
         <h1>
@@ -576,7 +576,7 @@
 
         var tableDesigner = {
 
-            DEBUGG: true,
+            DEBUGG: false,
 
             tables: {},
 
@@ -616,6 +616,25 @@
 
                 jsPlumb.setContainer(block);
                 jsPlumb.empty(block);
+
+                /**
+                 * When new connection is made i have to:
+                 *
+                 *  1. show popup to let user select the connection type
+                 *  2. if user selected connection type need an trigger which will catch that
+                 *  3. get source and check if there is no more relation for that field exists
+                 *  4. get source and check if that field type permit to have an connection
+                 *  5. get target and check if field type permit to have an connection (id|primary)
+                 *  6. get source and write to database source new relation and save to database and repaint table
+                 *  7. get the target write to database the connection which are in connections: [target1:params, target2:params] and repaint table
+                 *  8. when table render it have to check if field some connections and connect them if needed
+                 *  9. when user try to delete some of field it have to check if that field aren't into relation
+                 *  10. check if source and target cannot belong to the same table than show alert and return false. it can have relation to the same table.
+                 *
+                 * */
+                jsPlumb.bind("connection", function(info) {
+                    console.log(info);
+                });
 
                 this.render(block);
             },
