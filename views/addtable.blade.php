@@ -2,14 +2,17 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
+
             <div class="modal-body">
 
                 <div class="form-inline form-fields" style="margin-bottom: 10px">
                     <div class="form-group">
-                        <input type="text" class="form-control field-name" placeholder="Field" aria-describedby="basic-addon1">
+                        <input type="text" class="form-control field-name" placeholder="Field"
+                               aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
@@ -21,11 +24,13 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="number" class="form-control field-size" placeholder="Size" aria-describedby="basic-addon1">
+                        <input type="number" class="form-control field-size" placeholder="Size"
+                               aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
-                        <input type="text" class="form-control field-default" placeholder="Default"aria-describedby="basic-addon1">
+                        <input type="text" class="form-control field-default" placeholder="Default"
+                               aria-describedby="basic-addon1">
                     </div>
 
                     <div class="form-group">
@@ -81,8 +86,10 @@
                     <div class="panel-body">
                         @foreach($packages as $title => $package)
                             <div class="btn-group bs-example" data-toggle="buttons">
-                                <label class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Tooltip on left">
-                                    <input type="checkbox" name="{{$title}}" autocomplete="off" checked> {{ucfirst($title)}}
+                                <label class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top"
+                                       title="Tooltip on left">
+                                    <input type="checkbox" name="{{$title}}" autocomplete="off"
+                                           checked> {{ucfirst($title)}}
                                 </label>
                             </div>
                         @endforeach
@@ -98,7 +105,7 @@
 </div>
 
 <script>
-    $( "[type=checkbox]").on('click', function() {
+    $("[type=checkbox]").on('click', function () {
         $(this).val(this.checked ? 1 : 0)
     })
 </script>
@@ -107,7 +114,8 @@
     .form-control {
         border-radius: 5px;
     }
-    .bs-example>.btn{
-        margin:5px 0px;
+
+    .bs-example > .btn {
+        margin: 5px 0px;
     }
 </style>

@@ -440,7 +440,19 @@
                 $('#tableModal').attr('data-table', this.table.name);
 
                 /** Open the modal .. */
-                $('#tableModal').modal('show')
+                $('#tableModal').modal('toggle');
+                $('#tableModal').on('shown.bs.modal', function () {
+                    setTimeout(function (){
+                        self.focusInput();
+                    }, 300);
+                })
+            }
+
+            this.focusInput = function() {
+                $('#tableModal').find('input')
+                        .not('input[type=hidden],input[type=button],input[type=submit],input[type=reset],input[type=image],button')
+                        .filter(':enabled:visible:first')
+                        .focus();
             }
 
             this.closePanel = function() {
@@ -515,6 +527,8 @@
                 this.table.flush();
 
                 clearForm();
+
+                this.focusInput();
             }
 
             /**
