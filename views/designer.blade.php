@@ -131,6 +131,7 @@
 
                 var button = $('[data-relation="'+this.connection.id+'"]');
 
+
                 button.confirmation({
                     title: 'Edit Relationship',
                     onConfirm: function() {
@@ -664,12 +665,13 @@
                 connection.addOverlay(["Custom", {
                     create:function(component) {
 
-                        var template = '<input type="radio">';
+                        var template = '11';
 
                         return $('<div>' +
                         '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
                             '<div class="hidden">' +
-                                '<span data-container="'+template+'" data-relation="'+connection.id+'" data-toggle="confirmation" data-btn-ok-label="Save" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-class="btn-success"></span>' +                            '</div>' +
+                                '<span data-content="'+template+'" data-relation="'+connection.id+'" data-toggle="confirmation" data-btn-ok-label="Saveaaaa" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-class="btn-success"></span>' +
+                            '</div>' +
                         '</div>');
                     },
                     location:0.5,
