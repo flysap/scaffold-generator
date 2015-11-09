@@ -48,7 +48,6 @@
     </section>
     <!-- /.content -->
 
-
     <style>
         #diagram {
             height: 400px;
@@ -78,26 +77,6 @@
         }
 
     </style>
-
-    <?php
-    /**
-     * So by default we need to have add dialog modal which will include all the logic in the separate view blade script .
-     *  when the page is loaded is need to check for local storage if there is some data to render..
-     *
-     *   1. if there persist data for loading we have to
-     *      a. load the data from local storage
-     *      b. need a function which will render data from local storage .
-     *      c. need a function addTable(data) and addTables(data)
-     *      d. need a function removeTable(table) and removeTables
-     *      e. need a function addConnection(source, target, params), removeConnection(source) or target, removeConnections()
-     *      f. each drawn table must have hidden inputs with declared data, meaning fields, relations, packages etc ...
-     *
-     *
-     *   2. if there is clicked to add new table i have to prompt user to add new table name, if user entered table name i have to:
-     *          a. add new table to the tables
-     *          b. and render that table on the page .
-     */
-    ?>
 
     <script type="text/javascript">
 
@@ -203,7 +182,7 @@
                  * Update target field .
                  *
                  * */
-                targetFieldObj.setRefference(
+                targetFieldObj.addRefference(
                     sourceTable.name, sourceFieldObj.name
                 );
 
@@ -263,7 +242,7 @@
             }
         }
 
-        var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned, foreign, refference) {
+        var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned, foreign, refferences) {
 
             this.name = name;
             this.type = type;
@@ -273,7 +252,7 @@
             this.is_unique = is_unique ? is_unique : false;
             this.is_unsigned = is_unsigned ? is_unsigned : false;
             this.foreign = foreign ? foreign : null;
-            this.refference = refference ? refference : [];
+            this.refferences = refferences ? refferences : [];
 
             /**
              * Check if field have type number .
@@ -287,14 +266,22 @@
                 return this.foreign !== null;
             }
 
+            this.getForeign = function() {
+                return this.foreign;
+            }
+
             this.setForeign = function(table, field, type) {
                 this.foreign = table + '|' + field + '|' + type;
             }
 
-            this.setRefference = function(table, field) {
+            this.setRefferences = function(trefferences) {
+                this.refferences = refferences;
+            }
+
+            this.addRefference = function(table, field) {
                 var name = table + '|' + field;
 
-                this.refference.push(name);
+                this.refferences.push(name);
             }
 
             /** Check if field is primary  */
@@ -554,10 +541,12 @@
                             });
 
                             if( fieldObj.haveForeign() ) {
-                                var relation = fieldObj.foreign;
+                                var foreign = fieldObj.getForeign();
+                                foreign = foreign.split('|');
 
 
 
+                                console.log(foreign);
 
                                 //#@todo connect relation .
                             }
