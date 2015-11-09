@@ -115,7 +115,7 @@
         var Relation = function(connection) {
 
             this.relations = {
-                '1:1' : true,'1:n': true,'n:n': true
+                '1:1' : 'one','1:n': 'many','n:n': 'manytomany'
             }
 
             this.connection = connection;
@@ -191,7 +191,7 @@
                  *
                  * */
                 sourceFieldObj.setForeign(
-                    targetTable.name, targetFieldObj.name
+                    targetTable.name, targetFieldObj.name, this.relations.relation
                 );
 
                 sourceTable.updateField(
@@ -273,7 +273,7 @@
             this.is_unique = is_unique ? is_unique : false;
             this.is_unsigned = is_unsigned ? is_unsigned : false;
             this.foreign = foreign ? foreign : null;
-            this.refference = refference ? refference : null;
+            this.refference = refference ? refference : [];
 
             /**
              * Check if field have type number .
@@ -287,12 +287,14 @@
                 return this.foreign !== null;
             }
 
-            this.setForeign = function(table, field) {
-                this.foreign = table + '|' + field;
+            this.setForeign = function(table, field, type) {
+                this.foreign = table + '|' + field + '|' + type;
             }
 
             this.setRefference = function(table, field) {
-                this.refference = table + '|' + field;
+                var name = table + '|' + field;
+
+                this.refference.push(name);
             }
 
             /** Check if field is primary  */
@@ -554,7 +556,8 @@
                             if( fieldObj.haveForeign() ) {
                                 var relation = fieldObj.foreign;
 
-                                
+
+
 
                                 //#@todo connect relation .
                             }
