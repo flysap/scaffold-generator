@@ -114,6 +114,10 @@
 
         var Relation = function(connection) {
 
+            this.relations = {
+                '1:1' : true,'1:n': true,'n:n': true
+            }
+
             this.connection = connection;
             this.source = connection.source;
             this.target = connection.target;
@@ -122,21 +126,126 @@
 
             }
 
-            this.save = function() {
+            this.save = function(relation) {
+                /**
+                 * On save relation i have to :
+                 *
+                 *  for every relation i have do following things :
+                 *      a. get the selected relation type
+                 *      b. get the source, target table
+                 *      c. get the source, target field
+                 *      d. check if target field can have relations id|primary etc .
+                 *      e. check if source has no more relations
+                 *      f. update source field table
+                 *      g. update target field table
+                 *      h. check if source and target aren't belongs to the same table .
+                 *
+                 * */
 
-            }
+                if( ! relation in this.relations )
+                    throw new Error('Invalid relation type!')
+
+
+                if(! tableDesigner.isTableExists(
+                    $(this.source).closest('div.panel_table').data('table')
+                ))
+                    throw new Error('Invalid source table');
+
+
+                if(! tableDesigner.isTableExists(
+                    $(this.target).closest('div.panel_table').data('table')
+                ))
+                    throw new Error('Invalid target table');
+
+
+                var sourceTable = tableDesigner.getTable(
+                    $(this.source).closest('div.panel_table').data('table')
+                ), targetTable = tableDesigner.getTable(
+                    $(this.target).closest('div.panel_table').data('table')
+                );
+
+                var sourceField = $(this.source).closest('tr').data('field');
+                var targetField = $(this.target).closest('tr').data('field');
+
+                if( ! sourceTable.getField(sourceField) )
+                    throw new Error('Invalid source field');
+
+                if( ! targetTable.getField(targetField) )
+                    throw new Error('Invalid target field');
+
+                var sourceFieldObj = sourceTable.getField(sourceField);
+                var targetFieldObj = targetTable.getField(targetField);
+
+                if( ! targetFieldObj.isPrimary() )
+                    throw new Error('Invalid target field');
+
+                if(! sourceFieldObj.isUnsigned())
+                    throw new Error('Invalid source field');
+
+                if( sourceTable.name == targetTable.name )
+                    throw new Error('You cannot belongs to the same table!');
+
+
+                /**
+                 * Update foreign key
+                 *
+                 * */
+                sourceFieldObj.setForeign(
+                    targetTable.name, targetFieldObj.name
+                );
+
+                sourceTable.updateField(
+                    sourceFieldObj
+                );
+
+
+                /**
+                 * Update target field .
+                 *
+                 * */
+                targetFieldObj.setRefference(
+                    sourceTable.name, sourceFieldObj.name
+                );
+
+                targetTable.updateField(
+                    targetFieldObj
+                );
+
+
+                /**
+                 * Update source table .
+                 *
+                 * */
+                tableDesigner.updateTable(
+                    sourceTable
+                );
+
+                tableDesigner.debugg('Save state for source table ' + sourceTable.name);
+
+                /**
+                 * Update target table .
+                 *
+                 * */
+                tableDesigner.updateTable(
+                    targetTable
+                );
+
+                tableDesigner.saveCanvasState();
+
+                tableDesigner.debugg('Save state for target table ' + targetTable.name);
+             }
 
             this.bind = function() {
                 var self = this;
 
                 var button = $('[data-relation="'+this.connection.id+'"]');
 
-
                 button.confirmation({
-                    title: 'Edit Relationship',
+                    title: 'Set relation',
                     onConfirm: function() {
+                        var relation = button.closest('div').find('input[name=relation]').val();
 
-                        self.save();
+                        self.save(relation);
 
                         tableDesigner.debugg('Selected relation for connection' + self.connection.id)
                     },
@@ -154,7 +263,7 @@
             }
         }
 
-        var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned) {
+        var Field = function (name, type, size, default_value, is_primary, is_unique, is_unsigned, foreign, refference) {
 
             this.name = name;
             this.type = type;
@@ -163,7 +272,8 @@
             this.is_primary = is_primary ? is_primary : false;
             this.is_unique = is_unique ? is_unique : false;
             this.is_unsigned = is_unsigned ? is_unsigned : false;
-            this.ref = null;
+            this.foreign = foreign ? foreign : null;
+            this.refference = refference ? refference : null;
 
             /**
              * Check if field have type number .
@@ -173,8 +283,16 @@
                 return this.type == 'int';
             }
 
-            this.haveRelation = function() {
-                return this.ref !== null;
+            this.haveForeign = function() {
+                return this.foreign !== null;
+            }
+
+            this.setForeign = function(table, field) {
+                this.foreign = table + '|' + field;
+            }
+
+            this.setRefference = function(table, field) {
+                this.refference = table + '|' + field;
             }
 
             /** Check if field is primary  */
@@ -236,7 +354,7 @@
                             var field = fields[val];
 
                             self.addField(
-                                new Field(field.name, field.type, field.size, field.default_value, field.is_primary, field.is_unique, field.is_unsigned)
+                                new Field(field.name, field.type, field.size, field.default_value, field.is_primary, field.is_unique, field.is_unsigned, field.foreign, field.refference)
                             )
                         })
 
@@ -285,6 +403,19 @@
                     delete this.fields[field];
 
                 //#@todo check if there is no relations .
+            }
+
+            /**
+             * Update field .
+             *
+             * */
+            this.updateField = function(field) {
+                if( field instanceof Field )
+                    this.removeField(field.name)
+                else
+                    this.removeField(field);
+
+                this.addField(field);
             }
 
 
@@ -344,7 +475,7 @@
 
                 var self = this;
 
-                var html = '<div id="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px;"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span><strong>' + this.name + '</strong></div>';
+                var html = '<div id="' + this.name + '" data-table="' + this.name + '" class="panel panel-primary panel_table" style="left: '+this.x+'px; top: '+this.y+'px"><div class="panel-heading row-fluid"><span class="pull-right glyphicon glyphicon-remove tbl-remove" style="margin-left: 4px;"></span><span class="pull-right glyphicon glyphicon-edit tbl-edit"></span><strong>' + this.name + '</strong></div>';
 
                 html += '<table class="table">';
 
@@ -358,7 +489,7 @@
                 fieldKeys.map(function (field) {
                     var fieldObj = self.fields[field];
 
-                    html += '<tr>';
+                    html += '<tr data-field="'+fieldObj.name+'">';
 
                     if( self.renderInputs() )
                         html += '<input type="hidden" name="tables['+self.order+'][fields]['+counter+'][name]" value="'+fieldObj.name+'">';
@@ -420,8 +551,10 @@
                                 isSource: (fieldObj.name == 'id') ? false : true
                             });
 
-                            if( fieldObj.haveRelation() ) {
-                                var relation = fieldObj.ref;
+                            if( fieldObj.haveForeign() ) {
+                                var relation = fieldObj.foreign;
+
+                                
 
                                 //#@todo connect relation .
                             }
@@ -624,7 +757,7 @@
 
         var tableDesigner = {
 
-            DEBUGG: false,
+            DEBUGG: true,
 
             tables: {},
 
@@ -663,14 +796,14 @@
                 var source = connection.source, target = connection.target, relationObj = new Relation(connection);
 
                 connection.addOverlay(["Custom", {
-                    create:function(component) {
+                    create:function() {
 
-                        var template = '11';
+                        var template = "<form><input type='radio' name='relation' value='1:1'> 1:1<br /><input type='radio' name='relation' value='1:1'> 1:n<br /><input type='radio' name='relation' value='n:n'> n:n<br /><br /></form>";
 
                         return $('<div>' +
                         '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
                             '<div class="hidden">' +
-                                '<span data-content="'+template+'" data-relation="'+connection.id+'" data-toggle="confirmation" data-btn-ok-label="Saveaaaa" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-class="btn-success"></span>' +
+                                '<span data-content="'+template+'" data-relation="'+connection.id+'" data-toggle="confirmation" data-btn-ok-label="Save" data-btn-ok-icon="glyphicon glyphicon-share-alt" data-btn-ok-class="btn-success"></span>' +
                             '</div>' +
                         '</div>');
                     },
@@ -732,6 +865,11 @@
 
                 jsPlumb.setContainer(block);
                 jsPlumb.empty(block);
+
+                /**
+                 * On connection setup event i have to store relation to database .
+                 *
+                 * */
                 jsPlumb.bind("connection", function(info) {
                     self.setUpConnection(
                         info.connection, true
