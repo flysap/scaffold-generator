@@ -6,27 +6,27 @@
     <link href="/bower_components/database-designer/assets/style.css" rel="stylesheet" type="text/css"/>
 
     <!-- Include lockr components -->
-    <script src="/bower_components/database-designer/bower_components/lockr/lockr.min.js" type="text/javascript"></script>
+    <script src="/bower_components/lockr/lockr.min.js" type="text/javascript"></script>
 
     <!-- Include bootstrap confirmation components -->
-    <script src="/bower_components/database-designer/bower_components/bootstrap-confirmation/bootstrap-confirmation.js" type="text/javascript"></script>
+    <script src="/bower_components/bootstrap-confirmation/bootstrap-confirmation.js" type="text/javascript"></script>
 
     <!-- Include jsPlumb components -->
-    <script src="/bower_components/database-designer/bower_components/jsPlumb/dist/js/jsPlumb-2.0.4-min.js" type="text/javascript"></script>
-    <link href="/bower_components/database-designer/bower_components/jsPlumb/dist/css/jsPlumbToolkit-defaults.css" rel="stylesheet" type="text/css"/>
+    <script src="/bower_components/jsPlumb/dist/js/jsPlumb-2.0.4-min.js" type="text/javascript"></script>
+    <link href="/bower_components/jsPlumb/dist/css/jsPlumbToolkit-defaults.css" rel="stylesheet" type="text/css"/>
 
     <!-- Include keyboardjs components -->
-    <script src="/bower_components/database-designer/bower_components/keyboardjs/dist/keyboard.min.js" type="text/javascript"></script>
+    <script src="/bower_components/keyboardjs/dist/keyboard.min.js" type="text/javascript"></script>
 
     <!-- Include notifyjs components -->
-    <script src="/bower_components/database-designer/bower_components/notifyjs/dist/notify.js" type="text/javascript"></script>
+    <script src="/bower_components/notifyjs/dist/notify.js" type="text/javascript"></script>
 
     <!-- Include parse.com components -->
-    <!--<script src="/bower_components/database-designer/bower_components/parse-js-sdk/lib/parse.min.js" type="text/javascript"></script>-->
+    <!--<script src="bower_components/parse-js-sdk/lib/parse.min.js" type="text/javascript"></script>-->
     <script src="http://www.parsecdn.com/js/parse-1.6.7.min.js"></script>
 
     <!-- Include mask components -->
-    <script src="bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
+    <script src="/bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js"></script>
 
     <script src="/bower_components/database-designer/database-designer.js" type="text/javascript"></script>
 
@@ -255,7 +255,6 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-
 
     <script type="text/javascript">
         $(function() {
