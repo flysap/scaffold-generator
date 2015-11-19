@@ -46,7 +46,8 @@
     <section class="content">
         <div class="row">
             <!-- left column -->
-            <div class="col-md-12">
+            <form action="" method="post" class="diagram_form">
+                <div class="col-md-12">
                 <div class="box">
                     <div style="clear:both; overflow: auto; width: 100%; height:700px; position: relative" class="main_block">
                         <div style="width:4033px; overflow: hidden; height:1800px">
@@ -73,6 +74,7 @@
                                     <button type="button" class="btn btn-link export_sql" title="Export SQL"><span class="glyphicon glyphicon glyphicon-save-file" aria-hidden="true"></span></button>
                                 </div>
                             </div>
+
 
                             <div id="diagram" style=" width:calc(100% - 33px); height:100%"></div>
                         </div><!-- .container -->
@@ -250,6 +252,7 @@
                     </div>
                 </div>
             </div>
+            </form>
             <!--/.col (left) -->
         </div>
         <!-- /.row -->
